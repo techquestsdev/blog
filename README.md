@@ -6,8 +6,8 @@ A modern, performant blog built with SvelteKit 5, featuring enhanced MDX content
 
 [![CI](https://github.com/techquestsdev/blog/workflows/CI/badge.svg)](https://github.com/techquestsdev/blog/actions)
 [![Codecov](https://codecov.io/gh/techquestsdev/blog/branch/main/graph/badge.svg)](https://codecov.io/gh/techquestsdev/blog)
-[![Docker](https://ghcr-badge.egpl.dev/techquestsdev/blog/latest_tag?trim=major&label=latest)](https://github.com/techquestsdev/blog/pkgs/container/blog)
-[![License: GNU GPLv3](https://img.shields.io/badge/License-GNU%20GPLv3-blue.svg)](LICENSE)
+[![License: GNU GPLv3](https://img.shields.io/badge/License-GNU%20GPLv3-green.svg)](LICENSE)
+![Latest Release](https://img.shields.io/github/v/release/techquestsdev/blog?include_prereleases)
 
 ## Features
 

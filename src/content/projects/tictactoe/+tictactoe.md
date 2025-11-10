@@ -5,7 +5,7 @@ description: Cross-platform development project with React Native, Expo, and Go.
 thumbnail: icon.png
 images: [menu-normal.png, menu-extreme.png, game-normal.png, game-extreme.png]
 aspect_ratio: tall
-github: https://github.com/techquestsdev/tictactoe
+# github: https://github.com/techquestsdev/tictactoe
 # website: https://tictactoe.techquests.dev
 date: 2025-06-15
 ---
@@ -85,8 +85,8 @@ While the goal was learning and documentation rather than wide distribution, the
 **Available Platforms:**
 
 - **iOS**: Published on the App Store
-- **Android**: Published on Google Play
-<!-- - **Web**: [tictactoe.techquests.dev](https://tictactoe.techquests.dev) -->
+- **Android**: Published on Google Play _(internal testing track, invite only)_
+- **Web**: Hosted version available at [tictactoe.techquests.dev](https://tictactoe.techquests.dev) _(removed for now)_
 - **GitHub Repository**: [github.com/techquestsdev/tictactoe](https://github.com/techquestsdev/tictactoe)
 
 **Find It Online:**
@@ -94,7 +94,7 @@ While the goal was learning and documentation rather than wide distribution, the
 - Search for **"TechQuests - TicTacToe"** to find project references
 - Visit the [blog series](../blog/tictactoe-chapter-1) for detailed development documentation
 
-## Conclusion
+## Final Thoughts
 
 This project succeeded in its primary goal: providing a comprehensive testing ground for cross-platform development. It's not a case study in game design, but rather a case study in **shipping a complete, functional application across multiple platforms with a single codebase**.
 

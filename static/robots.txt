@@ -32,9 +32,9 @@ Disallow: /
 Sitemap: https://techquests.dev/sitemap.xml
 
 # RSS feeds
-Allow: /feed
-Allow: /blog/feed
-Allow: /projects/feed
+Allow: /rss.xml
+Allow: /blog/rss.xml
+Allow: /projects/rss.xml
 
 # Common crawl delay for good citizenship
 Crawl-delay: 1

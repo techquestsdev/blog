@@ -247,17 +247,44 @@ make docker-scan-critical
 The blog uses GitHub Actions for continuous integration and deployment with a multi-stage workflow:
 
 ```mermaid
-graph LR
-    A[Push/PR] --> B[Validate]
-    B --> C[Lint & Test]
-    C --> D[Coverage Upload]
-    D --> E{Event Type}
-    E -->|Push to main| F[Build & Push]
-    E -->|Pull Request| G[Docker Validate]
-    F --> H[Security Scan]
-    H --> I[Attestation]
-    I --> J[Deploy Ready]
-    G --> K[Trivy Scan PR]
+graph TB
+    START[Trigger: Push/PR/Tag] --> SPLIT{Event Type}
+
+    SPLIT -->|Push to main only| SV[Semantic Version Job]
+    SV -->|Calculate bump| DECIDE{Bump Needed?}
+    DECIDE -->|Yes| NEWTAG[Create and Push Tag]
+    DECIDE -->|No| SKIP[Skip Versioning]
+    NEWTAG -.->|Expose vX.Y.Z to build| DOCKERPUSH
+
+    SPLIT --> VAL[Validate Job]
+    VAL -->|Check files| LINT[Lint and Test Job]
+    LINT -->|Run tests| BUILD[Build Artifact]
+    BUILD -->|Upload| ARTIFACT[(build artifact)]
+    LINT -->|Upload| COV[Codecov]
+
+    ARTIFACT --> CHECK{Event?}
+
+    CHECK -->|Pull Request| DOCKERVAL[Validate Docker Job]
+    DOCKERVAL -->|Build test| TRIVY1[Trivy Scan]
+    TRIVY1 -->|Exit 1 on HIGH/CRITICAL| PRBLOCK[Block if vulnerable]
+
+    CHECK -->|Push/Tag not PR| DOCKERPUSH[Build and Push Job]
+    DOCKERPUSH -->|Multi-arch build| PUSH[Push to GHCR]
+    PUSH --> ATTEST[Generate Attestation]
+    ATTEST --> TRIVY2[Trivy SARIF + Table]
+    TRIVY2 --> UPLOAD[Upload SARIF to GitHub Security]
+
+    SV -.->|New tag + build success| RELEASE[Create Release Job]
+    DOCKERPUSH -.->|Success| RELEASE
+    RELEASE -->|GitHub Release| DONE[✓ Complete]
+
+    style SV fill:#b3d9ff
+    style NEWTAG fill:#ffb3b3
+    style DOCKERPUSH fill:#b3ffb3
+    style RELEASE fill:#ffb3ff
+    style ARTIFACT fill:#fff9b3
+    style TRIVY1 fill:#ffd9b3
+    style TRIVY2 fill:#ffd9b3
 ```
 
 ### Workflow Jobs
@@ -315,8 +342,6 @@ docker pull ghcr.io/techquestsdev/blog:main-abc123
 - `latest` - Latest from main branch
 - `main` - All pushes to main branch
 - `v*.*.*` - Semantic version tags (e.g., v1.2.3)
-- `v*.*` - Minor version tags (e.g., v1.2)
-- `v*` - Major version tags (e.g., v1)
 - `main-{sha}` - Commit-specific builds from main
 
 ### Security Features

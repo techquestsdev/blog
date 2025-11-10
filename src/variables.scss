@@ -1,0 +1,80 @@
+// Spacing variables (micro to macro)
+$spacing-4xs: 0.05rem;
+$spacing-3xs: 0.1rem;
+$spacing-2xs: 0.2rem;
+$spacing-xs: 0.3rem;
+$spacing-xxs: 0.4rem;
+$spacing-sm: 0.5rem;
+$spacing-smd: 0.6rem;
+$spacing-md: 0.75rem;
+$spacing-base: 1rem;
+$spacing-lg: 1.25rem;
+$spacing-xl: 1.5rem;
+$spacing-2xl: 1.75rem;
+$spacing-3xl: 2rem;
+$spacing-4xl: 2.5rem;
+$spacing-5xl: 3rem;
+$spacing-6xl: 3.75rem;
+$spacing-7xl: 5rem;
+$spacing-8xl: 6rem;
+$spacing-9xl: 10rem;
+$spacing-10xl: 12rem;
+$spacing-11xl: 90rem;
+
+// Layout widths
+$width-content: 53rem;
+$width-carousel: 80rem;
+$width-thumbnail: 20rem;
+$width-image-max: 50rem;
+$width-button: 3rem;
+$width-color-box: 5rem;
+$width-projects-card: 30rem;
+
+// Font sizes
+$font-xs: 1.1rem;
+$font-sm: 1.2rem;
+$font-base: 1.4rem;
+$font-md: 1.5rem;
+$font-lg: 1.6rem;
+$font-xl: 2.5rem;
+$font-2xl: 3rem;
+$font-3xl: 3.2rem;
+$font-4xl: 5rem;
+
+// Font families
+$font-family-base: 'Fira Code Variable', sans-serif;
+$font-family-mono: 'Fira Mono', monospace;
+
+// Line heights
+$line-height-2xl: 2.9rem;
+
+// Transitions
+$transition-fast: 0.2s;
+$transition-base: 0.3s;
+
+// Z-index layers
+$z-index-sticky: 10;
+$z-index-modal: 100;
+$z-index-base: 0;
+$z-index-above: 1;
+$z-index-higher: 2;
+
+// Breakpoints
+$breakpoint-mobile: 600px;
+$breakpoint-tablet: 850px;
+$breakpoint-desktop: 1000px;
+
+// Mixins
+@mixin flex($direction: row, $justify: null, $align: null) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin page-container {
+  width: 100%;
+  max-width: $width-content;
+  margin: 0 auto $spacing-9xl auto;
+  padding: $spacing-xl;
+}

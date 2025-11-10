@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="icon"
+      href="%sveltekit.assets%/favicon-light-mode.svg"
+      type="image/svg+xml"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      href="%sveltekit.assets%/favicon-dark-mode.svg"
+      type="image/svg+xml"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
+    <script
+      defer
+      src="https://analytics.techquests.dev/umami"
+      data-website-id="9055cb82-b25c-4c6d-8428-2b9f10f26946"
+      data-auto-track="false"
+    ></script>
+    <script>
+      const theme = localStorage.getItem('color-scheme');
+      theme
+        ? document.documentElement.setAttribute('color-scheme', theme)
+        : localStorage.setItem('color-scheme', 'dark');
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

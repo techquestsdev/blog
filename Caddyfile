@@ -1,0 +1,38 @@
+:3000 {
+	root * /usr/share/caddy
+	file_server
+
+	# Rewrite all requests to index.html if the file doesn't exist
+	try_files {path} {path}.html /index.html
+
+	log {
+		output stdout
+		format json
+	}
+
+	header {
+		# Prevent framing (clickjacking)
+		X-Frame-Options "DENY"
+
+		# Disable content sniffing
+		X-Content-Type-Options "nosniff"
+
+		# Only send referer on same origin
+		Referrer-Policy "strict-origin-when-cross-origin"
+
+		# Enforce HTTPS for 2 years
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+		# Disable features you don't need
+		Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=()"
+
+		# Content Security Policy (CSP) for stricter control
+		Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://analytics.techquests.dev; img-src 'self' data: https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://analytics.techquests.dev https://api.web3forms.com https://api.web3forms.com;"
+
+		# CORS settings
+		Access-Control-Allow-Origin "https://techquests.dev"
+		Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers "Content-Type"
+		Access-Control-Max-Age "86400"
+	}
+}

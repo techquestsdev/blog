@@ -1,0 +1,40 @@
+User-agent: *
+Allow: /
+
+# Disallow common areas that shouldn't be crawled
+Disallow: /api/
+Disallow: /_app/version.json
+Disallow: /*.json$
+
+# Specific bot optimizations
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://techquests.dev/sitemap.xml
+
+# RSS feeds
+Allow: /feed
+Allow: /blog/feed
+Allow: /projects/feed
+
+# Common crawl delay for good citizenship
+Crawl-delay: 1

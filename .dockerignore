@@ -1,0 +1,9 @@
+# Ignore everything by default
+*
+
+# Only include what's needed for the Docker image
+!build/
+!Caddyfile
+
+# Documentation (optional, for reference)
+!README.md

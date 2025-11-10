@@ -277,14 +277,6 @@ graph TB
     SV -.->|New tag + build success| RELEASE[Create Release Job]
     DOCKERPUSH -.->|Success| RELEASE
     RELEASE -->|GitHub Release| DONE[✓ Complete]
-
-    style SV fill:#b3d9ff
-    style NEWTAG fill:#ffb3b3
-    style DOCKERPUSH fill:#b3ffb3
-    style RELEASE fill:#ffb3ff
-    style ARTIFACT fill:#fff9b3
-    style TRIVY1 fill:#ffd9b3
-    style TRIVY2 fill:#ffd9b3
 ```
 
 ### Workflow Jobs

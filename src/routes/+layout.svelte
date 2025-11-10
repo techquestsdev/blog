@@ -100,7 +100,9 @@
       </a>
     {/each}
   </nav>
-  <Toggle />
+  {#if $page.url.pathname !== '/'}
+    <Toggle />
+  {/if}
 </header>
 
 <div class="container">

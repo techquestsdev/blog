@@ -4,7 +4,7 @@ export async function load() {
   const modules = import.meta.glob('/src/content/projects/*/*.md');
   let posts = await getPosts(modules);
 
-  posts.sort((b, a) => new Date(b.date) - new Date(a.date));
+  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return {
     posts,

@@ -72,7 +72,7 @@ test.describe('Data Loading', () => {
 
     await expect(page.locator('main')).toBeVisible();
 
-    const heading = page.locator('main h1').first();
+    const heading = page.locator('h1').first();
     await expect(heading).toBeVisible();
 
     const description = page.locator('.description');

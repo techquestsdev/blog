@@ -73,7 +73,7 @@ test.describe('Projects', () => {
   test('should display project details with links', async ({ page }) => {
     await page.goto('/projects/beer');
     await expect(page.locator('main').first()).toBeVisible();
-    await expect(page.locator('main h1').first()).toBeVisible();
+    await expect(page.locator('h1').first()).toBeVisible();
 
     // Verify external links have proper target attributes for security
     const websiteLink = page.locator('a[href*="http"]').filter({ hasText: /Site|Website/ });

@@ -65,10 +65,13 @@ test.describe('SEO and Meta Tags', () => {
     expect(title).toBeTruthy();
     expect(title).not.toBe('Tech Quests'); // Should be different from homepage
 
-    // Check that project name is likely in the title
-    const projectHeading = await page.locator('main h1').first().textContent();
+    // Check that project name is in the title (look for h1 in .head specifically for projects)
+    const projectHeading = await page.locator('.head h1, main h1').first().textContent();
     if (projectHeading) {
-      expect(title.toLowerCase()).toContain(projectHeading.toLowerCase().substring(0, 5));
+      const trimmedHeading = projectHeading.trim();
+      // Use up to 5 chars or the full heading if shorter
+      const searchString = trimmedHeading.substring(0, Math.min(5, trimmedHeading.length));
+      expect(title.toLowerCase()).toContain(searchString.toLowerCase());
     }
   });
 
@@ -86,8 +89,8 @@ test.describe('SEO and Meta Tags', () => {
     for (const pagePath of pages) {
       await page.goto(pagePath);
 
-      // Check that there's at least one H1 in main content
-      const h1Elements = page.locator('main h1');
+      // Check that there's at least one H1 (in main or .head for projects)
+      const h1Elements = page.locator('h1');
       const h1Count = await h1Elements.count();
       expect(h1Count).toBeGreaterThanOrEqual(1);
 

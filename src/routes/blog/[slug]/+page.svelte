@@ -20,6 +20,7 @@
 <style lang="scss">
   main {
     @include page-container;
+    padding-top: 0;
   }
 
   .date {
@@ -36,7 +37,7 @@
   }
 
   h1 {
-    margin: $spacing-3xl 0;
+    margin: $spacing-lg 0;
     line-height: 1.3;
   }
 </style>

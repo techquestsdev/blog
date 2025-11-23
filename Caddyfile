@@ -27,7 +27,7 @@
 		Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=()"
 
 		# Content Security Policy (CSP) for stricter control
-		Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://analytics.techquests.dev; img-src 'self' data: https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://analytics.techquests.dev https://api.web3forms.com https://api.web3forms.com;"
+		Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://analytics.techquests.dev https://code.iconify.design; img-src 'self' data: https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com https://analytics.techquests.dev https://api.web3forms.com https://api.web3forms.com;"
 
 		# CORS settings
 		Access-Control-Allow-Origin "https://techquests.dev"

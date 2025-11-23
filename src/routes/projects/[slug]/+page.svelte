@@ -24,95 +24,96 @@
   }
 </script>
 
-<main>
-  <div class="head">
-    <div class="row">
-      <h1>{metadata.name}</h1>
-      <div class="links">
-        {#if metadata.website}
-          <a class="external" href={metadata.website} target="_blank" rel="noopener noreferrer">
-            Site<span class="arrow">-></span>
-          </a>
-        {/if}
-        {#if metadata.github}
-          <a class="external" href={metadata.github} target="_blank" rel="noopener noreferrer">
-            Github<span class="arrow">-></span>
-          </a>
-        {/if}
+<div class="head">
+  <div class="row">
+    <h1>{metadata.name}</h1>
+    <div class="links">
+      {#if metadata.website}
+        <a class="external" href={metadata.website} target="_blank" rel="noopener noreferrer">
+          Site<span class="arrow">-></span>
+        </a>
+      {/if}
+      {#if metadata.github}
+        <a class="external" href={metadata.github} target="_blank" rel="noopener noreferrer">
+          Github<span class="arrow">-></span>
+        </a>
+      {/if}
+    </div>
+  </div>
+  <p class="description">
+    {metadata.description}
+  </p>
+</div>
+<div class="embla" use:emblaCarouselSvelte={{ options }} on:emblaInit={emblaInit}>
+  <div class="embla__container" class:loop>
+    {#each metadata.images as image (image)}
+      <div class="embla__slide" class:tall={metadata.aspect_ratio === 'tall'}>
+        <Image {image} alt={metadata.description} sizes="(min-width: 800px) 80vw, 100vw" />
       </div>
-    </div>
-    <p class="description">
-      {metadata.description}
-    </p>
+    {/each}
   </div>
-  <div class="embla" use:emblaCarouselSvelte={{ options }} on:emblaInit={emblaInit}>
-    <div class="embla__container" class:loop>
-      {#each metadata.images as image (image)}
-        <div class="embla__slide" class:tall={metadata.aspect_ratio === 'tall'}>
-          <Image {image} alt={metadata.description} sizes="(min-width: 800px) 80vw, 100vw" />
-        </div>
-      {/each}
-    </div>
-    <button class="embla__prev" on:click={emblaPrev} aria-label="Previous image"
-      ><span>&lt;</span></button
-    >
-    <button class="embla__next" on:click={emblaNext} aria-label="Next image"
-      ><span>&gt;</span></button
-    >
-  </div>
-  <div class="content">
-    <svelte:component this={content} />
-  </div>
+  <button class="embla__prev" on:click={emblaPrev} aria-label="Previous image"
+    ><span>&lt;</span></button
+  >
+  <button class="embla__next" on:click={emblaNext} aria-label="Next image"><span>&gt;</span></button
+  >
+</div>
+<main>
+  <svelte:component this={content} />
 </main>
 
 <style lang="scss">
-  main {
-    width: 100%;
-    padding: 0 0 $spacing-3xl 0;
-    margin: auto;
+  :global(body) {
+    overflow-x: hidden;
   }
 
-  h1 {
-    margin: 0;
-    margin-right: auto;
+  main {
+    @include page-container;
   }
 
   .head {
-    margin: $spacing-sm auto $spacing-lg auto;
-    padding: 0 $spacing-md;
-    width: 100%;
-    max-width: $width-content;
+    @include page-container;
+    margin-bottom: $spacing-md;
+    padding-top: 0;
 
     a {
       font-family: $font-family-mono;
       font-size: $font-md;
     }
 
-    .row,
+    .row {
+      @include flex(row, null, center);
+      gap: $spacing-sm $spacing-3xl;
+
+      h1 {
+        margin: 0 auto 0 0;
+        margin-right: auto;
+        line-height: 1.3;
+        word-wrap: break-word;
+      }
+    }
+
     .links {
       @include flex(row, null, center);
       gap: $spacing-sm $spacing-3xl;
+      flex-shrink: 0;
     }
 
     .description {
       font-size: $font-sm;
-      margin: $spacing-xl 0 $spacing-3xl 0;
+      margin: 0 0 $spacing-md 0;
       font-style: italic;
       color: var(--txt-2);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
-  }
-
-  .content {
-    width: 100%;
-    max-width: $width-content;
-    margin: auto;
-    margin-top: $spacing-lg;
-    padding: 0 $spacing-md;
   }
 
   .embla {
     overflow: hidden;
     position: relative;
+    width: 100%;
+    max-width: 100vw;
   }
   .embla__container {
     display: flex;
@@ -170,12 +171,14 @@
 
   @media (max-width: $breakpoint-tablet) {
     .embla__slide {
-      flex: 0 0 calc(100% - $spacing-5xl);
-      max-width: $width-image-max;
+      flex: 0 0 calc(100% - $spacing-3xl);
+      max-width: 100%;
+      margin-left: $spacing-md;
+      margin-right: $spacing-md;
     }
     .embla__prev,
     .embla__next {
-      width: 20%;
+      width: 15%;
       span {
         opacity: 1;
       }
@@ -191,8 +194,24 @@
   }
 
   @media (max-width: $breakpoint-mobile) {
+    .embla__slide {
+      flex: 0 0 calc(100% - $spacing-lg);
+      margin-left: $spacing-sm;
+      margin-right: $spacing-sm;
+    }
+
     .head {
       .row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-md;
+
+        h1 {
+          margin: $spacing-3xl 0 $spacing-sm 0;
+        }
+      }
+
+      .links {
         flex-wrap: wrap;
       }
     }

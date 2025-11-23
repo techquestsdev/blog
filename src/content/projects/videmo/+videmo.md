@@ -97,12 +97,12 @@ This was never meant to be a commercial product - it's a learning project where 
 
 ## Tech Stack
 
-```txt
-Frontend:    Next.js · React 19 · TypeScript · Tailwind CSS · Radix UI
-Desktop:     Electron · Vite · TypeScript
-Backend:     Node.js · Express · Socket.io · Prisma
+```yaml
+Frontend:    Next.js - React 19 - TypeScript - Tailwind CSS - Radix UI
+Desktop:     Electron - Vite - TypeScript
+Backend:     Node.js - Express - Socket.io - Prisma
 Storage:     MinIO (S3-compatible)
-AI:          Whisper · Mistral
+AI:          Whisper - Mistral
 Auth:        Clerk
 Database:    PostgreSQL (via Prisma)
 ```

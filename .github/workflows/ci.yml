@@ -186,7 +186,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f bun.lock ]; then
+          # Skip frozen lockfile for Dependabot PRs
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "Dependabot PR detected, installing without frozen lockfile..."
+            bun install
+          elif [ -f bun.lock ]; then
             echo "Installing with frozen lockfile..."
             bun install --frozen-lockfile
           else

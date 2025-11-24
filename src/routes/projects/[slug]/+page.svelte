@@ -101,7 +101,7 @@
 
     .description {
       font-size: $font-sm;
-      margin: 0 0 $spacing-md 0;
+      margin: 0 auto 0 0;
       font-style: italic;
       color: var(--txt-2);
       word-wrap: break-word;
@@ -207,7 +207,8 @@
         gap: $spacing-md;
 
         h1 {
-          margin: $spacing-3xl 0 $spacing-sm 0;
+          margin: $spacing-lg 0 $spacing-sm 0;
+          line-height: 1.3;
         }
       }
 

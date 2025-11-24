@@ -2,7 +2,7 @@
 published: true
 name: TicTacToe
 description: Cross-platform development project with React Native, Expo, and Go.
-thumbnail: icon.png
+thumbnail: cover.png
 images: [menu-normal.png, menu-extreme.png, game-normal.png, game-extreme.png]
 aspect_ratio: tall
 # github: https://github.com/techquestsdev/tictactoe

@@ -1,25 +1,25 @@
 ---
 published: true
-name: Videmo
+name: video manager
 description: A video messaging platform with AI-powered summarization.
-thumbnail: videmo_preview.png
+thumbnail: video manager_preview.png
 images:
   [
-    videmo_landing.png,
-    videmo_features.png,
-    videmo_usecases.png,
-    videmo_pricing.png,
-    videmo_contacts.png,
-    videmo_login.png,
-    videmo_pre_recording.png,
-    videmo_notifications.png,
-    videmo_billing.png,
-    videmo_settings.png,
-    videmo_search.png,
-    videmo_video.png
+    video manager_landing.png,
+    video manager_features.png,
+    video manager_usecases.png,
+    video manager_pricing.png,
+    video manager_contacts.png,
+    video manager_login.png,
+    video manager_pre_recording.png,
+    video manager_notifications.png,
+    video manager_billing.png,
+    video manager_settings.png,
+    video manager_search.png,
+    video manager_video.png
   ]
-# github: https://github.com/techquestsdev/videmo
-# website: https://github.com/techquestsdev/videmo
+# github: https://github.com/techquestsdev/video manager
+# website: https://github.com/techquestsdev/video manager
 date: 2025-11-22
 ---
 
@@ -83,7 +83,7 @@ Integrated Whisper for accurate speech-to-text transcription and Mistral for gen
 
 ## What I Learned
 
-Building Videmo end-to-end taught me about:
+Building video manager end-to-end taught me about:
 
 - **Video processing complexity**: Handling different formats, codecs, and streaming uploads
 - **Multi-platform development**: Shipping a consistent experience across web and desktop
@@ -109,7 +109,7 @@ Database:    PostgreSQL (via Prisma)
 
 ## Current Status
 
-Videmo is functional but intentionally kept as a side project. It successfully demonstrates the core concepts I wanted to explore: multi-platform development, video processing, and AI integration. The codebase serves as both a portfolio piece and a reference for future projects.
+video manager is functional but intentionally kept as a side project. It successfully demonstrates the core concepts I wanted to explore: multi-platform development, video processing, and AI integration. The codebase serves as both a portfolio piece and a reference for future projects.
 
 ---
 

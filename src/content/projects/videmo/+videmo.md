@@ -1,25 +1,25 @@
 ---
 published: true
-name: Videmo
+name: testerino
 description: A video messaging platform with AI-powered summarization.
-thumbnail: videmo_preview.png
+thumbnail: testerino_preview.png
 images:
   [
-    videmo_landing.png,
-    videmo_features.png,
-    videmo_usecases.png,
-    videmo_pricing.png,
-    videmo_contacts.png,
-    videmo_login.png,
-    videmo_pre_recording.png,
-    videmo_notifications.png,
-    videmo_billing.png,
-    videmo_settings.png,
-    videmo_search.png,
-    videmo_video.png
+    testerino_landing.png,
+    testerino_features.png,
+    testerino_usecases.png,
+    testerino_pricing.png,
+    testerino_contacts.png,
+    testerino_login.png,
+    testerino_pre_recording.png,
+    testerino_notifications.png,
+    testerino_billing.png,
+    testerino_settings.png,
+    testerino_search.png,
+    testerino_video.png
   ]
-# github: https://github.com/techquestsdev/videmo
-# website: https://github.com/techquestsdev/videmo
+# github: https://github.com/techquestsdev/testerino
+# website: https://github.com/techquestsdev/testerino
 date: 2025-11-22
 ---
 
@@ -83,7 +83,7 @@ Integrated Whisper for accurate speech-to-text transcription and Mistral for gen
 
 ## What I Learned
 
-Building Videmo end-to-end taught me about:
+Building testerino end-to-end taught me about:
 
 - **Video processing complexity**: Handling different formats, codecs, and streaming uploads
 - **Multi-platform development**: Shipping a consistent experience across web and desktop
@@ -109,7 +109,7 @@ Database:    PostgreSQL (via Prisma)
 
 ## Current Status
 
-Videmo is functional but intentionally kept as a side project. It successfully demonstrates the core concepts I wanted to explore: multi-platform development, video processing, and AI integration. The codebase serves as both a portfolio piece and a reference for future projects.
+testerino is functional but intentionally kept as a side project. It successfully demonstrates the core concepts I wanted to explore: multi-platform development, video processing, and AI integration. The codebase serves as both a portfolio piece and a reference for future projects.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 published: true
-name: Git Context
+name: Git Context Test Replace
 description: A simple CLI tool to help you create and validate cron expressions.
 thumbnail: gc_preview.png
 images: [gc_preview.png]
@@ -15,7 +15,7 @@ Ever pushed personal commits to a work repo? Or discovered 50 commits later that
 
 I used to juggle multiple `.gitconfig` files, git aliases, and mental gymnastics trying to remember which identity I was using. It was tedious, error-prone, and frankly, exhausting.
 
-So I built **Git Context** - a single command to switch between all your Git identities. Work, personal, freelance, school - whatever contexts you need.
+So I built **Git Context Test Replace** - a single command to switch between all your Git identities. Work, personal, freelance, school - whatever contexts you need.
 
 ## The Problem I Solved
 
@@ -28,9 +28,9 @@ Managing multiple Git identities is surprisingly common. Maybe you're:
 
 The traditional approach? Manual config editing, repository-specific overrides, or hoping you remember to check `git config user.email` before every commit. None of these scale when you're constantly context-switching.
 
-## Enter Git Context
+## Enter Git Context Test Replace
 
-Git Context manages profiles in a single YAML file. Define your identities once, switch between them with one command, and never commit with the wrong email again.
+Git Context Test Replace manages profiles in a single YAML file. Define your identities once, switch between them with one command, and never commit with the wrong email again.
 
 ```bash
 $ gctx list

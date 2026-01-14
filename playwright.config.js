@@ -3,7 +3,8 @@ import { devices } from '@playwright/test';
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   webServer: {
-    command: 'bash -lc "bun run build && bun run preview -- --host 0.0.0.0 --port 4173 --strictPort"',
+    // Requires: bun run build
+    command: 'bun run preview -- --host 0.0.0.0 --port 4173 --strictPort',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 180 * 1000 // 3 minutes timeout for web server startup

@@ -1,7 +1,7 @@
 ---
 published: true
 name: Git Context
-description: A simple CLI tool to help you create and validate cron expressions.
+description: Manage multiple Git identities and configurations with ease.
 thumbnail: gc_preview.png
 images: [gc_preview.png]
 github: https://github.com/techquestsdev/git-context

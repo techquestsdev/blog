@@ -3,7 +3,22 @@ published: true
 name: Code Search
 description: Self-hosted code search and bulk operations platform.
 thumbnail: cs_preview.png
-images: [cs_landing.png,cs_search_query.png,cs_search_repo.png,cs_search_result.png,cd_file_navigation.png,cs_file_shortcuts.png,cs_file_reference.png,cs_file_search.png,cs_connections.png,cs_repos.png,cs_jobs.png,cs_replace_history.png,cs_replace_preview.png]
+images:
+  [
+    cs_landing.png,
+    cs_search_query.png,
+    cs_search_repo.png,
+    cs_search_result.png,
+    cd_file_navigation.png,
+    cs_file_shortcuts.png,
+    cs_file_reference.png,
+    cs_file_search.png,
+    cs_connections.png,
+    cs_repos.png,
+    cs_jobs.png,
+    cs_replace_history.png,
+    cs_replace_preview.png
+  ]
 # github: https://github.com/techquestsdev/code-search
 website: https://code-search.techquests.dev
 date: 2026-01-13

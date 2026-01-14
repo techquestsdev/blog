@@ -3,7 +3,14 @@ published: true
 name: Code Search CLI
 description: Terminal interface for search automation and scripting.
 thumbnail: cs_cli_preview.png
-images: [cs_cli_preview.png, cs_cli_replace.png, cs_cli_replace_preview.png, cs_cli_search.png, cs_cli_search_preview.png]
+images:
+  [
+    cs_cli_preview.png,
+    cs_cli_replace.png,
+    cs_cli_replace_preview.png,
+    cs_cli_search.png,
+    cs_cli_search_preview.png
+  ]
 # github: https://github.com/techquestsdev/code-search
 website: https://code-search.techquests.dev
 date: 2026-01-14

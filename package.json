@@ -28,7 +28,7 @@
     "eslint-plugin-svelte": "^3.14.0",
     "jsdom": "^27.4.0",
     "mdsvex": "^0.12.6",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "sass": "^1.97.2",
     "svelte": "^5.46.1",
     "unplugin-icons": "^22.5.0",

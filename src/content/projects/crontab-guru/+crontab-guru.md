@@ -32,7 +32,7 @@ None of these are ideal, especially for developers who live in their terminals.
 
 ## Enter Crontab Guru
 
-**Crontab Guru** is a terminal UI application built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea) that brings the power of cron expression editing directly to your terminal—no browser needed. It's fast, beautiful, and actually _helpful_.
+**Crontab Guru** is a terminal UI application built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea) that brings the power of cron expression editing directly to your terminal - no browser needed. It's fast, beautiful, and actually _helpful_.
 
 ## Key Features
 

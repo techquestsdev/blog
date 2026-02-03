@@ -90,17 +90,8 @@ Building a code search platform from scratch taught me about:
 
 Designed to scale from small teams (single Docker host) to organizations with thousands of repositories (Kubernetes cluster with horizontal scaling).
 
-## Current Status
+## Status
 
-Code Search is actively developed and production-ready. It's used internally for managing multiple microservices and has indexed over 1,000 repositories across GitHub and GitLab.
+Actively developed and production-ready - currently indexing over 1,000 repositories across GitHub and GitLab.
 
-The project demonstrates modern full-stack development: Go microservices, Next.js frontend, distributed job processing, and infrastructure-as-code deployment with Helm charts.
-
-## What's Next
-
-The roadmap includes:
-
-- **Saved Searches**: Bookmark frequent queries and get notifications when results change.
-- **Code Intelligence**: Jump-to-definition and find-references using SCIP indexes.
-- **Diff Search**: Search across commit history, not just the latest code.
-- **Team Workspaces**: Shared search contexts and repository groups for teams.
+Want to know more? Feel free to reach out or check out the [Code Search Documentation](/projects/code-search-documentation) for setup guides, API references, and architecture details.

@@ -5,8 +5,7 @@
   import { page } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
   import Toggle from '$lib/components/Toggle.svelte';
-  import LogoLight from '$lib/components/LogoLight.svelte';
-  import LogoDark from '$lib/components/LogoDark.svelte';
+  import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
   import { fly } from 'svelte/transition';
   import { theme } from '$lib/js/theme';
@@ -73,6 +72,7 @@
   title={$page.error ? $page.status : $page.data.meta.title}
   description={$page.error ? $page.error.message : $page.data.meta.description}
   type={$page.data.meta.type}
+  jsonLd={$page.data.meta.jsonLd}
   image={$page.data.meta.image ?? {
     img: {
       src: '/blog.png',
@@ -84,26 +84,26 @@
 
 <Analytics />
 
-<header class:home={$page.url.pathname === '/'}>
-  <div class="row">
-    <a href="/"><h1>Tech Quests</h1></a>
-    {#if currentTheme === 'dark'}
-      <a class="pfp" href="/" aria-label="homepage"><LogoDark --width="2rem" --height="2rem" /></a>
-    {:else}
-      <a class="pfp" href="/" aria-label="homepage"><LogoLight --width="2rem" --height="2rem" /></a>
-    {/if}
-  </div>
-  <nav>
-    {#each pages as { name, path } (path)}
-      <a class="nav" href={path}>
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>{name}
+<a class="skip" href="#main">Skip to content</a>
+
+{#if $page.url.pathname !== '/'}
+  <header>
+    <div class="row">
+      <a href="/"><h1>Tech Quests</h1></a>
+      <a class="pfp" href="/" aria-label="homepage">
+        <NavLogo size="2rem" />
       </a>
-    {/each}
-  </nav>
-  {#if $page.url.pathname !== '/'}
+    </div>
+    <nav>
+      {#each pages as { name, path } (path)}
+        <a class="nav" href={path}>
+          <span class="arrow">&nbsp;></span><span class="slash">/</span>{name}
+        </a>
+      {/each}
+    </nav>
     <Toggle />
-  {/if}
-</header>
+  </header>
+{/if}
 
 <div class="container">
   {#key data.pathname}
@@ -119,7 +119,9 @@
         ...xy(data.pathname, false)
       }}
     >
-      <slot />
+      <div id="main" class="page" role="main">
+        <slot />
+      </div>
     </div>
   {/key}
 </div>
@@ -182,11 +184,32 @@
     display: grid;
   }
 
+  .skip {
+    position: absolute;
+    left: $spacing-md;
+    top: $spacing-md;
+    padding: $spacing-xs $spacing-md;
+    background: var(--bg-1);
+    color: var(--txt);
+    border: 1px solid var(--bg-3);
+    z-index: $z-index-sticky;
+    transform: translateY(-200%);
+    transition: transform 0.2s ease;
+  }
+
+  .skip:focus-visible {
+    transform: translateY(0);
+  }
+
   .transition {
     grid-column-start: 1;
     grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 2;
+  }
+
+  .page {
+    height: 100%;
   }
 
   @media (max-width: $breakpoint-tablet) {

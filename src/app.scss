@@ -287,6 +287,8 @@ div.description {
 // Internal navigation
 a.nav {
   position: relative;
+  color: var(--txt);
+  text-decoration: none;
   .arrow {
     position: absolute;
     top: -0.02em;
@@ -294,12 +296,17 @@ a.nav {
     transition: $transition-base;
     transform-origin: 50% 53%;
     left: -0.2em;
+    display: inline-block;
+    width: auto;
+    text-align: left;
   }
   .slash {
     display: inline-block;
     transition: $transition-base;
     transform: scale(1, 1) rotate(0deg);
     line-height: 0;
+    width: auto;
+    text-align: left;
   }
   &:hover {
     .arrow {
@@ -314,13 +321,18 @@ a.nav {
 // External links
 a.external {
   position: relative;
+  color: var(--txt-2);
+  text-decoration: none;
   .arrow {
     display: inline-block;
     margin-left: 0.4ch;
     transition: $transition-fast;
     color: var(--txt-2);
+    width: auto;
+    text-align: left;
   }
   &:hover {
+    color: var(--txt);
     text-decoration: underline;
     .arrow {
       transform: translateY(-0.4ch) translateX(-0.2ch) scale(1, 1) rotate(-30deg);
@@ -330,12 +342,16 @@ a.external {
 
 // Internal links
 a.link {
+  color: var(--txt);
+  text-decoration: none;
   .arrow {
     display: inline-block;
     margin-left: 0.5ch;
     opacity: 0;
     transform: translateX(-0.6em);
     transition: $transition-fast;
+    width: auto;
+    text-align: left;
   }
   .slash {
     display: inline-block;
@@ -343,6 +359,8 @@ a.link {
     transform: scale(1, 1) rotate(0deg);
     line-height: 0;
     opacity: 0;
+    width: 1ch;
+    text-align: center;
   }
   &:hover {
     .arrow {
@@ -413,6 +431,8 @@ figure {
     &:hover {
       &::after {
         content: '#';
+        margin-left: 0.3ch;
+        color: var(--txt-3);
       }
     }
   }

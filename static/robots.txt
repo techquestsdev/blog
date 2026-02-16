@@ -1,11 +1,6 @@
 User-agent: *
 Allow: /
 
-# Disallow common areas that shouldn't be crawled
-Disallow: /api/
-Disallow: /_app/version.json
-Disallow: /*.json$
-
 # Specific bot optimizations
 User-agent: GPTBot
 Disallow: /
@@ -35,6 +30,3 @@ Sitemap: https://techquests.dev/sitemap.xml
 Allow: /rss.xml
 Allow: /blog/rss.xml
 Allow: /projects/rss.xml
-
-# Common crawl delay for good citizenship
-Crawl-delay: 1

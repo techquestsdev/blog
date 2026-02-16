@@ -1,5 +1,6 @@
 import { getPosts, importOgImage } from '$lib/js/posts.js';
 import { escapeXml, getMarkdownContent, generateRssItem, generateRssXml } from '$lib/utils/rss.js';
+import { convertHtmlToPlainText, truncateHtmlForDescription } from '$lib/utils/markdown.js';
 
 export const prerender = true;
 
@@ -38,53 +39,22 @@ export async function GET() {
         const markdownContent = await getMarkdownContent(pathKey, contentModules);
         if (markdownContent?.trim()) {
           const { markdownToHtml } = await import('$lib/utils/markdown.js');
-          let htmlContent = await markdownToHtml(markdownContent);
+          const htmlContent = await markdownToHtml(markdownContent);
 
-          content += htmlContent + '<hr>';
+          content += htmlContent;
         }
       } catch (error) {
         console.warn('Failed to process markdown content for:', item.slug, error);
         if (item.description) {
-          content += `<p>${escapeXml(item.description)}</p><hr>`;
+          content += `<p>${escapeXml(item.description)}</p>`;
         }
       }
     }
 
     // Fallback to description if no content was found
     if (!content && item.description) {
-      content += `<p>${escapeXml(item.description)}</p><hr>`;
+      content += `<p>${item.description}</p>`;
     }
-
-    // Add metadata information
-    content +=
-      '<div style="margin-top: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 5px;">';
-
-    if (item.description) {
-      content += `<p><strong>Summary:</strong> ${escapeXml(item.description)}</p>`;
-    }
-
-    if (item.date) {
-      content += `<p><strong>Published:</strong> ${new Date(item.date).toDateString()}</p>`;
-    }
-
-    if (item.tags?.length > 0) {
-      content += `<p><strong>Tags:</strong> ${item.tags.map((tag) => escapeXml(tag)).join(', ')}</p>`;
-    }
-
-    // Add project-specific metadata
-    if (item.icon) {
-      content += `<p><strong>Icon:</strong> ${escapeXml(item.icon)}</p>`;
-    }
-
-    if (item.website) {
-      content += `<p><strong>Website:</strong> <a href="${escapeXml(item.website)}">${escapeXml(item.website)}</a></p>`;
-    }
-
-    if (item.github) {
-      content += `<p><strong>GitHub:</strong> <a href="${escapeXml(item.github)}">${escapeXml(item.github)}</a></p>`;
-    }
-
-    content += '</div>';
 
     return content || 'No content available';
   }
@@ -178,7 +148,7 @@ export async function GET() {
   ]);
 
   // Sort by date (newest first), with projects treated as recent
-  const sortedContent = allContent.sort((a, b) => b.sortDate - a.sortDate).slice(0, 25); // Latest 25 items
+  const sortedContent = allContent.sort((a, b) => b.sortDate - a.sortDate).slice(0, 50); // Latest 50 items
 
   // Define feed metadata
   const baseUrl = 'https://techquests.dev';
@@ -188,9 +158,21 @@ export async function GET() {
   const feedEmail = 'aanogueira@protonmail.com';
 
   // Generate RSS XML using shared utility
-  const rssItems = sortedContent.map((item) =>
-    generateRssItem(item, baseUrl, feedAuthor, feedEmail)
-  );
+  const rssItems = sortedContent.map((item) => {
+    const body = item.content || item.description || 'No content available';
+    const plainText = convertHtmlToPlainText(body);
+    const summary = truncateHtmlForDescription(plainText, 220);
+
+    return generateRssItem(
+      {
+        ...item,
+        description: summary || item.description
+      },
+      baseUrl,
+      feedAuthor,
+      feedEmail
+    );
+  });
 
   const rss = generateRssXml({
     title: feedTitle,

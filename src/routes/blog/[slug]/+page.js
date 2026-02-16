@@ -1,4 +1,5 @@
 import { nameFromPath, importOgImage } from '$lib/js/posts.js';
+import { buildBlogPostingJsonLd, buildImageObject } from '$lib/utils/structured-data.js';
 import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 
@@ -23,13 +24,19 @@ export async function load({ params }) {
   let imagePath = match.path.split('/').slice(0, -1).join('/') + '/' + post.metadata.ogImage;
   let image = await importOgImage(imagePath);
 
+  const jsonLd = buildBlogPostingJsonLd(
+    { ...post.metadata, slug: params.slug },
+    buildImageObject(image)
+  );
+
   return {
     post,
     meta: {
       title: post.metadata.name,
       description: post.metadata.description,
       type: 'article',
-      image
+      image,
+      jsonLd
     }
   };
 }

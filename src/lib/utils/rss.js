@@ -6,8 +6,9 @@
  * Escape XML special characters to prevent XML syntax errors
  */
 export function escapeXml(text) {
-  if (typeof text !== 'string') return '';
+  if (text === null || text === undefined) return '';
   return text
+    .toString()
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')

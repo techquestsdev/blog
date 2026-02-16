@@ -58,7 +58,7 @@
   <button class="embla__next" on:click={emblaNext} aria-label="Next image"><span>&gt;</span></button
   >
 </div>
-<main>
+<main class="content">
   <svelte:component this={content} />
 </main>
 
@@ -79,6 +79,19 @@
     a {
       font-family: $font-family-mono;
       font-size: $font-md;
+      color: var(--txt-2);
+      text-decoration: underline;
+      text-decoration-color: var(--txt-3);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.12em;
+      transition:
+        color 0.2s,
+        text-decoration-color 0.2s;
+      &:hover,
+      &:focus-visible {
+        color: var(--txt);
+        text-decoration-color: var(--txt);
+      }
     }
 
     .row {

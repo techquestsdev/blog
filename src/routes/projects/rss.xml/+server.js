@@ -1,5 +1,6 @@
 import { getPosts, importOgImage } from '$lib/js/posts.js';
 import { escapeXml, getMarkdownContent, generateRssXml } from '$lib/utils/rss.js';
+import { convertHtmlToPlainText, truncateHtmlForDescription } from '$lib/utils/markdown.js';
 
 export const prerender = true;
 
@@ -44,36 +45,9 @@ export async function GET() {
       content += `<p>${escapeXml(project.description)}</p>`;
     }
 
-    // Add metadata information
-    content +=
-      '<hr><div style="margin-top: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 5px;">';
-
-    if (project.description) {
-      content += `<p><strong>Summary:</strong> ${escapeXml(project.description)}</p>`;
+    if (!content) {
+      content = project.description || 'No content available';
     }
-
-    if (project.date) {
-      content += `<p><strong>Published:</strong> ${new Date(project.date).toDateString()}</p>`;
-    }
-
-    if (project.tags?.length > 0) {
-      content += `<p><strong>Tags:</strong> ${project.tags.map((tag) => escapeXml(tag)).join(', ')}</p>`;
-    }
-
-    // Add project-specific metadata
-    if (project.icon) {
-      content += `<p><strong>Icon:</strong> ${escapeXml(project.icon)}</p>`;
-    }
-
-    if (project.website) {
-      content += `<p><strong>Website:</strong> <a href="${escapeXml(project.website)}">${escapeXml(project.website)}</a></p>`;
-    }
-
-    if (project.github) {
-      content += `<p><strong>GitHub:</strong> <a href="${escapeXml(project.github)}">${escapeXml(project.github)}</a></p>`;
-    }
-
-    content += '</div>';
 
     return content || 'No content available';
   }
@@ -131,11 +105,14 @@ export async function GET() {
   const feedEmail = 'aanogueira@protonmail.com';
 
   // Generate RSS items
-  const rssItems = projectsWithImages.map(
-    (project) => `    <item>
+  const rssItems = projectsWithImages.map((project) => {
+    const body = project.content || project.description || 'No content available';
+    const plainText = convertHtmlToPlainText(body);
+    const summary = truncateHtmlForDescription(plainText, 220);
+    return `    <item>
       <title>${escapeXml(project.name || project.title || 'Untitled')}</title>
-      <description>${escapeXml(project.description || 'No description available')}</description>
-      <content:encoded><![CDATA[${project.content || project.description || 'No content available'}]]></content:encoded>
+      <description>${escapeXml(summary || project.description || 'No description available')}</description>
+      <content:encoded><![CDATA[${body}]]></content:encoded>
       <link>${feedBaseUrl}/projects/${project.slug}</link>
       <guid isPermaLink="true">${feedBaseUrl}/projects/${project.slug}</guid>
       <pubDate>${new Date(project.date || new Date()).toUTCString()}</pubDate>
@@ -144,8 +121,8 @@ export async function GET() {
       ${project.website ? `<comments>${escapeXml(project.website)}</comments>` : ''}
       ${project.github ? `<source url="${escapeXml(project.github)}">GitHub Repository</source>` : ''}
       ${project.imageData ? `<enclosure url="${feedBaseUrl}${project.imageData.url}" length="${project.imageData.length}" type="${project.imageData.type}" />` : ''}
-    </item>`
-  );
+    </item>`;
+  });
 
   // Generate RSS XML using shared utility
   const rss = generateRssXml({

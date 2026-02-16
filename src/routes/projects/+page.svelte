@@ -10,14 +10,21 @@
   <div class="posts">
     {#each data.posts as post (post.slug)}
       <a href={'/projects/' + post.slug} class="link">
-        <Image
-          image={post.thumbnail}
-          alt={post.description}
-          sizes="(min-width: 1200px) 50vw, 100vw"
-          --aspect-ratio="16/9"
-        />
-        <h2>{post.name}<span class="arrow">-></span><span class="slash">/</span></h2>
+        <h2>
+          {post.name}<span class="arrow" aria-hidden="true">&nbsp;></span><span
+            class="slash"
+            aria-hidden="true">/</span
+          >
+        </h2>
         <div class="description">{post.description}</div>
+        <div class="thumb">
+          <Image
+            image={post.thumbnail}
+            alt={`${post.name} thumbnail`}
+            sizes="(min-width: 1200px) 50vw, 100vw"
+            --aspect-ratio="16/9"
+          />
+        </div>
       </a>
     {/each}
   </div>
@@ -38,10 +45,28 @@
     max-width: 100%;
   }
 
+  a.link {
+    display: grid;
+    grid-template-areas:
+      'thumb'
+      'title'
+      'description';
+    gap: $spacing-sm;
+  }
+
+  .thumb {
+    grid-area: thumb;
+  }
+
   h2 {
+    grid-area: title;
     margin: $spacing-sm 0 $spacing-smd 0;
     color: var(--txt);
     font-size: $font-lg;
+  }
+
+  .description {
+    grid-area: description;
   }
 
   @media (max-width: $breakpoint-tablet) {

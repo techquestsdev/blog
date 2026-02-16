@@ -8,9 +8,14 @@
 
 <main>
   <h1>
-    <iconify-icon icon={metadata.icon}> </iconify-icon>{metadata.name}
+    <iconify-icon icon={metadata.icon}> </iconify-icon>
+    {metadata.name}
   </h1>
-  <p class="date">{formatDate(metadata.date)}</p>
+  <p class="meta">
+    <span class="author">Andre Nogueira</span>
+    <span class="divider">·</span>
+    <time datetime={metadata.date}>{formatDate(metadata.date)}</time>
+  </p>
   <p class="description">{metadata.description}</p>
   <div class="content">
     <svelte:component this={content} />
@@ -23,12 +28,6 @@
     padding-top: 0;
   }
 
-  .date {
-    margin: $spacing-sm 0;
-    font-size: $font-base;
-    font-family: 'Fira Mono', monospace;
-  }
-
   .description {
     font-size: $font-sm;
     margin: $spacing-sm 0 $spacing-3xl 0;
@@ -36,8 +35,29 @@
     color: var(--txt-2);
   }
 
+  .meta {
+    margin: $spacing-sm 0 0 0;
+    font-size: $font-sm;
+    font-family: 'Fira Mono', monospace;
+    color: var(--txt-2);
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+  }
+
+  .divider {
+    color: var(--txt-3);
+  }
+
   h1 {
     margin: $spacing-lg 0;
     line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  h1 :global(iconify-icon) {
+    padding-right: 0.75ch;
   }
 </style>

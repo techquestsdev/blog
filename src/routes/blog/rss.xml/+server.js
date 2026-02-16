@@ -1,5 +1,6 @@
 import { getPosts } from '$lib/js/posts.js';
 import { escapeXml, getMarkdownContent, generateRssXml } from '$lib/utils/rss.js';
+import { convertHtmlToPlainText, truncateHtmlForDescription } from '$lib/utils/markdown.js';
 
 export const prerender = true;
 
@@ -27,7 +28,7 @@ export async function GET() {
         const markdownContent = await getMarkdownContent(pathKey, blogContentModules);
         if (markdownContent?.trim()) {
           const { markdownToHtml } = await import('$lib/utils/markdown.js');
-          let htmlContent = await markdownToHtml(markdownContent);
+          const htmlContent = await markdownToHtml(markdownContent);
 
           content += htmlContent;
         }
@@ -44,23 +45,10 @@ export async function GET() {
       content += `<p>${escapeXml(post.description)}</p>`;
     }
 
-    // Add metadata information
-    content +=
-      '<hr><div style="margin-top: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 5px;">';
-
-    if (post.description) {
-      content += `<p><strong>Summary:</strong> ${escapeXml(post.description)}</p>`;
+    // Add a text fallback when HTML is empty
+    if (!content) {
+      content = post.description || 'No content available';
     }
-
-    if (post.date) {
-      content += `<p><strong>Published:</strong> ${new Date(post.date).toDateString()}</p>`;
-    }
-
-    if (post.icon) {
-      content += `<p><strong>Icon:</strong> ${escapeXml(post.icon)}</p>`;
-    }
-
-    content += '</div>';
 
     return content || 'No content available';
   }
@@ -86,18 +74,21 @@ export async function GET() {
   const feedEmail = 'aanogueira@protonmail.com';
 
   // Generate RSS items
-  const rssItems = sortedPosts.map(
-    (post) => `    <item>
+  const rssItems = sortedPosts.map((post) => {
+    const body = post.content || post.description || 'No content available';
+    const plainText = convertHtmlToPlainText(body);
+    const summary = truncateHtmlForDescription(plainText, 220);
+    return `    <item>
       <title>${escapeXml(post.name || 'Untitled')}</title>
-      <description>${escapeXml(post.description || 'No description available')}</description>
-      <content:encoded><![CDATA[${post.content || post.description || 'No content available'}]]></content:encoded>
+      <description>${escapeXml(summary || post.description || 'No description available')}</description>
+      <content:encoded><![CDATA[${body}]]></content:encoded>
       <link>${feedBaseUrl}/blog/${post.slug}</link>
       <guid isPermaLink="true">${feedBaseUrl}/blog/${post.slug}</guid>
       <pubDate>${new Date(post.date || new Date()).toUTCString()}</pubDate>
       <author>${feedEmail} (${feedAuthor})</author>
       ${post.tags ? post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('\n      ') : '<category>Blog</category>'}
-    </item>`
-  );
+    </item>`;
+  });
 
   // Generate RSS XML using shared utility
   const rss = generateRssXml({

@@ -7,6 +7,10 @@ export async function GET() {
   const modules = import.meta.glob('/src/content/blog/*/*.md');
   const posts = await getPosts(modules);
 
+  // Get all projects
+  const projectModules = import.meta.glob('/src/content/projects/*/*.md');
+  const projects = await getPosts(projectModules);
+
   // Define the base URL
   const baseUrl = 'https://techquests.dev';
 
@@ -39,6 +43,17 @@ export async function GET() {
   <url>
     <loc>${baseUrl}/blog/${post.slug}</loc>
     <lastmod>${new Date(post.date || new Date()).toISOString().split('T')[0]}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>`
+    )
+    .join('')}
+  ${projects
+    .map(
+      (project) => `
+  <url>
+    <loc>${baseUrl}/projects/${project.slug}</loc>
+    <lastmod>${new Date(project.date || new Date()).toISOString().split('T')[0]}</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>`

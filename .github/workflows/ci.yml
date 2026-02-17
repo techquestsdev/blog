@@ -114,7 +114,11 @@ jobs:
 
           # Get commit message for changelog
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "changelog=$COMMIT_MSG" >> $GITHUB_OUTPUT
+          {
+            echo "changelog<<CHANGELOG_EOF"
+            echo "$COMMIT_MSG"
+            echo "CHANGELOG_EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Create and push tag
         if: steps.tag.outputs.new_tag != ''
@@ -298,22 +302,22 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
-          sarif_file: "trivy-results.sarif"
+          sarif_file: 'trivy-results.sarif'
 
       - name: Run Trivy vulnerability scanner (table)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-          format: "table"
-          severity: "CRITICAL,HIGH"
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
 
   validate-docker:
     runs-on: ubuntu-latest
@@ -347,9 +351,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
-          format: "table"
-          severity: "CRITICAL,HIGH"
-          exit-code: "1"
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
 
   create-release:
     runs-on: ubuntu-latest

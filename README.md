@@ -248,7 +248,7 @@ The blog uses GitHub Actions for continuous integration and deployment with a mu
 
 ```mermaid
 graph TB
-    START[Trigger: Push/PR/Tag] --> SPLIT{Event Type}
+    START[Trigger: Push/PR/Manual] --> SPLIT{Event Type}
 
     SPLIT -->|Push to main only| SV[Semantic Version Job]
     SV -->|Calculate bump| DECIDE{Bump Needed?}
@@ -268,7 +268,7 @@ graph TB
     DOCKERVAL -->|Build test| TRIVY1[Trivy Scan]
     TRIVY1 -->|Exit 1 on HIGH/CRITICAL| PRBLOCK[Block if vulnerable]
 
-    CHECK -->|Push/Tag not PR| DOCKERPUSH[Build and Push Job]
+    CHECK -->|Push not PR| DOCKERPUSH[Build and Push Job]
     DOCKERPUSH -->|Multi-arch build| PUSH[Push to GHCR]
     PUSH --> ATTEST[Generate Attestation]
     ATTEST --> TRIVY2[Trivy SARIF + Table]
@@ -333,7 +333,7 @@ docker pull ghcr.io/techquestsdev/blog:main-abc123
 
 - `latest` - Latest from main branch
 - `main` - All pushes to main branch
-- `v*.*.*` - Semantic version tags (e.g., v1.2.3)
+- `v*.*.*` - Semantic version tags (e.g., v1.2.3) created by CI
 - `main-{sha}` - Commit-specific builds from main
 
 ### Security Features

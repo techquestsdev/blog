@@ -90,42 +90,32 @@ test.describe('Projects', () => {
 
 test.describe('Navigation', () => {
   test('should navigate between pages correctly', async ({ page }) => {
+    // Helper that clicks a nav link if it's visible, otherwise falls back to goto
+    const navigateTo = async (path) => {
+      const link = page.locator(`a[href="${path}"]`).first();
+      if (await link.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await link.click();
+      } else {
+        await page.goto(path);
+      }
+    };
+
     await page.goto('/');
 
-    // Adaptive navigation test - works with both standard and mobile layouts
-    const aboutLink = page.locator('a[href="/about"]').first();
-    if (await aboutLink.isVisible()) {
-      await aboutLink.click();
-      await expect(page).toHaveURL('/about');
+    await navigateTo('/about');
+    await expect(page).toHaveURL('/about');
 
-      await page.locator('a[href="/blog"]').first().click();
-      await expect(page).toHaveURL('/blog');
+    await navigateTo('/blog');
+    await expect(page).toHaveURL('/blog');
 
-      await page.locator('a[href="/projects"]').first().click();
-      await expect(page).toHaveURL('/projects');
+    await navigateTo('/projects');
+    await expect(page).toHaveURL('/projects');
 
-      await page.locator('a[href="/contact"]').first().click();
-      await expect(page).toHaveURL('/contact');
+    await navigateTo('/contact');
+    await expect(page).toHaveURL('/contact');
 
-      await page.locator('a[href="/"]').first().click();
-      await expect(page).toHaveURL('/');
-    } else {
-      // Fallback for mobile/hidden navigation - test direct page loads
-      await page.goto('/about');
-      await expect(page.locator('main').first()).toBeVisible();
-
-      await page.goto('/blog');
-      await expect(page.locator('main').first()).toBeVisible();
-
-      await page.goto('/projects');
-      await expect(page.locator('main').first()).toBeVisible();
-
-      await page.goto('/contact');
-      await expect(page.locator('main').first()).toBeVisible();
-
-      await page.goto('/');
-      await expect(page.locator('main').first()).toBeVisible();
-    }
+    await navigateTo('/');
+    await expect(page).toHaveURL('/');
   });
 });
 

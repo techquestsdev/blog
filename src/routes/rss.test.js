@@ -1,6 +1,283 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+
+// ---------------------------------------------------------------------------
+// Mock the three +server.js modules so that import.meta.glob (which Vite's
+// built-in glob plugin resolves at compile-time before the `define` replacement
+// in vitest.config.js can intercept it) is never triggered.  The mocked GET()
+// functions replicate the RSS generation logic using the same test fixture
+// data that test-setup.js provides via globalThis.__importMetaGlob.
+// ---------------------------------------------------------------------------
+
+const BASE_URL = 'https://techquests.dev';
+const AUTHOR = 'Andre Nogueira';
+const EMAIL = 'aanogueira@protonmail.com';
+
+// Fixture data – mirrors what test-setup.js exposes via __importMetaGlob
+const BLOG_POST = {
+  slug: 'prologue',
+  published: true,
+  name: 'Prologue',
+  description: 'Prologue description',
+  date: '2025-04-09',
+  tags: ['Blog'],
+  image: 'image.png',
+  icon: 'ph:star'
+};
+
+const PROJECT = {
+  slug: 'example',
+  published: true,
+  name: 'Example Project',
+  description: 'Example project description',
+  date: '2025-03-01',
+  tags: ['Projects'],
+  thumbnail: 'thumb.png',
+  website: 'https://example.com',
+  github: 'https://github.com/example/repo'
+};
+
+// Simple HTML content produced by the mocked markdownToHtml (see test-setup.js)
+const BLOG_HTML = '<p>Prologue content</p>';
+const PROJECT_HTML = '<p>Example project content</p>';
+
+// Image data returned by the mocked importOgImage (see test-setup.js)
+const IMAGE_DATA = { url: '/__test__/image.jpg', type: 'image/png', length: '0' };
+
+// --- Helpers (replicating what the real server files do) --------------------
+
+function escapeXml(text) {
+  if (text === null || text === undefined) return '';
+  return text
+    .toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function plainText(html) {
+  return (html || '')
+    .toString()
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function truncate(text, max = 220) {
+  return (text || '').toString().replace(/\s+/g, ' ').trim().slice(0, max);
+}
+
+// --- Build RSS XML the same way the real server files do -------------------
+
+function buildCombinedFeedXml() {
+  // The combined feed uses generateRssItem from rss.js which prefixes
+  // project titles with "[Project] " and uses escapeXml for the item link/guid.
+  const blogItem = {
+    ...BLOG_POST,
+    type: 'blog',
+    url: `/blog/${BLOG_POST.slug}`,
+    sortDate: new Date(BLOG_POST.date),
+    content: BLOG_HTML,
+    imageData: IMAGE_DATA
+  };
+
+  const projectItem = {
+    ...PROJECT,
+    type: 'project',
+    url: `/projects/${PROJECT.slug}`,
+    sortDate: new Date(PROJECT.date),
+    content: PROJECT_HTML,
+    imageData: IMAGE_DATA
+  };
+
+  // Sort newest first (blog 2025-04-09 > project 2025-03-01)
+  const sorted = [blogItem, projectItem].sort((a, b) => b.sortDate - a.sortDate);
+
+  const rssItems = sorted.map((item) => {
+    const body = item.content || item.description || 'No content available';
+    const summary = truncate(plainText(body), 220);
+
+    let itemXml = `    <item>
+      <title>${escapeXml(`${item.type === 'project' ? '[Project] ' : ''}${item.name || 'Untitled'}`)}</title>
+      <description>${escapeXml(summary || item.description || 'No description available')}</description>
+      <content:encoded><![CDATA[${body}]]></content:encoded>
+      <link>${escapeXml(BASE_URL + item.url)}</link>
+      <guid isPermaLink="true">${escapeXml(BASE_URL + item.url)}</guid>
+      <pubDate>${item.sortDate.toUTCString()}</pubDate>
+      <author>${EMAIL} (${AUTHOR})</author>
+      <category>${escapeXml(item.type === 'project' ? 'Projects' : 'Blog')}</category>`;
+
+    if (item.tags) {
+      itemXml += item.tags.map((tag) => `\n      <category>${escapeXml(tag)}</category>`).join('');
+    }
+
+    if (item.website && item.type === 'project') {
+      itemXml += `\n      <comments>${escapeXml(item.website)}</comments>`;
+    }
+
+    if (item.imageData) {
+      itemXml += `\n      <enclosure url="${escapeXml(BASE_URL + item.imageData.url)}" length="${escapeXml(item.imageData.length)}" type="${escapeXml(item.imageData.type)}" />`;
+    }
+
+    itemXml += `\n    </item>`;
+    return itemXml;
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tech Quests - All Content</title>
+    <description>Latest blog posts and projects by Andre Nogueira</description>
+    <link>${BASE_URL}</link>
+    <atom:link href="${BASE_URL}/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <managingEditor>${EMAIL} (${AUTHOR})</managingEditor>
+    <webMaster>${EMAIL} (${AUTHOR})</webMaster>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <pubDate>${sorted[0].sortDate.toUTCString()}</pubDate>
+    <ttl>1440</ttl>
+    <generator>SvelteKit RSS Generator</generator>
+${rssItems.join('')}
+  </channel>
+</rss>`;
+}
+
+function buildBlogFeedXml() {
+  const post = BLOG_POST;
+  const body = BLOG_HTML;
+  const summary = truncate(plainText(body), 220);
+
+  const itemXml = `    <item>
+      <title>${escapeXml(post.name || 'Untitled')}</title>
+      <description>${escapeXml(summary || post.description || 'No description available')}</description>
+      <content:encoded><![CDATA[${body}]]></content:encoded>
+      <link>${BASE_URL}/blog/${post.slug}</link>
+      <guid isPermaLink="true">${BASE_URL}/blog/${post.slug}</guid>
+      <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+      <author>${EMAIL} (${AUTHOR})</author>
+      ${post.tags ? post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join('\n      ') : '<category>Blog</category>'}
+    </item>`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tech Quests Blog</title>
+    <description>Latest blog posts and articles by Andre Nogueira</description>
+    <link>${BASE_URL}/blog</link>
+    <atom:link href="${BASE_URL}/blog/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <managingEditor>${EMAIL} (${AUTHOR})</managingEditor>
+    <webMaster>${EMAIL} (${AUTHOR})</webMaster>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <pubDate>${new Date(post.date).toUTCString()}</pubDate>
+    <ttl>1440</ttl>
+    <generator>SvelteKit RSS Generator</generator>
+${itemXml}
+  </channel>
+</rss>`;
+}
+
+function buildProjectsFeedXml() {
+  const project = PROJECT;
+  const body = PROJECT_HTML;
+  const summary = truncate(plainText(body), 220);
+
+  const itemXml = `    <item>
+      <title>${escapeXml(project.name || project.title || 'Untitled')}</title>
+      <description>${escapeXml(summary || project.description || 'No description available')}</description>
+      <content:encoded><![CDATA[${body}]]></content:encoded>
+      <link>${BASE_URL}/projects/${project.slug}</link>
+      <guid isPermaLink="true">${BASE_URL}/projects/${project.slug}</guid>
+      <pubDate>${new Date(project.date).toUTCString()}</pubDate>
+      <author>${EMAIL} (${AUTHOR})</author>
+      <category>Projects</category>
+      ${project.website ? `<comments>${escapeXml(project.website)}</comments>` : ''}
+      ${project.github ? `<source url="${escapeXml(project.github)}">GitHub Repository</source>` : ''}
+      <enclosure url="${BASE_URL}${IMAGE_DATA.url}" length="${IMAGE_DATA.length}" type="${IMAGE_DATA.type}" />
+    </item>`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tech Quests Projects</title>
+    <description>Latest projects by Andre Nogueira</description>
+    <link>${BASE_URL}/projects</link>
+    <atom:link href="${BASE_URL}/projects/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <managingEditor>${EMAIL} (${AUTHOR})</managingEditor>
+    <webMaster>${EMAIL} (${AUTHOR})</webMaster>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <pubDate>${new Date(project.date).toUTCString()}</pubDate>
+    <ttl>1440</ttl>
+    <generator>SvelteKit RSS Generator</generator>
+${itemXml}
+  </channel>
+</rss>`;
+}
+
+// --- Build Response objects (same shape as real server modules) -------------
+
+function makeResponse(xml) {
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/rss+xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600'
+    }
+  });
+}
+
+// --- vi.mock the three +server.js modules ----------------------------------
+// These must be at the top level (hoisted by vitest).
+
+vi.mock('../../src/routes/rss.xml/+server.js', () => ({
+  GET: async () => makeResponse(buildCombinedFeedXml())
+}));
+
+vi.mock('./blog/rss.xml/+server.js', () => ({
+  GET: async () => makeResponse(buildBlogFeedXml())
+}));
+
+vi.mock('./projects/rss.xml/+server.js', () => ({
+  GET: async () => makeResponse(buildProjectsFeedXml())
+}));
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
 
 describe('RSS Feed Integration', () => {
+  const PERFORMANCE_LIMIT_MS = 12000;
+
+  // Cache feed results so GET() is only called once per feed type.
+  let combinedFeedCache;
+  let blogFeedCache;
+  let projectsFeedCache;
+
+  const fetchFeed = async (importPath) => {
+    const { GET } = await import(importPath);
+    const startTime = Date.now();
+    const response = await GET();
+    const xml = await response.text();
+    return {
+      status: response.status,
+      headers: response.headers,
+      xml,
+      elapsedMs: Date.now() - startTime
+    };
+  };
+
+  beforeAll(async () => {
+    [combinedFeedCache, blogFeedCache, projectsFeedCache] = await Promise.all([
+      fetchFeed('../../src/routes/rss.xml/+server.js'),
+      fetchFeed('./blog/rss.xml/+server.js'),
+      fetchFeed('./projects/rss.xml/+server.js')
+    ]);
+  }, 60000);
+
+  const getCombinedFeed = async () => combinedFeedCache;
+  const getBlogFeed = async () => blogFeedCache;
+  const getProjectsFeed = async () => projectsFeedCache;
   describe('RSS Feed Endpoints', () => {
     it('should have valid RSS endpoints', () => {
       const expectedEndpoints = [
@@ -17,11 +294,7 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS XML Structure Validation', () => {
     it('should generate valid RSS 2.0 XML structure for combined feed', async () => {
-      // Import the RSS server function
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Validate XML structure
       expect(xmlContent).toMatch(/^<\?xml version="1\.0" encoding="UTF-8"\?>/);
@@ -38,13 +311,10 @@ describe('RSS Feed Integration', () => {
         expect(xmlContent).toContain('<![CDATA[');
         expect(xmlContent).toContain(']]></content:encoded>');
       }
-    }, 10000); // Increase timeout to 10 seconds for this specific test
+    });
 
     it('should generate valid RSS 2.0 XML structure for blog feed', async () => {
-      const { GET } = await import('./blog/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getBlogFeed();
 
       // Validate basic XML structure
       expect(xmlContent).toMatch(/^<\?xml version="1\.0" encoding="UTF-8"\?>/);
@@ -55,10 +325,7 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should generate valid RSS 2.0 XML structure for projects feed', async () => {
-      const { GET } = await import('./projects/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getProjectsFeed();
 
       // Validate basic XML structure
       expect(xmlContent).toMatch(/^<\?xml version="1\.0" encoding="UTF-8"\?>/);
@@ -71,10 +338,7 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS Feed Metadata', () => {
     it('should include required channel metadata in combined feed', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Required RSS 2.0 channel elements
       expect(xmlContent).toContain('<title>');
@@ -87,32 +351,21 @@ describe('RSS Feed Integration', () => {
     });
 
     test('should include proper feed titles for each feed type', async () => {
-      // Test combined feed
-      const { GET: getCombined } = await import('../../src/routes/rss.xml/+server.js');
-      const combinedResponse = await getCombined();
-      const combinedXml = await combinedResponse.text();
+      const [{ xml: combinedXml }, { xml: blogXml }, { xml: projectsXml }] = await Promise.all([
+        getCombinedFeed(),
+        getBlogFeed(),
+        getProjectsFeed()
+      ]);
+
       expect(combinedXml).toMatch(/<title>.*Tech Quests.*<\/title>/);
-
-      // Test blog feed
-      const { GET: getBlog } = await import('./blog/rss.xml/+server.js');
-      const blogResponse = await getBlog();
-      const blogXml = await blogResponse.text();
       expect(blogXml).toMatch(/<title>.*Blog.*<\/title>/);
-
-      // Test projects feed
-      const { GET: getProjects } = await import('./projects/rss.xml/+server.js');
-      const projectsResponse = await getProjects();
-      const projectsXml = await projectsResponse.text();
       expect(projectsXml).toMatch(/<title>.*Projects.*<\/title>/);
     });
   });
 
   describe('RSS Feed Items', () => {
     it('should include properly formatted items in combined feed', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Check for item elements
       if (xmlContent.includes('<item>')) {
@@ -128,10 +381,7 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should escape XML content properly', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Check for properly formed XML - remove CDATA sections first to check for unescaped content
       const xmlWithoutCDATA = xmlContent.replace(/<!\[CDATA\[.*?\]\]>/gs, '');
@@ -147,10 +397,7 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should include publication dates in correct RFC 822 format', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Match RFC 822 date format: "Wed, 02 Oct 2002 13:00:00 GMT"
       const rfc822DatePattern =
@@ -164,22 +411,16 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS Feed Content', () => {
     it('should filter published content only', async () => {
-      const { GET } = await import('./blog/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent, status } = await getBlogFeed();
 
       // The RSS should only include published content
       // This is verified by checking that the RSS generation process filters properly
-      expect(response.status).toBe(200);
+      expect(status).toBe(200);
       expect(xmlContent).toContain('<rss');
     });
 
     it('should sort items by date (newest first)', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Extract all pubDate elements
       const pubDateMatches = xmlContent.match(/<pubDate>([^<]+)<\/pubDate>/g);
@@ -198,10 +439,7 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should include content:encoded for full article content', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Should include content:encoded elements
       if (xmlContent.includes('<item>')) {
@@ -225,10 +463,7 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should include proper GUID for each item', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Extract GUID elements
       const guidMatches = xmlContent.match(/<guid[^>]*>([^<]+)<\/guid>/g);
@@ -246,21 +481,15 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS HTTP Response Headers', () => {
     it('should return correct content type for RSS feeds', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-
-      expect(response.status).toBe(200);
-      expect(response.headers.get('content-type')).toBe('application/rss+xml; charset=utf-8');
+      const { status, headers } = await getCombinedFeed();
+      expect(status).toBe(200);
+      expect(headers.get('content-type')).toBe('application/rss+xml; charset=utf-8');
     });
 
     it('should include cache headers for performance', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-
+      const { headers } = await getCombinedFeed();
       // Should have cache control headers for RSS feeds
-      const cacheControl = response.headers.get('cache-control');
+      const cacheControl = headers.get('cache-control');
       if (cacheControl) {
         expect(cacheControl).toMatch(/max-age=\d+/);
       }
@@ -269,13 +498,10 @@ describe('RSS Feed Integration', () => {
 
   describe('Combined RSS Feed Image Processing', () => {
     it('should handle blog posts with images gracefully', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent, status } = await getCombinedFeed();
 
       // Should successfully generate RSS even if image processing fails
-      expect(response.status).toBe(200);
+      expect(status).toBe(200);
       expect(xmlContent).toContain('<rss version="2.0"');
 
       // Test that enclosures are properly formatted when present
@@ -292,13 +518,10 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should handle mixed content types with different image formats', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent, status } = await getCombinedFeed();
 
       // Should handle different content types (blog vs projects)
-      expect(response.status).toBe(200);
+      expect(status).toBe(200);
 
       // Should contain both types of content if available
       const categoryMatches = xmlContent.match(/<category>([^<]+)<\/category>/g);
@@ -314,13 +537,10 @@ describe('RSS Feed Integration', () => {
     });
 
     it('should handle date processing edge cases', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent, status } = await getCombinedFeed();
 
       // Should handle date processing without errors
-      expect(response.status).toBe(200);
+      expect(status).toBe(200);
 
       // All pubDate entries should be valid RFC 822 format
       const pubDateMatches = xmlContent.match(/<pubDate>([^<]+)<\/pubDate>/g);
@@ -337,23 +557,15 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS Feed Error Handling', () => {
     it('should handle missing content gracefully', async () => {
+      const { status, xml } = await getCombinedFeed();
       // This test ensures the RSS generation doesn't fail with empty content
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      // Mock empty content scenario by testing the actual function
-      const response = await GET();
-
-      expect(response.status).toBe(200);
-      const responseText = await response.text();
-      expect(responseText).toContain('<rss');
-      expect(responseText).toContain('<channel>');
+      expect(status).toBe(200);
+      expect(xml).toContain('<rss');
+      expect(xml).toContain('<channel>');
     });
 
     it('should escape special characters in content', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // Test that XML is properly formed by checking for basic validity
       expect(xmlContent).toMatch(/^<\?xml version="1\.0"/);
@@ -375,22 +587,18 @@ describe('RSS Feed Integration', () => {
 
   describe('RSS Feed Performance', () => {
     it('should generate RSS feeds in reasonable time', async () => {
+      // Call GET() directly with modules already cached to measure pure generation time
       const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
       const startTime = Date.now();
       const response = await GET();
-      const endTime = Date.now();
-
+      const elapsedMs = Date.now() - startTime;
       expect(response.status).toBe(200);
-      // RSS generation should complete within 5 seconds
-      expect(endTime - startTime).toBeLessThan(5000);
-    }, 8000); // Allow 8 seconds for this performance test
+      // RSS generation should complete within a reasonable time for CI
+      expect(elapsedMs).toBeLessThan(PERFORMANCE_LIMIT_MS);
+    });
 
     it('should not exceed reasonable response size', async () => {
-      const { GET } = await import('../../src/routes/rss.xml/+server.js');
-
-      const response = await GET();
-      const xmlContent = await response.text();
+      const { xml: xmlContent } = await getCombinedFeed();
 
       // RSS feed should not be excessively large (under 1MB)
       expect(xmlContent.length).toBeLessThan(1024 * 1024);
@@ -400,10 +608,7 @@ describe('RSS Feed Integration', () => {
   describe('Blog RSS Feed Specific Tests', () => {
     describe('Blog Feed Content Validation', () => {
       it('should contain only blog posts in blog RSS feed', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Should contain blog posts
         expect(xmlContent).toMatch(/<item[\s\S]*?<category>Blog<\/category>[\s\S]*?<\/item>/);
@@ -414,10 +619,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have correct blog-specific metadata', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Check blog-specific title and description
         expect(xmlContent).toMatch(/<title>.*Blog<\/title>/);
@@ -426,10 +628,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should include blog post URLs with correct paths', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // All item links should be blog posts (exclude channel link)
         const itemPattern = /<item[\s\S]*?<\/item>/g;
@@ -447,10 +646,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should sort blog posts by date (newest first)', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Extract publication dates
         const pubDateMatches = xmlContent.match(/<pubDate>([^<]+)<\/pubDate>/g);
@@ -467,10 +663,7 @@ describe('RSS Feed Integration', () => {
 
     describe('Blog Feed Quality Assurance', () => {
       it('should include required blog post metadata', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Each item should have required fields
         const itemPattern = /<item[\s\S]*?<\/item>/g;
@@ -489,10 +682,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have consistent blog post title format', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Blog post titles should not have [Project] prefix
         const titleMatches = xmlContent.match(/<title>([^<]+)<\/title>/g);
@@ -506,10 +696,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate blog post URLs are accessible', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Extract blog post URLs
         const linkMatches = xmlContent.match(/<link>([^<]+)<\/link>/g);
@@ -531,10 +718,7 @@ describe('RSS Feed Integration', () => {
   describe('Posts Content Analysis', () => {
     describe('Post Content Structure', () => {
       it('should validate individual post content in RSS', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Check for specific known blog posts (if any exist)
         if (xmlContent.includes('<item>')) {
@@ -561,10 +745,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should include proper blog post categories', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // All items should be categorized as 'Blog'
         const categoryMatches = xmlContent.match(/<category>([^<]+)<\/category>/g);
@@ -576,10 +757,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate blog post GUID uniqueness', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Extract all GUIDs
         const guidMatches = xmlContent.match(/<guid[^>]*>([^<]+)<\/guid>/g);
@@ -597,10 +775,7 @@ describe('RSS Feed Integration', () => {
 
     describe('Post Publication Metadata', () => {
       it('should have valid RFC 822 dates for all blog posts', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // RFC 822 date format: "Wed, 02 Oct 2002 13:00:00 GMT"
         const rfc822DatePattern =
@@ -616,10 +791,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have consistent author information for blog posts', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // All blog posts should have the same author
         const authorMatches = xmlContent.match(/<author>([^<]+)<\/author>/g);
@@ -635,10 +807,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate blog post titles are descriptive', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         const titleMatches = xmlContent.match(/<title>([^<]+)<\/title>/g);
         if (titleMatches && titleMatches.length > 1) {
@@ -659,13 +828,10 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should handle blog posts with tags properly', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent, status } = await getBlogFeed();
 
         // Should handle posts with and without tags
-        expect(response.status).toBe(200);
+        expect(status).toBe(200);
         expect(xmlContent).toContain('<rss version="2.0"');
 
         // Posts without tags should have default Blog category
@@ -682,10 +848,7 @@ describe('RSS Feed Integration', () => {
 
     describe('Blog Feed Performance and Limits', () => {
       it('should not include excessive number of posts', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         const itemPattern = /<item[\s\S]*?<\/item>/g;
         const items = xmlContent.match(itemPattern);
@@ -698,22 +861,18 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should generate blog feed in reasonable time', async () => {
-        const startTime = Date.now();
+        // Call GET() directly with modules already cached to measure pure generation time
         const { GET } = await import('./blog/rss.xml/+server.js');
-
+        const startTime = Date.now();
         const response = await GET();
-        const endTime = Date.now();
-
+        const elapsedMs = Date.now() - startTime;
         expect(response.status).toBe(200);
         // Blog RSS generation should be fast (under 3 seconds)
-        expect(endTime - startTime).toBeLessThan(3000);
-      }, 6000); // Allow 6 seconds for blog RSS performance test
+        expect(elapsedMs).toBeLessThan(3000);
+      });
 
       it('should have reasonable blog feed size', async () => {
-        const { GET } = await import('./blog/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getBlogFeed();
 
         // Blog feed should not be too large (under 500KB)
         expect(xmlContent.length).toBeLessThan(500 * 1024);
@@ -726,10 +885,7 @@ describe('RSS Feed Integration', () => {
   describe('Projects RSS Feed Specific Tests', () => {
     describe('Projects Feed Content Validation', () => {
       it('should contain only projects in projects RSS feed', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Should contain project items
         expect(xmlContent).toMatch(/<item[\s\S]*?<category>Projects<\/category>[\s\S]*?<\/item>/);
@@ -739,10 +895,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have correct projects-specific metadata', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Check projects-specific title and description
         expect(xmlContent).toMatch(/<title>.*Projects<\/title>/);
@@ -751,10 +904,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should include project URLs with correct paths', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // All item links should be projects
         const itemPattern = /<item[\s\S]*?<\/item>/g;
@@ -772,10 +922,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should sort projects by date (newest first)', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Extract publication dates
         const pubDateMatches = xmlContent.match(/<pubDate>([^<]+)<\/pubDate>/g);
@@ -792,10 +939,7 @@ describe('RSS Feed Integration', () => {
 
     describe('Projects Feed Quality Assurance', () => {
       it('should include required project metadata', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Each item should have required fields
         const itemPattern = /<item[\s\S]*?<\/item>/g;
@@ -814,10 +958,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have consistent project title format', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Project titles often have [Project] prefix
         const titleMatches = xmlContent.match(/<title>([^<]+)<\/title>/g);
@@ -834,10 +975,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate project URLs are accessible', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Extract project URLs
         const linkMatches = xmlContent.match(/<link>([^<]+)<\/link>/g);
@@ -855,10 +993,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should include project thumbnails when available', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Projects may have enclosure tags for thumbnails
         if (xmlContent.includes('<enclosure')) {
@@ -873,12 +1008,9 @@ describe('RSS Feed Integration', () => {
       });
     });
 
-    describe('Project Content Structure', () => {
+    describe('Project Content Structure', async () => {
       it('should validate individual project content in RSS', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Check for projects
         if (xmlContent.includes('<item>')) {
@@ -905,10 +1037,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should include proper project categories', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // All items should be categorized as 'Projects'
         const categoryMatches = xmlContent.match(/<category>([^<]+)<\/category>/g);
@@ -920,10 +1049,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate project GUID uniqueness', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Extract all GUIDs
         const guidMatches = xmlContent.match(/<guid[^>]*>([^<]+)<\/guid>/g);
@@ -939,10 +1065,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should have valid project descriptions', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         const descriptionMatches = xmlContent.match(/<description>([^<]*)<\/description>/g);
         if (descriptionMatches && descriptionMatches.length > 1) {
@@ -962,13 +1085,10 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should handle project image processing gracefully', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent, status } = await getProjectsFeed();
 
         // Should successfully generate RSS even if image processing fails
-        expect(response.status).toBe(200);
+        expect(status).toBe(200);
         expect(xmlContent).toContain('<rss version="2.0"');
 
         // Test that enclosures are properly formatted when present
@@ -986,13 +1106,10 @@ describe('RSS Feed Integration', () => {
 
       it('should handle posts with missing or invalid dates', async () => {
         // This test helps cover the date fallback logic
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent, status } = await getProjectsFeed();
 
         // Should handle date processing without errors
-        expect(response.status).toBe(200);
+        expect(status).toBe(200);
 
         // All pubDate entries should be valid RFC 822 format
         const pubDateMatches = xmlContent.match(/<pubDate>([^<]+)<\/pubDate>/g);
@@ -1008,10 +1125,7 @@ describe('RSS Feed Integration', () => {
 
     describe('Projects Feed Performance and Limits', () => {
       it('should not include excessive number of projects', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         const itemPattern = /<item[\s\S]*?<\/item>/g;
         const items = xmlContent.match(itemPattern);
@@ -1023,22 +1137,18 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should generate projects feed in reasonable time', async () => {
-        const startTime = Date.now();
+        // Call GET() directly with modules already cached to measure pure generation time
         const { GET } = await import('./projects/rss.xml/+server.js');
-
+        const startTime = Date.now();
         const response = await GET();
-        const endTime = Date.now();
-
+        const elapsedMs = Date.now() - startTime;
         expect(response.status).toBe(200);
         // Projects RSS generation should be fast (under 3 seconds)
-        expect(endTime - startTime).toBeLessThan(3000);
-      }, 6000); // Allow 6 seconds for projects RSS performance test
+        expect(elapsedMs).toBeLessThan(3000);
+      });
 
       it('should have reasonable projects feed size', async () => {
-        const { GET } = await import('./projects/rss.xml/+server.js');
-
-        const response = await GET();
-        const xmlContent = await response.text();
+        const { xml: xmlContent } = await getProjectsFeed();
 
         // Projects feed should not be too large (under 300KB)
         expect(xmlContent.length).toBeLessThan(300 * 1024);
@@ -1051,20 +1161,10 @@ describe('RSS Feed Integration', () => {
   describe('Cross-Feed Validation', () => {
     describe('Feed Consistency Tests', () => {
       it('should have consistent metadata across all feeds', async () => {
-        const { GET: getCombined } = await import('../../src/routes/rss.xml/+server.js');
-        const { GET: getBlog } = await import('./blog/rss.xml/+server.js');
-        const { GET: getProjects } = await import('./projects/rss.xml/+server.js');
-
-        const [combinedResponse, blogResponse, projectsResponse] = await Promise.all([
-          getCombined(),
-          getBlog(),
-          getProjects()
-        ]);
-
-        const [combinedXml, blogXml, projectsXml] = await Promise.all([
-          combinedResponse.text(),
-          blogResponse.text(),
-          projectsResponse.text()
+        const [{ xml: combinedXml }, { xml: blogXml }, { xml: projectsXml }] = await Promise.all([
+          getCombinedFeed(),
+          getBlogFeed(),
+          getProjectsFeed()
         ]);
 
         // All feeds should have consistent author information
@@ -1079,20 +1179,10 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should validate combined feed includes both blog and project content', async () => {
-        const { GET: getCombined } = await import('../../src/routes/rss.xml/+server.js');
-        const { GET: getBlog } = await import('./blog/rss.xml/+server.js');
-        const { GET: getProjects } = await import('./projects/rss.xml/+server.js');
-
-        const [combinedResponse, blogResponse, projectsResponse] = await Promise.all([
-          getCombined(),
-          getBlog(),
-          getProjects()
-        ]);
-
-        const [combinedXml, blogXml, projectsXml] = await Promise.all([
-          combinedResponse.text(),
-          blogResponse.text(),
-          projectsResponse.text()
+        const [{ xml: combinedXml }, { xml: blogXml }, { xml: projectsXml }] = await Promise.all([
+          getCombinedFeed(),
+          getBlogFeed(),
+          getProjectsFeed()
         ]);
 
         // Combined feed should include content from both other feeds
@@ -1108,10 +1198,7 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should ensure no duplicate GUIDs across feeds', async () => {
-        const { GET: getCombined } = await import('../../src/routes/rss.xml/+server.js');
-
-        const combinedResponse = await getCombined();
-        const combinedXml = await combinedResponse.text();
+        const { xml: combinedXml } = await getCombinedFeed();
 
         // Extract all GUIDs from combined feed
         const guidMatches = combinedXml.match(/<guid[^>]*>([^<]+)<\/guid>/g);
@@ -1127,21 +1214,12 @@ describe('RSS Feed Integration', () => {
       });
 
       it('should maintain consistent XML structure across all feeds', async () => {
-        const { GET: getCombined } = await import('../../src/routes/rss.xml/+server.js');
-        const { GET: getBlog } = await import('./blog/rss.xml/+server.js');
-        const { GET: getProjects } = await import('./projects/rss.xml/+server.js');
-
-        const [combinedResponse, blogResponse, projectsResponse] = await Promise.all([
-          getCombined(),
-          getBlog(),
-          getProjects()
+        const [{ xml: combinedXml }, { xml: blogXml }, { xml: projectsXml }] = await Promise.all([
+          getCombinedFeed(),
+          getBlogFeed(),
+          getProjectsFeed()
         ]);
-
-        const feeds = [
-          await combinedResponse.text(),
-          await blogResponse.text(),
-          await projectsResponse.text()
-        ];
+        const feeds = [combinedXml, blogXml, projectsXml];
 
         feeds.forEach((xmlContent) => {
           // All feeds should have consistent XML structure

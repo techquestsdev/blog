@@ -135,20 +135,6 @@
     transform: translateY(0);
     flex-shrink: 0;
 
-    &.home {
-      justify-content: flex-end;
-      position: relative;
-      z-index: $z-index-sticky;
-
-      .row {
-        display: none;
-      }
-
-      nav {
-        display: none;
-      }
-    }
-
     .row {
       @include flex(row, null, center);
       gap: $spacing-xl;

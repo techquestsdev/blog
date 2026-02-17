@@ -6,30 +6,13 @@
 
   let loaded = false;
 
-  const lazyPictures = import.meta.glob(
-    `/src/content/**/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp}`,
-    {
-      import: 'default',
-      query: {
-        enhanced: true,
-        w: '2400;2000;1600;1200;800;400'
-      }
+  const pictures = import.meta.glob(`/src/content/**/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp}`, {
+    import: 'default',
+    query: {
+      enhanced: true,
+      w: '2400;2000;1600;1200;800;400'
     }
-  );
-
-  const eagerPictures = import.meta.glob(
-    `/src/content/**/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp}`,
-    {
-      eager: true,
-      import: 'default',
-      query: {
-        enhanced: true,
-        w: '2400;2000;1600;1200;800;400'
-      }
-    }
-  );
-
-  const isSSR = import.meta.env.SSR;
+  });
 
   function findModule(modules, image) {
     if (!image || typeof image !== 'string') {
@@ -56,7 +39,7 @@
   }
 
   async function importImage(image) {
-    const module = findModule(lazyPictures, image);
+    const module = findModule(pictures, image);
     if (!module) return null;
 
     try {
@@ -67,57 +50,33 @@
     }
   }
 
-  function resolveImageSync(image) {
-    const module = findModule(eagerPictures, image);
-    if (!module) return null;
-    return typeof module === 'function' ? null : module;
-  }
-
-  $: resolvedImage = isSSR ? resolveImageSync(image) : null;
-
   function handleLoad() {
     loaded = true;
   }
 </script>
 
 <picture>
-  {#if isSSR}
-    {#if resolvedImage}
-      <source srcset={resolvedImage.sources.avif} type="image/avif" {sizes} />
-      <source srcset={resolvedImage.sources.webp} type="image/webp" {sizes} />
+  {#await importImage(image)}
+    <div class="loading">Loading...</div>
+  {:then src}
+    {#if src}
+      <source srcset={src.sources.avif} type="image/avif" {sizes} />
+      <source srcset={src.sources.webp} type="image/webp" {sizes} />
       <img
-        src={resolvedImage.img.src}
+        src={src.img.src}
         {alt}
         {loading}
-        width={resolvedImage.img.w}
-        height={resolvedImage.img.h}
+        on:load={handleLoad}
+        class:loaded
+        width={src.img.w}
+        height={src.img.h}
       />
     {:else}
       <div class="error">{alt || 'Image unavailable'}</div>
     {/if}
-  {:else}
-    {#await importImage(image)}
-      <div class="loading">Loading...</div>
-    {:then src}
-      {#if src}
-        <source srcset={src.sources.avif} type="image/avif" {sizes} />
-        <source srcset={src.sources.webp} type="image/webp" {sizes} />
-        <img
-          src={src.img.src}
-          {alt}
-          {loading}
-          on:load={handleLoad}
-          class:loaded
-          width={src.img.w}
-          height={src.img.h}
-        />
-      {:else}
-        <div class="error">{alt || 'Image unavailable'}</div>
-      {/if}
-    {:catch}
-      <div class="error">{alt || 'Image unavailable'}</div>
-    {/await}
-  {/if}
+  {:catch}
+    <div class="error">{alt || 'Image unavailable'}</div>
+  {/await}
 </picture>
 
 <style lang="scss">

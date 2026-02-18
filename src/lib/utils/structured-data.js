@@ -18,6 +18,46 @@ function normalizeImage(image) {
   };
 }
 
+export function buildPersonJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: authorName,
+    url: authorUrl,
+    jobTitle: 'Site Reliability Engineer',
+    sameAs: [
+      'https://github.com/aanogueira',
+      'https://linkedin.com/in/andre-a-nogueira',
+      'https://medium.com/@aanogueira',
+      'https://dev.to/aanogueira'
+    ]
+  };
+}
+
+export function buildWebSiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteName,
+    url: hostname,
+    description:
+      'The saga of Andre Nogueira, a Site Reliability Engineer sharing insights on homelabs, software engineering, and technological adventures.',
+    publisher: {
+      '@type': 'Organization',
+      name: siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: logoUrl
+      }
+    },
+    author: {
+      '@type': 'Person',
+      name: authorName,
+      url: authorUrl
+    }
+  };
+}
+
 export function buildBlogPostingJsonLd(metadata, image) {
   const url = `${hostname}/blog/${metadata.slug}`;
   const datePublished = metadata.date ? new Date(metadata.date).toISOString() : undefined;

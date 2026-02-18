@@ -10,8 +10,9 @@ export async function load() {
   return {
     posts,
     meta: {
-      title: 'Blog',
-      description: 'Posts about various topics.',
+      title: 'Blog | Technological Adventures and SRE Insights',
+      description:
+        'Explore a collection of articles and tutorials on Site Reliability Engineering, homelabs, and various technological adventures.',
       type: 'blog-posts'
     }
   };

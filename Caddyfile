@@ -1,4 +1,11 @@
 :3000 {
+	# Redirect to canonical domain if host is not techquests.dev
+	@notCanonical {
+		not host techquests.dev
+		not host localhost
+	}
+	redir @notCanonical https://techquests.dev{uri} permanent
+
 	root * /usr/share/caddy
 	file_server
 

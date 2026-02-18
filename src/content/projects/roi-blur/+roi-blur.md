@@ -3,7 +3,16 @@ published: true
 name: ROI Blur
 description: Interactive ROI selection tool to blur parts of an image for privacy redaction using OpenCV.
 thumbnail: roi_blur_preview.png
-images: [roi_blur_preview.png, roi_blur_command.png, roi_blur_image.png, roi_blur_selection.png, roi_blur_commit.png, roi_blur_censor.png, roi_blur_logs.png]
+images:
+  [
+    roi_blur_preview.png,
+    roi_blur_command.png,
+    roi_blur_image.png,
+    roi_blur_selection.png,
+    roi_blur_commit.png,
+    roi_blur_censor.png,
+    roi_blur_logs.png
+  ]
 github: https://github.com/techquestsdev/roi-blur
 website: https://pypi.org/project/roi-blur
 date: 2026-02-05

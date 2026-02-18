@@ -44,7 +44,7 @@ export async function load({ params }) {
   return {
     post,
     meta: {
-      title: post.metadata.name,
+      title: `${post.metadata.name} | Tech Quests`,
       description: post.metadata.description,
       type: 'article',
       image,

@@ -9,8 +9,9 @@ export async function load() {
   return {
     posts,
     meta: {
-      title: 'Projects',
-      description: "Projects I've worked on.",
+      title: 'Projects | Open Source and Personal Works',
+      description:
+        'Discover the various open source projects and personal software works developed by Andre Nogueira at Tech Quests.',
       type: 'blog-projects'
     }
   };

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { load } from './+page.js';
+import { buildWebSiteJsonLd } from '$lib/utils/structured-data.js';
 
 describe('Home Page Load Function', () => {
   it('should return correct meta information', () => {
@@ -7,9 +8,11 @@ describe('Home Page Load Function', () => {
 
     expect(result).toEqual({
       meta: {
-        title: 'Tech Quests',
-        description: 'The saga of a SRE sharing his technological adventures.',
-        type: 'blog'
+        title: 'Tech Quests | A SRE saga on technological adventures',
+        description:
+          'The saga of Andre Nogueira, a Site Reliability Engineer sharing insights on homelabs, software engineering, and technological adventures.',
+        type: 'blog',
+        jsonLd: buildWebSiteJsonLd()
       }
     });
   });

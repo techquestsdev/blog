@@ -73,9 +73,24 @@ howto "list all running containers with their ports"
 howto "show disk usage sorted by size"
 # → du -sh * | sort -hr
 
-# Git
-howto "undo last commit but keep changes"
-# → git reset --soft HEAD~1
+# Networking
+howto "check which process is listening on port 8080"
+# → lsof -i :8080
+```
+
+## Options & Providers
+
+Howto supports multiple AI providers (OpenAI, Anthropic, Gemini, DeepSeek, and GitHub Copilot). It auto-detects your API keys and picks the best available provider.
+
+```bash
+# Dry run (print command without inserting into terminal)
+howto -d "list docker containers"
+
+# Use a specific model or provider
+howto -m gpt-4-turbo -p OpenAI "count lines of code"
+
+# See available providers
+howto providers
 ```
 
 ## My Personal Setup
@@ -98,84 +113,9 @@ bindkey '^Xg' howto-under-cursor
 
 Now I type `find large log files older than 30 days`, hit `Ctrl+X G`, and get the actual command. Zero friction.
 
-## Tech Stack
-
-- **Go 1.24+** - Fast startup, single binary distribution
-- **Cobra** - CLI framework
-- **Multiple AI SDKs** - OpenAI, Anthropic, Google GenAI
-- **GitHub Actions** - CI with testing, linting, cross-platform releases via GoReleaser
-- **Homebrew** - Easy distribution via custom tap
-
-## Getting Started
-
-### Install
-
-```bash
-# Homebrew (macOS/Linux)
-brew install techquestsdev/tap/howto
-
-# Go install
-go install github.com/techquestsdev/howto@latest
-```
-
-### Configure
-
-Set at least one API key:
-
-```bash
-export OPENAI_API_KEY=sk-...
-# or
-export ANTHROPIC_API_KEY=sk-ant-...
-# or
-export GEMINI_API_KEY=...
-```
-
-### Use
-
-```bash
-# Basic usage
-howto "your question here"
-
-# Dry run (just print, don't inject)
-howto -d "list docker containers"
-
-# Specific provider
-howto -p Anthropic "show memory usage"
-
-# Specific model
-howto -m gpt-5-mini "count lines of code"
-
-# See available providers
-howto providers
-```
-
-## GitHub Copilot (No API Key Needed)
-
-If you have a Copilot subscription:
-
-```bash
-gh extension install github/gh-copilot
-gh auth login
-# Now howto can use Copilot as a provider
-```
-
-## Provider Priority
-
-When multiple providers are configured, howto picks in this order:
-
-1. OpenAI
-2. Anthropic
-3. Gemini
-4. DeepSeek
-5. GitHub Copilot
-
-Override with `--provider` or set `HOWTO_PROVIDER` environment variable.
-
 ## Try It Out
 
-Full source: [techquestsdev/howto](https://github.com/techquestsdev/howto)
-
-Star it, fork it, submit PRs. It's open source, cross-platform, and solves a real daily annoyance.
+Full source and installation instructions are available at: [techquestsdev/howto](https://github.com/techquestsdev/howto)
 
 Stop context-switching. Start asking your terminal directly.
 

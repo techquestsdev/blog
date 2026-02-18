@@ -41,24 +41,28 @@ None of these are ideal, especially for developers who live in their terminals.
 - **Next Run Times** - Preview exactly when your job will execute next
 - **Beautiful TUI** - Colorful, responsive terminal interface that just works
 - **Clipboard Integration** - Copy your expression with a single keystroke
-- **Smart Field Navigation** - Tab, arrow keys, and intuitive shortcuts
-- **Robust Error Handling** - Comprehensive validation prevents crashes and bad schedules
 
-### Example Usage
+## How to Use
 
-Launch the app, start typing values into the five cron fields (minute, hour, day, month, weekday), and watch as:
+1. Launch the application with `crontab-guru`.
+2. Use **Tab**, **Space**, or **Enter** to navigate between fields.
+3. Type your cron expression values (minute, hour, day, month, weekday).
+4. See the description and next run times update in real-time.
+5. Press **y** to copy the final expression to your clipboard.
+6. Press **Esc** or **Ctrl+C** to quit.
 
-```text
-┌───────────── minute (0 - 59)
-│ ┌───────────── hour (0 - 23)
-│ │ ┌───────────── day of month (1 - 31)
-│ │ │ ┌───────────── month (1 - 12)
-│ │ │ │ ┌───────────── day of week (0 - 6)
-│ │ │ │ │
-0 9 * * MON-FRI  →  "Every weekday at 9:00 AM"
-```
+## Examples
 
-The description updates in real-time. Copy it. Done. No second-guessing.
+| Expression        | Description              |
+| ----------------- | ------------------------ |
+| `* * * * *`       | Every minute             |
+| `0 * * * *`       | Every hour               |
+| `0 0 * * *`       | Every day at midnight    |
+| `0 9 * * MON-FRI` | At 9:00 AM on weekdays   |
+| `*/15 * * * *`    | Every 15 minutes         |
+| `0 9,17 * * *`    | At 9:00 AM and 5:00 PM   |
+| `0 0 1 * *`       | First day of every month |
+| `0 0 * * SUN`     | Every Sunday at midnight |
 
 ## Why I Built This
 
@@ -77,37 +81,12 @@ Plus, I wanted to prove that terminal applications don't have to be ugly or conf
 - **UI Framework:** [Bubble Tea](https://github.com/charmbracelet/bubbletea) (Elm Architecture pattern)
 - **Architecture:** Model-View-Update (MVU) pattern
 - **Testing:** Comprehensive unit and integration tests with high coverage
-- **Distribution:** Cross-platform binaries (Linux, macOS, Windows)
 
 ## Getting Started
 
-### Quick Install
+Check the [GitHub repository](https://github.com/techquestsdev/crontab-guru) for full installation instructions (Homebrew, Go, or binaries).
 
-```bash
-go install github.com/techquestsdev/crontab-guru@latest
-crontab-guru
-```
-
-Or download a pre-built binary from the [Releases page](https://github.com/techquestsdev/crontab-guru/releases).
-
-### Build from Source
-
-```bash
-git clone https://github.com/techquestsdev/crontab-guru.git
-cd crontab-guru
-make build
-./bin/crontab-guru
-```
-
-### Install with Homebrew
-
-```bash
-brew tap techquestsdev/tap
-brew install crontab-guru
-crontab-guru
-```
-
-## Keyboard Shortcuts
+### Keyboard Shortcuts
 
 | Shortcut         | Action                       |
 | ---------------- | ---------------------------- |

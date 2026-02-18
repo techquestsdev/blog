@@ -51,18 +51,40 @@ Looks familiar, right?
 - **Continuous monitoring** - watch memory usage with `-s` flag
 - **Familiar options** - compatible with common `free` command flags
 
+### Examples
+
+**Human-readable format:**
+
 ```shell
-# Human-readable output
-free -h
+$ free -h
+               total         used         free       shared   buff/cache    available
+Mem:          16.0Gi        8.0Gi        2.0Gi      512.0Mi        6.0Gi        8.0Gi
+Swap:          2.0Gi      512.0Mi        1.5Gi
+```
 
-# Wide mode with all memory categories
-free -w -h
+**Wide output with all memory categories:**
 
-# Monitor every 2 seconds
+```shell
+$ free -w -h
+              total        used        free      active    inactive       wired  compressed   available
+Mem:         16.0Gi       8.0Gi       2.0Gi       4.0Gi       2.0Gi       2.0Gi       1.0Gi       8.0Gi
+Swap:         2.0Gi     512.0Mi       1.5Gi
+```
+
+**Monitor memory every 2 seconds:**
+
+```shell
 free -h -s 2
+```
 
-# Show totals for RAM + swap
-free -h -t
+**Show totals for RAM + swap:**
+
+```txt
+$ free -h -t
+              total        used        free      shared  buff/cache   available
+Mem:         16.0Gi       8.0Gi       2.0Gi     512.0Mi       6.0Gi       8.0Gi
+Swap:         2.0Gi     512.0Mi       1.5Gi
+Total:       18.0Gi       8.5Gi       3.5Gi
 ```
 
 ## How It Works
@@ -93,21 +115,7 @@ Plus, C felt appropriate for a system utility like this.
 
 ## Installation
 
-```shell
-# Clone the repo
-git clone https://github.com/techquestsdev/mac-free.git
-cd mac-free
-
-# Build and install
-make
-sudo make install
-
-# or use Homebrew
-brew install techquestsdev/tap/mac-free
-
-# Use it
-free -h
-```
+Full installation instructions (Homebrew or source) are available in the [GitHub repository](https://github.com/techquestsdev/mac-free).
 
 Requires Xcode Command Line Tools (`xcode-select --install`).
 

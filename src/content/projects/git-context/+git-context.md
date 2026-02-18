@@ -91,40 +91,50 @@ Architecture follows clean separation: CLI commands, config management, git oper
 
 ## Getting Started
 
-### Install
-
-```bash
-# Go install
-go install github.com/techquestsdev/git-context@latest
-
-# Homebrew
-brew tap techquestsdev/tap
-brew install git-context
-
-# Or download from releases
-```
+Full installation instructions (Homebrew, Go, or binaries) are available in the [GitHub repository](https://github.com/techquestsdev/git-context).
 
 ### Basic Usage
 
 ```bash
-# The way to run it
-alias gctx='git-context'
-
 # Initialize config
-gctx init
+git-context init
 
 # Add profiles
-gctx add work
-gctx add personal
+git-context add work
+git-context add personal
+
+# List all profiles
+git-context list
 
 # Switch contexts
-gctx switch work
+git-context switch work
 
-# Show current
-gctx current
+# Switch back to the previous profile
+git-context switch -
 
-# List all
-gctx list
+# Show current active profile
+git-context current
+
+# Show details of a specific profile
+git-context show work
+```
+
+### Use Cases
+
+**Scenario: Work vs Personal Repositories**
+
+```bash
+# Create work profile
+git-context add work
+# Enter: Your Name, you@company.com, work-gpg-key
+
+# Create personal profile
+git-context add personal
+# Enter: Your Name, you@personal.com, personal-gpg-key
+
+# Switch based on what you're working on
+git-context switch work      # For company projects
+git-context switch personal  # For personal projects
 ```
 
 ### Configuration Example

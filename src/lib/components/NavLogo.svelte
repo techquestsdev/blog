@@ -9,6 +9,7 @@
   let container;
   let lottie;
   let animation;
+  let ready = false;
 
   $: currentTheme = $theme;
 
@@ -27,6 +28,8 @@
       autoplay: true,
       animationData: theme === 'dark' ? JSON.parse(pfpinDark) : JSON.parse(pfpinLight)
     });
+
+    ready = true;
   }
 
   onMount(async () => {
@@ -39,10 +42,16 @@
   }
 </script>
 
-<div class="logo" style={`width: ${size}; height: ${size};`} bind:this={container}></div>
+<div class="logo" class:ready style={`width: ${size};`} bind:this={container}></div>
 
 <style lang="scss">
   .logo {
     display: inline-flex;
+    aspect-ratio: 800 / 410;
+
+    :global(svg) {
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
 </style>

@@ -141,7 +141,8 @@
 
       .pfp {
         display: flex;
-        margin-top: $spacing-3xs;
+        align-items: center;
+        justify-content: center;
       }
 
       h1 {

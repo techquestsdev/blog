@@ -182,7 +182,7 @@ jobs:
 
       - name: Download lockfile if exists
         continue-on-error: true
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: lockfile
 
@@ -250,7 +250,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download built app
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: build
           path: build
@@ -328,7 +328,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download built app
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: build
           path: build

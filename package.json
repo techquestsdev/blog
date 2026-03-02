@@ -49,6 +49,6 @@
     "remark-gfm": "^4.0.1",
     "remark-mermaidjs": "^7.0.0",
     "remark-toc": "^9.0.0",
-    "shiki": "^3.22.0"
+    "shiki": "^4.0.1"
   }
 }

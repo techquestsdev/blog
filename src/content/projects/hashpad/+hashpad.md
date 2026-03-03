@@ -1,9 +1,9 @@
 ---
-published: false
+published: true
 name: HashPad
 description: A minimal, serverless text editor that stores content in the URL hash. No backend, no database - just share the link.
 thumbnail: hashpad_preview.png
-images: [hashpad_preview.png]
+images: [hashpad_example.png, hashpad_options.png, hashpad_password.png, hashpad_qr.png]
 github: https://github.com/techquestsdev/hashpad
 website: https://hashpad.techquests.dev
 date: 2026-02-17
@@ -29,9 +29,9 @@ I built **HashPad** to solve the "quick share" problem without the overhead (or 
 
 Using HashPad is as simple as typing:
 
-1.  **Start Writing**: Open [hashpad.techquests.dev](https://hashpad.techquests.dev) and just start typing. Your content is automatically compressed into the URL.
-2.  **Add Encryption (Optional)**: Click the "Lock" icon to set a password. This encrypts your content with AES-256-GCM before it's added to the URL.
-3.  **Share the Link**: Copy the URL from your browser's address bar. Anyone with the link (and the password, if set) can read the note.
+1. **Start Writing**: Open [hashpad.techquests.dev](https://hashpad.techquests.dev) and just start typing. Your content is automatically compressed into the URL.
+2. **Add Encryption (Optional)**: Click the "Lock" icon to set a password. This encrypts your content with AES-256-GCM before it's added to the URL.
+3. **Share the Link**: Copy the URL from your browser's address bar. Anyone with the link (and the password, if set) can read the note.
 
 Check the [GitHub repository](https://github.com/techquestsdev/hashpad) for local development and deployment instructions (Docker, Kubernetes/Helm).
 
@@ -66,4 +66,4 @@ With HashPad, as long as you have that link, you have the data. It's permanent, 
 
 ## Status
 
-Solid, stable, and serverless. Check it out at [hashpad.techquests.dev](https://hashpad.techquests.dev).
+Solid, stable, and serverless. Check it out at [hashpad.techquests.dev](https://hashpad.techquests.dev/#bY89T8MwEIb3-xWv6i1SUvE5MDBAkYoEDNA9cZNrbdW10_iCAEX57SgpVK3Ay_l57kN3CuYMc9aV9WuQUjDnv0hqwItjVDCXJ6xgrk6Fgrk-mGHgPDT2K3jRDq-tY0rTdNAP29roaCMlycLYCBuxDK6C8IckCeX5H5vndCi1op0t98WU_2Nz6vs3aeyGxTShXZu-H7e5c6Hc7NogHOn2mFBq74NgyfAchassy4aG-1AxPXpnPaMoQ8UFjV0Y_pis2JccJ1QUBT1_Ysm6Fbtq3ZgerVJY6KXjSB1e9JbRYcaxbGwtNnh01CFN0xT78PNGPdOi0WExrNNYHwB04xFP1m8iGZE63kynRkdT6yoTLs2u5Sgxq_h9SvQN).

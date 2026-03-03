@@ -1,13 +1,13 @@
 # Tech Quests Blog
 
-> The saga of a SRE sharing his technological adventures.
-
-A modern, performant blog built with SvelteKit 5, featuring enhanced MDX content, advanced syntax highlighting, and automated deployment via GitOps. Built with cutting-edge web technologies for optimal performance and developer experience.
-
 [![CI](https://github.com/techquestsdev/blog/workflows/CI/badge.svg)](https://github.com/techquestsdev/blog/actions)
 [![Codecov](https://codecov.io/gh/techquestsdev/blog/branch/main/graph/badge.svg)](https://codecov.io/gh/techquestsdev/blog)
 [![License: GNU GPLv3](https://img.shields.io/badge/License-GNU%20GPLv3-green.svg)](LICENSE)
 ![Latest Release](https://img.shields.io/github/v/release/techquestsdev/blog?include_prereleases)
+
+![Blog](docs/blog.gif)
+
+A modern, performant blog built with SvelteKit 5, featuring enhanced MDX content, advanced syntax highlighting, and automated deployment via GitOps. Built with cutting-edge web technologies for optimal performance and developer experience.
 
 ## Features
 

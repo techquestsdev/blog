@@ -27,6 +27,10 @@ updates:
           - "vite"
           - "prettier"
           - "eslint*"
+    ignore:
+      # Ignore updates to eslint until packages are adapted to eslint v10
+      - dependency-name: "eslint"
+        versions: [">=10"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

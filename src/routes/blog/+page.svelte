@@ -42,7 +42,7 @@
   .date {
     grid-area: date;
     font-size: $font-sm;
-    font-family: 'Fira Mono', monospace;
+    font-family: $font-family-mono;
     color: var(--txt-2);
     margin-top: $spacing-2xs;
   }

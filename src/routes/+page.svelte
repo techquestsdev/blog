@@ -100,7 +100,7 @@
 
     a {
       font-size: $font-base;
-      font-family: 'Fira Mono', monospace;
+      font-family: $font-family-mono;
     }
   }
 

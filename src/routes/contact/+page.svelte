@@ -200,7 +200,7 @@
   }
 
   button {
-    font-family: 'Fira Mono', monospace;
+    font-family: $font-family-mono;
     padding: $spacing-sm $font-sm;
     &:hover {
       border: 2px solid var(--txt-2);

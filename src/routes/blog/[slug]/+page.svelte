@@ -38,7 +38,7 @@
   .meta {
     margin: $spacing-sm 0 0 0;
     font-size: $font-sm;
-    font-family: 'Fira Mono', monospace;
+    font-family: $font-family-mono;
     color: var(--txt-2);
     display: flex;
     gap: $spacing-sm;

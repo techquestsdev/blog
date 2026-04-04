@@ -1,20 +1,3 @@
-<!-- <script>
-  let content = {
-    languages: {
-      Web: ['JavaScript', 'TypeScript', 'PHP', 'HTML', 'CSS'],
-      Code: ['Go', 'Python', 'C', 'Rust'],
-      Script: ['Shell', 'Lua', 'Ruby']
-    },
-    tech: {
-      Frameworks: ['React', 'NextJS', 'SvelteKit'],
-      Languages: ['Go', 'Rust', 'TypeScript', 'Python'],
-      Databases: ['PostgreSQL', 'Sqlite', 'MongoDB', 'Redis'],
-      Cloud: ['GCP', 'AWS', 'Azure'],
-      Tools: ['macOS', 'Pop!_OS', 'Ghostty', 'tmux', 'neovim', 'yadm']
-    }
-  };
-</script> -->
-
 <main>
   <h1>About</h1>
   <p>
@@ -105,31 +88,6 @@
       </a>
     </li>
   </ul>
-  <!-- <a href="/resume.pdf" class="external">Resume<span class="arrow">-></span></a> -->
-  <!-- <h2>Languages</h2>
-  {#each Object.keys(content.languages) as category (category)}
-    <div class="info">
-      <span class="main">{category}</span> <span class="sub">-></span>
-      {#each content.languages[category] as item (item)}
-        {item}
-        {#if item !== content.languages[category][content.languages[category].length - 1]}
-          <span class="sub">/</span>&nbsp;
-        {/if}
-      {/each}
-    </div>
-  {/each}
-  <h2>Tech</h2>
-  {#each Object.keys(content.tech) as category (category)}
-    <div class="info">
-      <span class="main">{category}</span> <span class="sub">-></span>
-      {#each content.tech[category] as item (item)}
-        {item}
-        {#if item !== content.tech[category][content.tech[category].length - 1]}
-          <span class="sub">/</span>&nbsp;
-        {/if}
-      {/each}
-    </div>
-  {/each} -->
   <h2>This blog</h2>
   <ul class="link-list">
     <li>
@@ -203,7 +161,7 @@
   }
 
   a {
-    font-family: 'Fira Mono', monospace;
+    font-family: $font-family-mono;
     font-size: $font-sm;
     margin: $spacing-sm 0;
     display: block;
@@ -212,7 +170,7 @@
   .info {
     font-size: $font-sm;
     margin: $spacing-sm 0;
-    font-family: 'Fira Mono', monospace;
+    font-family: $font-family-mono;
 
     .main {
       font-weight: bold;

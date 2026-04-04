@@ -31,7 +31,6 @@ export async function GET() {
       (page) => `
   <url>
     <loc>${baseUrl}${page}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>${page === '' ? '1.0' : '0.8'}</priority>
   </url>`

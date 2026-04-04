@@ -21,5 +21,9 @@
     padding: 0;
     display: inline-flex;
     background: none;
+    width: 2em;
+    height: 2em;
+    align-items: center;
+    justify-content: center;
   }
 </style>

@@ -34,7 +34,7 @@
     </li>
     <li>
       <a
-        href="https://linkedin.com/in/andre-a-nogueira"
+        href="https://linkedin.com/in/aanogueira"
         class="external"
         target="_blank"
         rel="noopener noreferrer"
@@ -82,6 +82,27 @@
       <a href="/projects/rss.xml" class="external" target="_blank" rel="noopener noreferrer"
         >Projects only<span class="arrow">-></span></a
       >
+    </li>
+  </ul>
+  <h2>CV</h2>
+  <ul class="link-list">
+    <li>
+      <a
+        href="https://github.com/aanogueira/cv/releases/download/latest/cv.pdf"
+        class="external"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Download CV (light)<span class="arrow">-></span>
+      </a>
+    </li>
+    <li>
+      <a
+        href="https://github.com/aanogueira/cv/releases/download/latest/cv-dark.pdf"
+        class="external"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Download CV (dark)<span class="arrow">-></span>
+      </a>
     </li>
   </ul>
   <!-- <a href="/resume.pdf" class="external">Resume<span class="arrow">-></span></a> -->

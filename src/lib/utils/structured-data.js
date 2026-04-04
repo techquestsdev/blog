@@ -27,7 +27,7 @@ export function buildPersonJsonLd() {
     jobTitle: 'Site Reliability Engineer',
     sameAs: [
       'https://github.com/aanogueira',
-      'https://linkedin.com/in/andre-a-nogueira',
+      'https://linkedin.com/in/aanogueira',
       'https://medium.com/@aanogueira',
       'https://dev.to/aanogueira'
     ]

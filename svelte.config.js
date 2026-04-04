@@ -51,9 +51,11 @@ const mdsvexOptions = {
     _: path.resolve(__dirname, 'src/mdsvex.svelte')
   },
   highlight: {
-    highlighter: async (code, lang = 'text') => {
+    highlighter: async (code, lang = 'text', meta) => {
+      const centered = (meta || '').includes('center');
+
       const highlighter = await highlighterPromise;
-      const html = highlighter.codeToHtml(code, {
+      let html = highlighter.codeToHtml(code, {
         lang,
         themes: {
           dark: 'rose-pine',
@@ -63,6 +65,11 @@ const mdsvexOptions = {
           '#1e1e2e': 'none'
         }
       });
+
+      if (centered) {
+        html = html.replace('<pre class="', '<pre class="centered ');
+      }
+
       const escaped = escapeSvelte(html);
       return `{@html \`${escaped}\` }`;
     }

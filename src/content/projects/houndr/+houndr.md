@@ -67,7 +67,7 @@ Posting lists are sorted by cardinality before intersection - starting with the 
 
 houndr uses a custom binary format (`.idx`) designed for memory-mapped random access:
 
-```txt
+```txt center
 ┌────────────────────────────────────────────┐
 │ HEADER (64 bytes)                          │
 │   magic: "HNDR", version, offsets          │
@@ -97,7 +97,7 @@ Index writes happen in 9 phases to a `.tmp` file, then atomically renamed. Reade
 
 Three standalone crates, deliberately separated:
 
-```txt
+```txt center
 ┌──────────────────────────────────────────────┐
 │                houndr-server                 │
 │       Axum · Web UI · SSE · LRU Cache        │
@@ -112,7 +112,7 @@ Three standalone crates, deliberately separated:
 ┌────────────────┐   ┌─────────────────────────┐
 │  houndr-index  │   │      houndr-repo        │
 │                │   │                         │
-│ IndexBuilder   │◄──│ pipeline::index_repo()  │
+│ IndexBuilder   │◀──│ pipeline::index_repo()  │
 │ IndexReader    │   │ vcs::GitRepo            │
 │ QueryPlan      │   │ config::Config          │
 │ Trigram engine │   │                         │

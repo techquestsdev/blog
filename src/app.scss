@@ -116,6 +116,11 @@ html {
     white-space: pre-wrap;
     word-break: break-word;
   }
+
+  .shiki.centered span {
+    white-space: pre;
+    word-break: normal;
+  }
 }
 
 [color-scheme='light'] {
@@ -233,6 +238,29 @@ pre {
   code {
     background: none;
     padding: initial;
+  }
+
+  &.centered code {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    font-family:
+      ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    font-variant-ligatures: none;
+    font-feature-settings:
+      'liga' 0,
+      'calt' 0;
+    -webkit-font-feature-settings:
+      'liga' 0,
+      'calt' 0;
+
+    span {
+      font-family: inherit !important;
+      font-variant-ligatures: none !important;
+      font-feature-settings:
+        'liga' 0,
+        'calt' 0 !important;
+    }
   }
 }
 

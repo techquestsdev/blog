@@ -1,4 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
+
+const environment = vi.hoisted(() => ({ dev: true }));
+vi.mock('$app/environment', () => environment);
+
 import { nameFromPath, getPosts, importOgImage } from './posts.js';
 
 describe('nameFromPath', () => {
@@ -56,11 +60,6 @@ describe('getPosts', () => {
         })
     };
 
-    // Mock dev environment to true to include all posts
-    vi.doMock('$app/environment', () => ({
-      dev: true
-    }));
-
     const posts = await getPosts(mockModules);
 
     expect(posts).toHaveLength(2);
@@ -80,6 +79,8 @@ describe('getPosts', () => {
     });
   });
   it('should filter unpublished posts in production', async () => {
+    environment.dev = false;
+
     const mockModules = {
       '/blog/published.md': () =>
         Promise.resolve({
@@ -103,22 +104,13 @@ describe('getPosts', () => {
         })
     };
 
-    // Mock the environment module before importing
-    vi.doMock('$app/environment', () => ({
-      dev: false
-    }));
-
-    // Dynamically import to get the mocked version
-    const { getPosts } = await import('./posts.js?timestamp=' + Date.now());
-
     const posts = await getPosts(mockModules);
 
     // Should only include posts with published: true
     expect(posts).toHaveLength(1);
     expect(posts[0].title).toBe('Published Post');
 
-    // Clean up
-    vi.doUnmock('$app/environment');
+    environment.dev = true;
   });
 
   it('should handle empty modules object', async () => {
@@ -127,6 +119,8 @@ describe('getPosts', () => {
   });
 
   it('should handle posts without published field', async () => {
+    environment.dev = false;
+
     const mockModules = {
       '/blog/no-published-field.md': () =>
         Promise.resolve({
@@ -137,14 +131,12 @@ describe('getPosts', () => {
         })
     };
 
-    vi.mock('$app/environment', () => ({
-      dev: false
-    }));
-
     const posts = await getPosts(mockModules);
 
     // Posts without published field should be filtered out in production
     expect(posts).toHaveLength(0);
+
+    environment.dev = true;
   });
 });
 

@@ -30,3 +30,4 @@ Sitemap: https://techquests.dev/sitemap.xml
 Allow: /rss.xml
 Allow: /blog/rss.xml
 Allow: /projects/rss.xml
+Allow: /videos/rss.xml

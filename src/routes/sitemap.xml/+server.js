@@ -11,6 +11,10 @@ export async function GET() {
   const projectModules = import.meta.glob('/src/content/projects/*/*.md');
   const projects = await getPosts(projectModules);
 
+  // Get all videos
+  const videoModules = import.meta.glob('/src/content/videos/*/*.md');
+  const videos = await getPosts(videoModules);
+
   // Define the base URL
   const baseUrl = 'https://techquests.dev';
 
@@ -19,6 +23,7 @@ export async function GET() {
     '', // Home page
     '/about', // About page
     '/blog', // Blog index
+    '/videos', // Videos index
     '/contact', // Contact page
     '/projects' // Projects page
   ];
@@ -53,6 +58,17 @@ export async function GET() {
   <url>
     <loc>${baseUrl}/projects/${project.slug}</loc>
     <lastmod>${new Date(project.date || new Date()).toISOString().split('T')[0]}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>`
+    )
+    .join('')}
+  ${videos
+    .map(
+      (video) => `
+  <url>
+    <loc>${baseUrl}/videos/${video.slug}</loc>
+    <lastmod>${new Date(video.date || new Date()).toISOString().split('T')[0]}</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>`

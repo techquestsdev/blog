@@ -17,6 +17,12 @@
     <link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="any" />
     <link rel="icon" href="%sveltekit.assets%/favicon.png" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.setAttribute(
+        'color-scheme',
+        window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+      );
+    </script>
     <script defer src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
     <script
       defer
@@ -24,12 +30,6 @@
       data-website-id="c8dd6e51-7182-472b-9637-01955cdec219"
       data-auto-track="false"
     ></script>
-    <script>
-      const theme = localStorage.getItem('color-scheme');
-      theme
-        ? document.documentElement.setAttribute('color-scheme', theme)
-        : localStorage.setItem('color-scheme', 'dark');
-    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

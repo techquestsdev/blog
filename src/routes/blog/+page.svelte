@@ -1,11 +1,23 @@
 <script>
   import { formatDate } from '$lib/js/utils.js';
+  import RssIcon from '~icons/ph/rss';
 
   export let data;
 </script>
 
 <main>
-  <h1>Blog</h1>
+  <div class="title-row">
+    <h1>Blog <span class="count">[{data.posts.length}]</span></h1>
+    <a
+      href="/blog/rss.xml"
+      class="rss-link"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Blog RSS feed"
+    >
+      <RssIcon /> RSS
+    </a>
+  </div>
 
   <div class="posts">
     {#each data.posts as post (post.slug)}
@@ -26,6 +38,47 @@
 <style lang="scss">
   main {
     @include page-container;
+    padding-top: 0;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+    margin: $spacing-xl 0 $spacing-2xl 0;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  .rss-link {
+    font-family: $font-family-mono;
+    font-size: $font-xs;
+    color: var(--txt-3);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4ch;
+    transition: color $transition-fast;
+
+    :global(svg) {
+      font-size: 1em;
+    }
+
+    &:hover {
+      color: var(--txt);
+    }
+  }
+
+  .count {
+    font-family: $font-family-mono;
+    font-size: $font-base;
+    color: var(--txt-3);
+    font-weight: 400;
+    margin-left: 0.5ch;
   }
 
   .posts {
@@ -43,7 +96,7 @@
     grid-area: date;
     font-size: $font-sm;
     font-family: $font-family-mono;
-    color: var(--txt-2);
+    color: var(--txt-3);
     margin-top: $spacing-2xs;
   }
 
@@ -69,13 +122,17 @@
     a {
       grid-template-columns: auto;
       grid-template-areas:
-        'title'
         'date'
+        'title'
         'description';
-      gap: $spacing-md;
+      gap: $spacing-xs;
 
       .description {
         grid-column: 1;
+      }
+
+      .date {
+        margin-top: 0;
       }
     }
   }

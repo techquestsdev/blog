@@ -1,12 +1,12 @@
 <script>
   import '../app.scss';
   import '$lib/assets/fonts/fira-mono.css';
-  import '$lib/assets/fonts/fira-code-variable.css';
+  import '$lib/assets/fonts/inter.css';
   import { page } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
-  import Toggle from '$lib/components/Toggle.svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
+  import { toggleTheme } from '$lib/js/theme.js';
   import { fly } from 'svelte/transition';
 
   export let data;
@@ -14,6 +14,7 @@
   const pages = [
     { name: 'Projects', path: '/projects' },
     { name: 'Blog', path: '/blog' },
+    { name: 'Videos', path: '/videos' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }
   ];
@@ -87,9 +88,9 @@
   <header>
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
-      <a class="pfp" href="/" aria-label="homepage">
-        <NavLogo size="2rem" />
-      </a>
+      <button class="pfp" on:click={toggleTheme} aria-label="Toggle theme">
+        <NavLogo size="2.5rem" />
+      </button>
     </div>
     <nav>
       {#each pages as { name, path } (path)}
@@ -98,7 +99,6 @@
         </a>
       {/each}
     </nav>
-    <Toggle />
   </header>
 {/if}
 
@@ -173,7 +173,7 @@
     left: $spacing-md;
     top: $spacing-md;
     padding: $spacing-xs $spacing-md;
-    background: var(--bg-1);
+    background: var(--bg-2);
     color: var(--txt);
     border: 1px solid var(--bg-3);
     z-index: $z-index-sticky;
@@ -198,7 +198,7 @@
 
   @media (max-width: $breakpoint-tablet) {
     header {
-      padding: 0 $spacing-md;
+      padding: 0 $spacing-xl;
       gap: $spacing-md;
 
       nav {

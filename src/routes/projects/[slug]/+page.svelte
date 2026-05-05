@@ -10,9 +10,16 @@
   let options = { loop: true, align: 'center' };
   let loop = true;
 
+  function recompute() {
+    if (!emblaApi) return;
+    loop = emblaApi.internalEngine().slideLooper.canLoop();
+  }
+
   function emblaInit(event) {
     emblaApi = event.detail;
-    loop = emblaApi.internalEngine().slideLooper.canLoop();
+    recompute();
+    emblaApi.on('reInit', recompute);
+    emblaApi.on('resize', recompute);
   }
 
   function emblaNext() {
@@ -24,6 +31,11 @@
   }
 </script>
 
+<div class="back-row">
+  <a href="/projects" class="back">
+    <span class="arrow">&lt;</span>Back to projects
+  </a>
+</div>
 <div class="head">
   <div class="row">
     <h1>{metadata.name}</h1>
@@ -48,15 +60,23 @@
   <div class="embla__container" class:loop>
     {#each metadata.images as image (image)}
       <div class="embla__slide" class:tall={metadata.aspect_ratio === 'tall'}>
-        <Image {image} alt={metadata.description} sizes="(min-width: 800px) 80vw, 100vw" />
+        <Image
+          {image}
+          alt={metadata.description}
+          sizes="(min-width: 800px) 80vw, 100vw"
+          --aspect-ratio={metadata.aspect_ratio === 'tall' ? '9/16' : '16/9'}
+        />
       </div>
     {/each}
   </div>
-  <button class="embla__prev" on:click={emblaPrev} aria-label="Previous image"
-    ><span>&lt;</span></button
-  >
-  <button class="embla__next" on:click={emblaNext} aria-label="Next image"><span>&gt;</span></button
-  >
+  {#if loop}
+    <button class="embla__prev" on:click={emblaPrev} aria-label="Previous image"
+      ><span>&lt;</span></button
+    >
+    <button class="embla__next" on:click={emblaNext} aria-label="Next image"
+      ><span>&gt;</span></button
+    >
+  {/if}
 </div>
 <main class="content">
   <svelte:component this={content} />
@@ -71,9 +91,16 @@
     @include page-container;
   }
 
+  .back-row {
+    @include page-container;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   .head {
     @include page-container;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
     padding-top: 0;
 
     a {
@@ -96,7 +123,7 @@
 
     .row {
       @include flex(row, null, center);
-      gap: $spacing-sm $spacing-3xl;
+      gap: $spacing-md $spacing-3xl;
 
       h1 {
         margin: 0 auto 0 0;
@@ -220,13 +247,14 @@
         gap: $spacing-md;
 
         h1 {
-          margin: $spacing-lg 0 $spacing-sm 0;
+          margin: 0 0 $spacing-sm 0;
           line-height: 1.3;
         }
       }
 
       .links {
         flex-wrap: wrap;
+        margin-bottom: $spacing-md;
       }
     }
   }

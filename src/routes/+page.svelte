@@ -1,8 +1,7 @@
 <script>
-  import Toggle from '$lib/components/Toggle.svelte';
   import pfpinDark from '$lib/assets/pfpin-dark.json?raw';
   import pfpinLight from '$lib/assets/pfpin-light.json?raw';
-  import { theme } from '$lib/js/theme';
+  import { theme, toggleTheme } from '$lib/js/theme';
   import { onMount } from 'svelte';
 
   let lottie;
@@ -46,8 +45,8 @@
 <main>
   <div class="container">
     <div class="row">
-      <h1>Tech Quests</h1>
-      <div class="pfpstart"></div>
+      <a href="/"><h1>Tech Quests</h1></a>
+      <button class="pfpstart" on:click={toggleTheme} aria-label="Toggle theme"></button>
     </div>
     <p>The saga of a SRE sharing his technological adventures.</p>
     <nav>
@@ -57,13 +56,15 @@
       <a class="nav" href="/blog">
         <span class="arrow">&nbsp;></span><span class="slash">/</span>Blog
       </a>
+      <a class="nav" href="/videos">
+        <span class="arrow">&nbsp;></span><span class="slash">/</span>Videos
+      </a>
       <a class="nav" href="/about">
         <span class="arrow">&nbsp;></span><span class="slash">/</span>About
       </a>
       <a class="nav" href="/contact">
         <span class="arrow">&nbsp;></span><span class="slash">/</span>Contact
       </a>
-      <Toggle />
     </nav>
   </div>
 </main>
@@ -83,10 +84,16 @@
   }
 
   .pfpstart {
-    width: $spacing-6xl;
-    height: $spacing-6xl;
-    margin-top: $spacing-xs;
-    margin-left: $spacing-base;
+    display: inline-flex;
+    height: $font-3xl;
+    aspect-ratio: 800 / 410;
+    background: none;
+    padding: 0;
+
+    :global(svg) {
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
 
   h1 {
@@ -112,15 +119,22 @@
   @media (max-width: $breakpoint-mobile) {
     nav {
       flex-direction: column;
-      gap: $spacing-sm;
+      gap: $spacing-md;
     }
     .row {
-      flex-direction: column-reverse;
-      gap: $spacing-sm;
-      align-items: flex-start;
+      gap: $spacing-lg;
+      align-items: center;
+    }
+    h1 {
+      font-size: $font-2xl;
     }
     .pfpstart {
-      visibility: hidden;
+      width: auto;
+      height: $font-2xl;
+      aspect-ratio: 800 / 410;
+      margin: 0;
+      flex-shrink: 0;
+      visibility: visible;
     }
   }
 </style>

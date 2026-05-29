@@ -1,5 +1,8 @@
 <script>
   import { onMount } from 'svelte';
+  import XIcon from '~icons/ph/x-logo';
+  import DiscordIcon from '~icons/ph/discord-logo';
+  import EnvelopeIcon from '~icons/ph/envelope';
 
   let status = 'Send ->';
   let nameInput;
@@ -48,13 +51,13 @@
   <h1>Contact</h1>
   <p>Ways to get in touch, in order from fastest to slowest.</p>
   <div class="info">
-    X <span class="sub">-></span>
+    <XIcon /> X <span class="sub">-></span>
     <a href="https://x.com/0xaanogueira" class="external" target="_blank" rel="noopener noreferrer"
       >0xaanogueira<span class="arrow">-></span>
     </a>
   </div>
   <div class="info">
-    Discord <span class="sub">-></span>
+    <DiscordIcon /> Discord <span class="sub">-></span>
     <a
       href="https://discord.com/users/aanogueira"
       class="external"
@@ -64,7 +67,7 @@
     </a>
   </div>
   <div class="info">
-    Email <span class="sub">-></span>
+    <EnvelopeIcon /> Email <span class="sub">-></span>
     <a href="mailto:aanogueira@protonmail.com" class="external"
       >aanogueira@protonmail.com<span class="arrow">-></span>
     </a>
@@ -205,6 +208,12 @@
     &:hover {
       border: 2px solid var(--txt-2);
     }
+  }
+
+  .info :global(svg) {
+    vertical-align: -0.15em;
+    margin-right: 0.5ch;
+    font-size: 0.95em;
   }
 
   @media (max-width: $breakpoint-mobile) {

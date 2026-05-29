@@ -46,7 +46,7 @@ html {
   --yellow-light: hsl(32, 77%, 52%);
 
   font-family: $font-family-base;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 :root {
@@ -65,7 +65,7 @@ html {
   --yellow: var(--yellow-dark);
 
   font-family: $font-family-base;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 @media (prefers-color-scheme: light) {
@@ -289,11 +289,11 @@ div.description {
 
 .pfp {
   border-radius: 50%;
-  transition: transform 1.5s;
+  background: none;
+  padding: 0;
 
   &:hover {
     cursor: pointer;
-    transform: rotate(540deg);
   }
 }
 
@@ -387,6 +387,27 @@ a.link {
       opacity: 1;
       transform: translatey(0.05ch) translatex(-1.6ch) scale(1, 1) rotate(64deg);
     }
+  }
+}
+
+// Back link (used on detail pages to return to section index)
+a.back {
+  display: inline-block;
+  font-family: $font-family-mono;
+  font-size: $font-base;
+  font-weight: 400;
+  color: var(--txt);
+  text-decoration: none;
+  margin: $spacing-xl 0 $spacing-lg 0;
+
+  .arrow {
+    display: inline-block;
+    margin-right: 0.4ch;
+    transition: transform $transition-fast;
+  }
+
+  &:hover .arrow {
+    transform: translateX(-0.3em);
   }
 }
 

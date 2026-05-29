@@ -1,9 +1,22 @@
+<script>
+  import GithubIcon from '~icons/ph/github-logo';
+  import LinkedinIcon from '~icons/ph/linkedin-logo';
+  import MediumIcon from '~icons/ph/medium-logo';
+  import DevToIcon from '~icons/ph/dev-to-logo';
+  import CoffeeIcon from '~icons/ph/coffee';
+  import RssIcon from '~icons/ph/rss';
+</script>
+
 <main>
   <h1>About</h1>
   <p>
-    Howdy! I'm a SRE living in Portugal who goes by the name aanogueira online. I'm interested in
-    tech... that's about it.
+    Howdy! I'm <strong>Andre Nogueira</strong> – a Portugal-based Site Reliability Engineer who goes
+    by <strong>aanogueira</strong> online. <strong>Tech Quests</strong> is where I write about the
+    technical work that doesn't fit on a CV: homelab adventures, SRE rabbit-holes, platform
+    engineering experiments, the kind of projects that start with
+    <em>"what if I just tried..."</em>.
   </p>
+  <p>Long-form posts, hands-on projects, and the occasional video. Best paired with coffee.</p>
   <h2>Links</h2>
   <ul class="link-list">
     <li>
@@ -12,7 +25,7 @@
         class="external"
         target="_blank"
         rel="noopener noreferrer"
-        >Github profile<span class="arrow">-></span>
+        ><GithubIcon /> Github profile<span class="arrow">-></span>
       </a>
     </li>
     <li>
@@ -21,7 +34,7 @@
         class="external"
         target="_blank"
         rel="noopener noreferrer"
-        >Linkedin profile<span class="arrow">-></span>
+        ><LinkedinIcon /> Linkedin profile<span class="arrow">-></span>
       </a>
     </li>
     <li>
@@ -30,12 +43,12 @@
         class="external"
         target="_blank"
         rel="noopener noreferrer"
-        >Medium profile<span class="arrow">-></span>
+        ><MediumIcon /> Medium profile<span class="arrow">-></span>
       </a>
     </li>
     <li>
       <a href="https://dev.to/aanogueira" class="external" target="_blank" rel="noopener noreferrer"
-        >Dev.to profile<span class="arrow">-></span>
+        ><DevToIcon /> Dev.to profile<span class="arrow">-></span>
       </a>
     </li>
     <li>
@@ -44,7 +57,7 @@
         class="external"
         target="_blank"
         rel="noopener noreferrer"
-        >Buy me a coffee<span class="arrow">-></span>
+        ><CoffeeIcon /> Buy me a coffee<span class="arrow">-></span>
       </a>
     </li>
   </ul>
@@ -53,17 +66,7 @@
   <ul class="link-list">
     <li>
       <a href="/rss.xml" class="external" target="_blank" rel="noopener noreferrer"
-        >All content feed<span class="arrow">-></span></a
-      >
-    </li>
-    <li>
-      <a href="/blog/rss.xml" class="external" target="_blank" rel="noopener noreferrer"
-        >Blog posts only<span class="arrow">-></span></a
-      >
-    </li>
-    <li>
-      <a href="/projects/rss.xml" class="external" target="_blank" rel="noopener noreferrer"
-        >Projects only<span class="arrow">-></span></a
+        ><RssIcon /> All content feed<span class="arrow">-></span></a
       >
     </li>
   </ul>
@@ -116,7 +119,7 @@
   </div>
   <div class="info">
     <span class="main">Fonts</span> <span class="sub">-></span>
-    Fira <span class="sub">/</span>
+    Inter <span class="sub">/</span>
     Fira Mono
   </div>
   <div class="info">
@@ -208,5 +211,12 @@
 
   h1 {
     margin-bottom: $spacing-3xl;
+  }
+
+  a.external :global(svg) {
+    vertical-align: -0.15em;
+    margin-right: 0.5ch;
+    font-size: 0.95em;
+    color: var(--txt);
   }
 </style>

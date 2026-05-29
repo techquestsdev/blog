@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["293M4MWUJC.dev.techquests.unkee"],
+        "components": [
+          { "/": "/unkee/save", "comment": "AutoFill extension hands off the save flow" },
+          { "/": "/unkee/save/*", "comment": "AutoFill extension hands off the save flow" },
+          { "/": "/unkee/autofill", "comment": "AutoFill unlock-stub hands off after Face ID" },
+          { "/": "/unkee/autofill/*", "comment": "AutoFill unlock-stub hands off after Face ID" },
+          { "/": "/unkee/open", "comment": "Spotlight tap / Siri intent / App Shortcut" },
+          { "/": "/unkee/open/*", "comment": "Spotlight tap / Siri intent / App Shortcut" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["293M4MWUJC.dev.techquests.unkee"]
+  }
+}

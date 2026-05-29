@@ -9,7 +9,11 @@
           { "/": "/unkee/autofill", "comment": "AutoFill unlock-stub hands off after Face ID" },
           { "/": "/unkee/autofill/*", "comment": "AutoFill unlock-stub hands off after Face ID" },
           { "/": "/unkee/open", "comment": "Spotlight tap / Siri intent / App Shortcut" },
-          { "/": "/unkee/open/*", "comment": "Spotlight tap / Siri intent / App Shortcut" }
+          { "/": "/unkee/open/*", "comment": "Spotlight tap / Siri intent / App Shortcut" },
+          { "/": "/unkee/passkey-create", "comment": "Passkey registration ceremony" },
+          { "/": "/unkee/passkey-create/*", "comment": "Passkey registration ceremony" },
+          { "/": "/unkee/passkey-get", "comment": "Passkey assertion ceremony" },
+          { "/": "/unkee/passkey-get/*", "comment": "Passkey assertion ceremony" }
         ]
       }
     ]

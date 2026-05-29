@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!-- saved from url=(0071)file:///Users/andre.nogueira/projects/blog/docs/typography-preview.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Typography preview — techquests.dev</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./Typography preview — techquests.dev_files/css2" rel="stylesheet">
+    <style>
+      :root {
+        --bg-dark: hsl(220, 10%, 8%);
+        --bg-2-dark: hsl(220, 10%, 11%);
+        --bg-3-dark: hsl(220, 10%, 16%);
+        --txt-3-dark: hsl(220, 11%, 35%);
+        --txt-2-dark: hsl(220, 11%, 60%);
+        --txt-dark: hsl(220, 30%, 80%);
+        --txt-0-dark: hsl(220, 45%, 90%);
+        --green-dark: hsl(189, 41%, 68%);
+        --salmon-dark: hsl(1, 52%, 79%);
+        --yellow-dark: hsl(34, 85%, 67%);
+
+        --bg-light: hsl(30, 10%, 92%);
+        --bg-2-light: hsl(40, 11%, 89%);
+        --bg-3-light: hsl(45, 10%, 84%);
+        --txt-3-light: hsl(39, 11%, 65%);
+        --txt-2-light: hsl(40.9, 11%, 40%);
+        --txt-light: hsl(40, 29%, 20%);
+        --txt-0-light: hsl(39.1, 45%, 10%);
+        --green-light: hsl(189, 34%, 41%);
+        --salmon-light: hsl(1, 49%, 61%);
+        --yellow-light: hsl(32, 77%, 52%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #111;
+        color: #ddd;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      .controls {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0a0a0a;
+        border-bottom: 1px solid #222;
+        padding: 1rem 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .controls h1 {
+        font-size: 1rem;
+        margin: 0;
+        color: #999;
+        font-weight: 500;
+      }
+
+      .controls button {
+        background: #222;
+        color: #ddd;
+        border: 1px solid #333;
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.85rem;
+      }
+
+      .controls button.active {
+        background: #2563eb;
+        border-color: #3b82f6;
+        color: white;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: #222;
+      }
+
+      @media (max-width: 1100px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      .panel-header {
+        padding: 0.75rem 1.5rem;
+        background: rgba(0, 0, 0, 0.4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #888;
+        position: sticky;
+        top: 73px;
+        z-index: 5;
+      }
+
+      .content {
+        padding: 2.5rem 2rem 6rem;
+        max-width: 53rem;
+        margin: 0 auto;
+      }
+
+      /* === Theme application === */
+      .theme-dark {
+        background: var(--bg-dark);
+        color: var(--txt-dark);
+      }
+      .theme-dark h1,
+      .theme-dark h2,
+      .theme-dark h3 {
+        color: var(--txt-0-dark);
+      }
+      .theme-dark .meta {
+        color: var(--txt-2-dark);
+      }
+      .theme-dark a {
+        color: var(--green-dark);
+      }
+      .theme-dark code {
+        background: var(--bg-2-dark);
+        color: var(--salmon-dark);
+      }
+      .theme-dark pre {
+        background: var(--bg-2-dark);
+        border: 1px solid var(--bg-3-dark);
+      }
+      .theme-dark .tag {
+        background: var(--bg-3-dark);
+        color: var(--yellow-dark);
+      }
+      .theme-dark blockquote {
+        border-left-color: var(--bg-3-dark);
+        color: var(--txt-2-dark);
+      }
+      .theme-dark hr {
+        border-top-color: var(--bg-3-dark);
+      }
+      .theme-dark .panel-header {
+        background: var(--bg-2-dark);
+      }
+
+      .theme-light {
+        background: var(--bg-light);
+        color: var(--txt-light);
+      }
+      .theme-light h1,
+      .theme-light h2,
+      .theme-light h3 {
+        color: var(--txt-0-light);
+      }
+      .theme-light .meta {
+        color: var(--txt-2-light);
+      }
+      .theme-light a {
+        color: var(--green-light);
+      }
+      .theme-light code {
+        background: var(--bg-2-light);
+        color: var(--salmon-light);
+      }
+      .theme-light pre {
+        background: var(--bg-2-light);
+        border: 1px solid var(--bg-3-light);
+      }
+      .theme-light .tag {
+        background: var(--bg-3-light);
+        color: var(--txt-light);
+      }
+      .theme-light blockquote {
+        border-left-color: var(--bg-3-light);
+        color: var(--txt-2-light);
+      }
+      .theme-light hr {
+        border-top-color: var(--bg-3-light);
+      }
+      .theme-light .panel-header {
+        background: var(--bg-2-light);
+        color: var(--txt-2-light);
+      }
+
+      /* === Variant A: current (all Fira Code) === */
+      .variant-current {
+        font-family: 'Fira Code', monospace;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .variant-current h1 {
+        font-family: 'Fira Code', monospace;
+        font-size: 2.4rem;
+        line-height: 1.15;
+        margin: 0 0 0.5rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .variant-current h2 {
+        font-family: 'Fira Code', monospace;
+        font-size: 1.6rem;
+        line-height: 1.2;
+        margin: 2.5rem 0 1rem;
+        font-weight: 600;
+      }
+      .variant-current h3 {
+        font-family: 'Fira Code', monospace;
+        font-size: 1.2rem;
+        line-height: 1.3;
+        margin: 1.75rem 0 0.75rem;
+        font-weight: 600;
+      }
+      .variant-current p {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.95rem;
+        line-height: 1.75;
+        margin: 1rem 0;
+      }
+      .variant-current code,
+      .variant-current pre {
+        font-family: 'Fira Code', monospace;
+      }
+
+      /* === Variant B: proposed (Space Grotesk + JetBrains Mono) === */
+      .variant-proposed {
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        font-size: 17px;
+        line-height: 1.65;
+      }
+      .variant-proposed h1 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2.6rem;
+        line-height: 1.15;
+        margin: 0 0 0.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .variant-proposed h2 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.7rem;
+        line-height: 1.2;
+        margin: 2.5rem 0 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .variant-proposed h3 {
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        font-size: 1.3rem;
+        line-height: 1.3;
+        margin: 1.75rem 0 0.75rem;
+        font-weight: 700;
+      }
+      .variant-proposed p {
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        font-size: 1.0625rem;
+        line-height: 1.7;
+        margin: 1rem 0;
+      }
+      .variant-proposed code,
+      .variant-proposed pre {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .variant-proposed .meta,
+      .variant-proposed .tag {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* === Shared element styling === */
+      .meta {
+        font-size: 0.85rem;
+        margin: 0.5rem 0 1.5rem;
+        opacity: 0.85;
+      }
+
+      .tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+        margin-right: 0.4rem;
+      }
+
+      a {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+      }
+
+      code {
+        padding: 0.1em 0.35em;
+        border-radius: 3px;
+        font-size: 0.875em;
+      }
+
+      pre {
+        padding: 1rem 1.25rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        line-height: 1.55;
+        font-size: 0.875rem;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+        font-size: inherit;
+      }
+
+      blockquote {
+        border-left: 3px solid;
+        padding: 0.25rem 0 0.25rem 1.25rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+      }
+
+      ul {
+        padding-left: 1.5rem;
+      }
+
+      li {
+        margin: 0.4rem 0;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid;
+        margin: 2.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <h1>Typography preview · techquests.dev</h1>
+      <div>
+        <button data-theme="dark" class="active">Dark</button>
+        <button data-theme="light" class="">Light</button>
+      </div>
+      <div style="margin-left: auto; color: #666; font-size: 0.8rem">
+        Left = current (all Fira Code) · Right = proposed (Space Grotesk + JetBrains Mono)
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel variant-current theme-dark" id="left">
+        <div class="panel-header">Current — Fira Code everywhere</div>
+        <article class="content">
+          <span class="tag">platform</span><span class="tag">kubernetes</span>
+          <h1>Cutting cold-start latency on a 12-cluster GKE fleet</h1>
+          <div class="meta">Published 2026-04-18 · 11 min read · by Andre Nogueira</div>
+
+          <p>
+            Cold starts are the kind of problem you only notice when something
+            you didn't write breaks. Last quarter a payments-adjacent service
+            started missing its p99 latency target during deploy windows, and
+            the trail led somewhere I didn't expect: not the application code,
+            not the JVM, but the way our autoscaler interpreted scale-from-zero.
+          </p>
+
+          <h2>The shape of the regression</h2>
+          <p>
+            We run a multi-tenant control plane across twelve regional GKE
+            clusters. Each cluster runs an instance of <code>conductor</code>,
+            a small Go service that fans out work to per-tenant pools. When a
+            tenant goes idle, its pool scales to zero. When traffic returns,
+            the autoscaler is supposed to bring it back inside 800ms.
+          </p>
+
+          <p>
+            It used to. Then it didn't, and nobody had touched the code for
+            six weeks. Read on if you've ever stared at a graph and asked
+            <em>why now?</em>
+          </p>
+
+          <h3>Reproducing locally</h3>
+          <p>
+            The fastest way to make this concrete was a tiny harness that
+            drained a pool, waited, and timed the recovery. Skip the timing
+            decorators — just call the thing and stopwatch it.
+          </p>
+
+          <pre><code>func TestColdStart(t *testing.T) {
+    ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+    defer cancel()
+
+    pool := conductor.NewPool(testTenant)
+    pool.ScaleToZero(ctx)
+
+    start := time.Now()
+    if err := pool.Submit(ctx, &amp;Job{Kind: "ping"}); err != nil {
+        t.Fatalf("submit: %v", err)
+    }
+    elapsed := time.Since(start)
+
+    if elapsed &gt; 800*time.Millisecond {
+        t.Errorf("cold-start regression: %v &gt; 800ms", elapsed)
+    }
+}</code></pre>
+
+          <blockquote>
+            "Every reliable system has a story about the day its assumptions
+            stopped being true."
+          </blockquote>
+
+          <h3>What we changed</h3>
+          <ul>
+            <li>Pinned the autoscaler to a single profile per workload class</li>
+            <li>
+              Added a <code>warmup</code> hint when a tenant exits the idle
+              window
+            </li>
+            <li>
+              Stopped using <code>kubectl rollout restart</code> as a debugging
+              tool in production
+            </li>
+          </ul>
+
+          <hr>
+
+          <p>
+            Full writeup with traces and reproduction repo on
+            <a href="file:///Users/andre.nogueira/projects/blog/docs/typography-preview.html#">github.com/aanogueira/coldstart-2026</a>.
+          </p>
+        </article>
+      </div>
+
+      <div class="panel variant-proposed theme-dark" id="right">
+        <div class="panel-header">Proposed — Space Grotesk body, JetBrains Mono titles &amp; code</div>
+        <article class="content">
+          <span class="tag">platform</span><span class="tag">kubernetes</span>
+          <h1>Cutting cold-start latency on a 12-cluster GKE fleet</h1>
+          <div class="meta">Published 2026-04-18 · 11 min read · by Andre Nogueira</div>
+
+          <p>
+            Cold starts are the kind of problem you only notice when something
+            you didn't write breaks. Last quarter a payments-adjacent service
+            started missing its p99 latency target during deploy windows, and
+            the trail led somewhere I didn't expect: not the application code,
+            not the JVM, but the way our autoscaler interpreted scale-from-zero.
+          </p>
+
+          <h2>The shape of the regression</h2>
+          <p>
+            We run a multi-tenant control plane across twelve regional GKE
+            clusters. Each cluster runs an instance of <code>conductor</code>,
+            a small Go service that fans out work to per-tenant pools. When a
+            tenant goes idle, its pool scales to zero. When traffic returns,
+            the autoscaler is supposed to bring it back inside 800ms.
+          </p>
+
+          <p>
+            It used to. Then it didn't, and nobody had touched the code for
+            six weeks. Read on if you've ever stared at a graph and asked
+            <em>why now?</em>
+          </p>
+
+          <h3>Reproducing locally</h3>
+          <p>
+            The fastest way to make this concrete was a tiny harness that
+            drained a pool, waited, and timed the recovery. Skip the timing
+            decorators — just call the thing and stopwatch it.
+          </p>
+
+          <pre><code>func TestColdStart(t *testing.T) {
+    ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
+    defer cancel()
+
+    pool := conductor.NewPool(testTenant)
+    pool.ScaleToZero(ctx)
+
+    start := time.Now()
+    if err := pool.Submit(ctx, &amp;Job{Kind: "ping"}); err != nil {
+        t.Fatalf("submit: %v", err)
+    }
+    elapsed := time.Since(start)
+
+    if elapsed &gt; 800*time.Millisecond {
+        t.Errorf("cold-start regression: %v &gt; 800ms", elapsed)
+    }
+}</code></pre>
+
+          <blockquote>
+            "Every reliable system has a story about the day its assumptions
+            stopped being true."
+          </blockquote>
+
+          <h3>What we changed</h3>
+          <ul>
+            <li>Pinned the autoscaler to a single profile per workload class</li>
+            <li>
+              Added a <code>warmup</code> hint when a tenant exits the idle
+              window
+            </li>
+            <li>
+              Stopped using <code>kubectl rollout restart</code> as a debugging
+              tool in production
+            </li>
+          </ul>
+
+          <hr>
+
+          <p>
+            Full writeup with traces and reproduction repo on
+            <a href="file:///Users/andre.nogueira/projects/blog/docs/typography-preview.html#">github.com/aanogueira/coldstart-2026</a>.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <script>
+      const buttons = document.querySelectorAll('[data-theme]');
+      const left = document.getElementById('left');
+      const right = document.getElementById('right');
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const theme = btn.dataset.theme;
+          buttons.forEach((b) => b.classList.toggle('active', b === btn));
+          [left, right].forEach((p) => {
+            p.classList.remove('theme-dark', 'theme-light');
+            p.classList.add('theme-' + theme);
+          });
+        });
+      });
+    </script>
+  
+
+</body></html>

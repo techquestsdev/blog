@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "dev.techquests.unkee",
+      "sha256_cert_fingerprints": [
+        "CF:C9:F2:6F:6C:97:6C:42:6D:69:42:EF:2D:4C:21:79:78:E9:AB:48:A8:8E:9A:E3:CF:E8:2D:3A:A6:9B:5C:9C",
+        "DE:17:CB:F0:80:9E:D4:49:60:26:18:A6:39:8B:1F:8F:BA:E9:66:67:16:BA:C2:C8:49:05:9F:35:AE:F3:FC:E7"
+      ]
+    }
+  }
+]

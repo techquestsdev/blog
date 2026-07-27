@@ -73,9 +73,12 @@
     }
   }
 
+  // The mark is small and decorative. Keep a gentle (slower) trace alive even
+  // under reduce-motion so the logo never reads as broken/static — the global
+  // reduce-motion reset in app.scss would otherwise freeze it.
   @media (prefers-reduced-motion: reduce) {
     .trace {
-      display: none;
+      animation: flow 7s linear infinite !important;
     }
   }
 </style>

@@ -7,17 +7,10 @@
   import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
   import { toggleTheme } from '$lib/js/theme.js';
+  import { pages } from '$lib/js/nav.js';
   import { fly } from 'svelte/transition';
 
   export let data;
-
-  const pages = [
-    { name: 'Projects', path: '/projects' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Videos', path: '/videos' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' }
-  ];
 
   let prevTwoPages = ['', ''];
   $: {
@@ -93,9 +86,11 @@
       </button>
     </div>
     <nav>
-      {#each pages as { name, path } (path)}
+      {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow">&nbsp;></span><span class="slash">/</span>{name}
+          <span class="arrow">&nbsp;></span><span class="slash">/</span>{label}<span
+            class="path">{path}</span
+          >
         </a>
       {/each}
     </nav>
@@ -159,6 +154,12 @@
       a {
         font-size: $font-base;
         font-family: $font-family-mono;
+
+        .path {
+          color: var(--txt-3);
+          margin-left: 0.4ch;
+          font-size: 0.8em;
+        }
       }
     }
   }

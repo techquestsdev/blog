@@ -48,7 +48,7 @@
 </script>
 
 <main>
-  <h1>Contact</h1>
+  <h1>Send a Raven</h1>
   <p>Ways to get in touch, in order from fastest to slowest.</p>
   <div class="info">
     <XIcon /> X <span class="sub">-></span>

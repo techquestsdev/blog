@@ -11,7 +11,7 @@
 
 <main>
   <div class="title-row">
-    <h1>Videos <span class="count">[{data.videos.length}]</span></h1>
+    <h1>Sagas <span class="count">[{data.videos.length}]</span></h1>
     <a
       href="/videos/rss.xml"
       class="rss-link"

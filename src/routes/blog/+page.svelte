@@ -7,7 +7,7 @@
 
 <main>
   <div class="title-row">
-    <h1>Blog <span class="count">[{data.posts.length}]</span></h1>
+    <h1>Chronicles <span class="count">[{data.posts.length}]</span></h1>
     <a
       href="/blog/rss.xml"
       class="rss-link"

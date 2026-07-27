@@ -7,7 +7,7 @@
 
 <main>
   <div class="title-row">
-    <h1>Projects <span class="count">[{data.posts.length}]</span></h1>
+    <h1>Quests <span class="count">[{data.posts.length}]</span></h1>
     <a
       href="/projects/rss.xml"
       class="rss-link"

@@ -2,6 +2,7 @@
   import pfpinDark from '$lib/assets/pfpin-dark.json?raw';
   import pfpinLight from '$lib/assets/pfpin-light.json?raw';
   import { theme, toggleTheme } from '$lib/js/theme';
+  import { pages } from '$lib/js/nav.js';
   import { onMount } from 'svelte';
 
   let lottie;
@@ -50,21 +51,11 @@
     </div>
     <p>The saga of a SRE sharing his technological adventures.</p>
     <nav>
-      <a class="nav" href="/projects">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Projects
-      </a>
-      <a class="nav" href="/blog">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Blog
-      </a>
-      <a class="nav" href="/videos">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Videos
-      </a>
-      <a class="nav" href="/about">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>About
-      </a>
-      <a class="nav" href="/contact">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Contact
-      </a>
+      {#each pages as { label, path } (path)}
+        <a class="nav" href={path}>
+          <span class="arrow">&nbsp;></span><span class="slash">/</span>{label}
+        </a>
+      {/each}
     </nav>
   </div>
 </main>

@@ -21,12 +21,14 @@
       />
       <path
         class="accent teal"
+        pathLength="1"
         stroke-width="20"
         d="M-193.997 123.007c-20.015 4.767-37.545 2.732-52.218 1.222-15.169-1.561-31.594-7.935-46.919-18.187"
         transform="translate(441.756 211.719)"
       />
       <path
         class="accent amber"
+        pathLength="1"
         stroke-width="20"
         d="M131.322-193.41c14.443-2.1 27.151-2.02 37.843-1.981 41.795.153 90.727 22.932 127.642 61.101"
         transform="translate(441.756 211.719)"
@@ -61,11 +63,18 @@
     animation: draw 3.5s ease-in-out infinite;
   }
 
+  .accent {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 3.5s ease-in-out infinite;
+  }
   .accent.teal {
     stroke: var(--green);
+    animation-delay: 0.25s;
   }
   .accent.amber {
     stroke: var(--yellow);
+    animation-delay: 0.5s;
   }
 
   @keyframes draw {
@@ -81,7 +90,8 @@
   // under reduce-motion so the logo never reads as broken/static — the global
   // reduce-motion reset in app.scss would otherwise freeze it.
   @media (prefers-reduced-motion: reduce) {
-    .trace {
+    .trace,
+    .accent {
       animation: draw 6s ease-in-out infinite !important;
     }
   }

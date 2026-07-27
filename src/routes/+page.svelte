@@ -13,9 +13,8 @@
       >
     </div>
     <p>
-      ▸ field notes of an SRE, logged from the tech wilds — <span class="m"
-        >no dragons, just YAML</span
-      >.
+      <span aria-hidden="true">▸</span> field notes of an SRE, logged from the tech wilds —
+      <span class="m">no dragons, just YAML</span>.
     </p>
     <nav>
       {#each pages as { label, path } (path)}

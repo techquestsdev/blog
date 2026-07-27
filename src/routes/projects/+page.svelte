@@ -25,7 +25,7 @@
       <a href={'/projects/' + post.slug} class="link">
         {#if statusRune(post.status)}
           {@const rune = statusRune(post.status)}
-          <div class="state">{rune.glyph} {rune.label}</div>
+          <div class="state"><span aria-hidden="true">{rune.glyph}</span> {rune.label}</div>
         {/if}
         <h2>
           {post.name}<span class="arrow" aria-hidden="true">&nbsp;></span><span

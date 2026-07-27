@@ -1,13 +1,10 @@
 function stripFrontmatter(text) {
-  return text.replace(/^﻿?---[\s\S]*?---/, '');
+  return text.replace(/^\uFEFF?---[\s\S]*?---/, '');
 }
 
 export function countWords(text) {
   if (!text) return 0;
-  return stripFrontmatter(text)
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length;
+  return stripFrontmatter(text).trim().split(/\s+/).filter(Boolean).length;
 }
 
 export function readingJourney(text, wpm = 200) {

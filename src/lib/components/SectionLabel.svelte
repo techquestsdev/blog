@@ -2,7 +2,10 @@
   export let label = '';
 </script>
 
-<div class="section-label"><span class="glyph" aria-hidden="true">❖</span>{label}<span class="rule" aria-hidden="true"></span></div>
+<div class="section-label">
+  <span class="glyph" aria-hidden="true">❖</span>{label}<span class="rule" aria-hidden="true"
+  ></span>
+</div>
 
 <style lang="scss">
   .section-label {

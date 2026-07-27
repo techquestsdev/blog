@@ -28,7 +28,10 @@
             aria-hidden="true">&nbsp;></span
           ><span class="slash" aria-hidden="true">/</span>
         </h2>
-        <div class="date">{formatDate(post.date)}{#if post.journey} · <span class="journey">{post.journey}</span>{/if}</div>
+        <div class="date">
+          {formatDate(post.date)}{#if post.journey}
+            · <span class="journey">{post.journey}</span>{/if}
+        </div>
         <div class="description">{post.description}</div>
       </a>
     {/each}

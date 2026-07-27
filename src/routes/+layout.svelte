@@ -92,9 +92,10 @@
     <nav>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow" aria-hidden="true">&nbsp;></span><span class="slash" aria-hidden="true">/</span>{label}<span
-            class="path" aria-hidden="true">{path}</span
-          >
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span
+            class="slash"
+            aria-hidden="true">/</span
+          >{label}<span class="path" aria-hidden="true">{path}</span>
         </a>
       {/each}
     </nav>
@@ -125,7 +126,9 @@
 {#if $page.url.pathname !== '/'}
   <footer class="site-footer">
     <span>⚔ forged in vim &amp; regret</span>
-    <a class="external" href="/contact">send a raven <span class="arrow" aria-hidden="true">❯</span></a>
+    <a class="external" href="/contact"
+      >send a raven <span class="arrow" aria-hidden="true">❯</span></a
+    >
   </footer>
 {/if}
 

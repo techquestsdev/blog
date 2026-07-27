@@ -115,8 +115,7 @@
           data-placeholder="Hi there! I have a question about..."
           required
           rows="4"
-          bind:this={messageInput}
-        ></textarea>
+          bind:this={messageInput}></textarea>
       </label>
     </div>
     <div class="field full">

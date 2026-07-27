@@ -8,13 +8,22 @@
   <div class="container">
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
-      <button class="pfpstart" on:click={toggleThemeWithBurst} aria-label="Toggle theme"><NavLogo size="4rem" /></button>
+      <button class="pfpstart" on:click={toggleThemeWithBurst} aria-label="Toggle theme"
+        ><NavLogo size="4rem" /></button
+      >
     </div>
-    <p>▸ field notes of an SRE, logged from the tech wilds — <span class="m">no dragons, just YAML</span>.</p>
+    <p>
+      ▸ field notes of an SRE, logged from the tech wilds — <span class="m"
+        >no dragons, just YAML</span
+      >.
+    </p>
     <nav>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow" aria-hidden="true">&nbsp;></span><span class="slash" aria-hidden="true">/</span>{label}
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span
+            class="slash"
+            aria-hidden="true">/</span
+          >{label}
         </a>
       {/each}
     </nav>

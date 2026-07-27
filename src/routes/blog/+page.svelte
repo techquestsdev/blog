@@ -28,11 +28,11 @@
             aria-hidden="true">&nbsp;></span
           ><span class="slash" aria-hidden="true">/</span>
         </h2>
-        <div class="date">
-          {formatDate(post.date)}{#if post.journey}
-            · <span class="journey">{post.journey}</span>{/if}
-        </div>
+        <div class="date">{formatDate(post.date)}</div>
         <div class="description">{post.description}</div>
+        {#if post.journey}
+          <div class="journey">{post.journey}</div>
+        {/if}
       </a>
     {/each}
   </div>
@@ -104,7 +104,11 @@
   }
 
   .journey {
-    color: var(--yellow);
+    grid-area: journey;
+    font-family: $font-family-mono;
+    font-size: $font-xs;
+    color: var(--txt-3);
+    margin-top: $spacing-2xs;
   }
 
   a {
@@ -112,7 +116,8 @@
     grid-template-columns: auto 1fr;
     grid-template-areas:
       'date title'
-      '. description';
+      '. description'
+      '. journey';
     justify-content: left;
     gap: $spacing-md $spacing-3xl;
   }
@@ -131,7 +136,8 @@
       grid-template-areas:
         'date'
         'title'
-        'description';
+        'description'
+        'journey';
       gap: $spacing-xs;
 
       .description {

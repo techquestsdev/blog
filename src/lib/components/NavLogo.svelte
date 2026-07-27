@@ -48,40 +48,38 @@
     }
   }
 
-  // Faint full outline so the mark is always legible under the animated stroke.
+  // Subtle, theme-adaptive outline so the shape stays legible while the colored
+  // strokes carry the motion. --txt-3 shifts with the active light/dark theme.
   .base {
-    stroke: var(--txt-2);
-    opacity: 0.45;
+    stroke: var(--txt-3);
   }
 
-  // The loop continuously draws itself and flows on — a lively "endless quest".
+  // A green highlight continuously flowing around the loop.
   // pathLength=1 makes the dash math resolution-independent.
   .trace {
     stroke: var(--green);
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw 3.5s ease-in-out infinite;
+    stroke-dasharray: 0.5 0.5;
+    stroke-dashoffset: 0;
+    animation: flow 2.4s linear infinite;
   }
 
+  // The two accent flourishes ride the same flow, offset in phase, for extra pop.
   .accent {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw 3.5s ease-in-out infinite;
+    stroke-dasharray: 0.6 0.4;
+    stroke-dashoffset: 0;
+    animation: flow 2.4s linear infinite;
   }
   .accent.teal {
     stroke: var(--green);
-    animation-delay: 0.25s;
+    animation-delay: -0.4s;
   }
   .accent.amber {
     stroke: var(--yellow);
-    animation-delay: 0.5s;
+    animation-delay: -0.9s;
   }
 
-  @keyframes draw {
-    0% {
-      stroke-dashoffset: 1;
-    }
-    100% {
+  @keyframes flow {
+    to {
       stroke-dashoffset: -1;
     }
   }
@@ -92,7 +90,7 @@
   @media (prefers-reduced-motion: reduce) {
     .trace,
     .accent {
-      animation: draw 6s ease-in-out infinite !important;
+      animation: flow 4s linear infinite !important;
     }
   }
 </style>

@@ -11,6 +11,7 @@
   import { toggleThemeWithBurst } from '$lib/js/theme.js';
   import { pages } from '$lib/js/nav.js';
   import { fly } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
   export let data;
 
@@ -49,8 +50,8 @@
     const yDiff = currDepth - prevDepth;
 
     // Ensure we don't return NaN values
-    const xValue = isNaN(xDiff) ? 0 : xDiff * 20;
-    const yValue = isNaN(yDiff) ? 0 : yDiff * 20;
+    const xValue = isNaN(xDiff) ? 0 : xDiff * 12;
+    const yValue = isNaN(yDiff) ? 0 : yDiff * 12;
 
     // Return numeric values in pixels for the fly transition
     // Apply direction for in vs out transitions
@@ -111,12 +112,14 @@
     <div
       class="transition"
       in:fly={{
-        duration: 260,
-        delay: 60,
+        duration: 340,
+        delay: 90,
+        easing: quintOut,
         ...xy(data.pathname)
       }}
       out:fly={{
-        duration: 150,
+        duration: 180,
+        easing: quintOut,
         ...xy(data.pathname, false)
       }}
     >

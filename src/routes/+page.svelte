@@ -85,22 +85,22 @@
   .row,
   p,
   nav {
-    animation: rise 0.7s ease both;
+    animation: rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .row {
-    animation-delay: 0.05s;
+    animation-delay: 0.1s;
   }
   p {
-    animation-delay: 0.15s;
+    animation-delay: 0.28s;
   }
   nav {
-    animation-delay: 0.25s;
+    animation-delay: 0.46s;
   }
 
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;

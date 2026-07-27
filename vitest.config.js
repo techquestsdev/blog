@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { enhancedImages } from '@sveltejs/enhanced-img';
+import { svelteTesting } from '@testing-library/svelte/vite';
 import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
@@ -9,7 +10,8 @@ export default defineConfig({
     sveltekit(),
     Icons({
       compiler: 'svelte'
-    })
+    }),
+    svelteTesting()
   ],
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}'],

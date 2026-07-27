@@ -23,4 +23,24 @@ describe('AsciiField', () => {
     expect(canvas).toBeTruthy();
     expect(canvas.getAttribute('aria-hidden')).toBe('true');
   });
+
+  it('repaints a static frame on resize under reduced motion', () => {
+    // reduced motion on -> no rAF loop; resize must still repaint.
+    const ctx = {
+      setTransform: vi.fn(),
+      clearRect: vi.fn(),
+      fillText: vi.fn(),
+      fillRect: vi.fn(),
+      scale: vi.fn(),
+      fillStyle: '',
+      font: ''
+    };
+    HTMLCanvasElement.prototype.getContext = vi.fn(() => ctx);
+    window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn() });
+
+    render(AsciiField);
+    ctx.clearRect.mockClear();
+    window.dispatchEvent(new Event('resize'));
+    expect(ctx.clearRect).toHaveBeenCalled();
+  });
 });

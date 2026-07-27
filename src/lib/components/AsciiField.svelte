@@ -35,6 +35,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     w = rect.width;
     h = rect.height;
+    if (reduced) draw(lastT);
   }
 
   function draw(t) {

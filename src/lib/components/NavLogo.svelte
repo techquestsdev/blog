@@ -46,18 +46,19 @@
     }
   }
 
-  // Full mark, always visible.
+  // Faint full outline so the mark is always legible under the animated stroke.
   .base {
-    stroke: var(--txt-0);
+    stroke: var(--txt-2);
+    opacity: 0.45;
   }
 
-  // A bright segment that continuously travels around the infinity loop —
-  // "the endless quest". pathLength=1 makes the dash math resolution-independent.
+  // The loop continuously draws itself and flows on — a lively "endless quest".
+  // pathLength=1 makes the dash math resolution-independent.
   .trace {
     stroke: var(--green);
-    stroke-dasharray: 0.16 0.84;
-    stroke-dashoffset: 0;
-    animation: flow 4.5s linear infinite;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 3.5s ease-in-out infinite;
   }
 
   .accent.teal {
@@ -67,8 +68,11 @@
     stroke: var(--yellow);
   }
 
-  @keyframes flow {
-    to {
+  @keyframes draw {
+    0% {
+      stroke-dashoffset: 1;
+    }
+    100% {
       stroke-dashoffset: -1;
     }
   }
@@ -78,7 +82,7 @@
   // reduce-motion reset in app.scss would otherwise freeze it.
   @media (prefers-reduced-motion: reduce) {
     .trace {
-      animation: flow 7s linear infinite !important;
+      animation: draw 6s ease-in-out infinite !important;
     }
   }
 </style>

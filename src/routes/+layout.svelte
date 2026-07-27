@@ -133,11 +133,6 @@
       <span><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
       <span class="copy">© {data.year} Tech Quests</span>
     </div>
-    <nav class="foot-nav" aria-label="Footer">
-      {#each pages as { label, path } (path)}
-        <a href={path}>{label}</a>
-      {/each}
-    </nav>
     <div class="foot-social">
       <a
         class="external"
@@ -253,12 +248,6 @@
       gap: $spacing-3xs;
     }
 
-    .foot-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: $spacing-md $spacing-lg;
-    }
-
     .foot-social {
       display: flex;
       gap: $spacing-md;
@@ -270,9 +259,18 @@
       }
     }
 
+    // On small screens, stack the flavor/copyright and the social icons
+    // centered for a tidier presentation.
     @media (max-width: $breakpoint-tablet) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: $spacing-md;
       padding: $spacing-xl;
-      gap: $spacing-md $spacing-lg;
+
+      .foot-left {
+        align-items: center;
+      }
     }
   }
 

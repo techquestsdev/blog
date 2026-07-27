@@ -112,3 +112,7 @@ temp/
 
 # Local design references / saved web pages
 docs/preview/
+.superpowers/
+
+.claude/
+.serena/

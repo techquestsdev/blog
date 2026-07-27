@@ -22,16 +22,15 @@
   <div class="posts">
     {#each data.posts as post (post.slug)}
       <a href={'/blog/' + post.slug} class="link">
+        <div class="date">
+          {formatDate(post.date)}{#if post.journey}<span class="journey">{post.journey}</span>{/if}
+        </div>
         <h2>
           <iconify-icon icon={post.icon}> </iconify-icon>{post.name}<span
             class="arrow"
             aria-hidden="true">&nbsp;></span
           ><span class="slash" aria-hidden="true">/</span>
         </h2>
-        <div class="meta">
-          {formatDate(post.date)}{#if post.journey}
-            · {post.journey}{/if}
-        </div>
         <div class="description">{post.description}</div>
       </a>
     {/each}
@@ -91,19 +90,52 @@
   }
 
   a.link {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'date title'
+      '.    description';
+    justify-content: left;
+    gap: $spacing-sm $spacing-3xl;
+  }
+
+  .date {
+    grid-area: date;
+    font-family: $font-family-mono;
+    font-size: $font-sm;
+    color: var(--txt-3);
+    margin-top: $spacing-2xs;
+  }
+
+  .journey {
+    display: block;
+    font-size: $font-xs;
+    color: var(--txt-3);
+    margin-top: $spacing-3xs;
   }
 
   h2 {
+    grid-area: title;
     margin: 0;
     color: var(--txt);
   }
 
-  .meta {
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
+  .description {
+    grid-area: description;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    a.link {
+      grid-template-columns: auto;
+      grid-template-areas:
+        'date'
+        'title'
+        'description';
+      gap: $spacing-xs;
+    }
+
+    .date {
+      margin-top: 0;
+    }
   }
 </style>

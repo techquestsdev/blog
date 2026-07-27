@@ -8,8 +8,8 @@ describe('nav pages', () => {
       '/projects': 'Quests',
       '/blog': 'Chronicles',
       '/videos': 'Sagas',
-      '/about': 'The Adventurer',
-      '/contact': 'Send a Raven'
+      '/about': 'About',
+      '/contact': 'Contact'
     });
   });
 

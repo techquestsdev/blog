@@ -4,6 +4,6 @@ export const pages = [
   { label: 'Quests', path: '/projects' },
   { label: 'Chronicles', path: '/blog' },
   { label: 'Sagas', path: '/videos' },
-  { label: 'The Adventurer', path: '/about' },
-  { label: 'Send a Raven', path: '/contact' }
+  { label: 'About', path: '/about' },
+  { label: 'Contact', path: '/contact' }
 ];

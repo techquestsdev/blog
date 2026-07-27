@@ -13,7 +13,7 @@
 </script>
 
 <main>
-  <h1>The Adventurer</h1>
+  <h1>About</h1>
   <p>
     Howdy! I'm <strong>Andre Nogueira</strong> – a Portugal-based Site Reliability Engineer who goes
     by <strong>aanogueira</strong> online. <strong>Tech Quests</strong> is where I write about the

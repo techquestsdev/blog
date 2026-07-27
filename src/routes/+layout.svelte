@@ -100,7 +100,7 @@
           <span class="arrow" aria-hidden="true">&nbsp;></span><span
             class="slash"
             aria-hidden="true">/</span
-          >{label}<span class="path" aria-hidden="true">{path}</span>
+          >{label}
         </a>
       {/each}
     </nav>
@@ -158,9 +158,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: $spacing-xl;
     padding: 0 $spacing-7xl;
-    height: $spacing-8xl;
-    overflow: hidden;
+    min-height: $spacing-8xl;
     transition: transform 0.1s ease;
     transform: translateY(0);
     flex-shrink: 0;
@@ -168,6 +168,7 @@
     .row {
       @include flex(row, null, center);
       gap: $spacing-xl;
+      flex-shrink: 0;
 
       .pfp {
         display: flex;
@@ -180,22 +181,20 @@
         font-size: $font-base;
         color: var(--txt);
         margin: 0;
+        white-space: nowrap;
       }
     }
 
     nav {
       display: flex;
-      gap: $spacing-4xl;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: $spacing-sm $spacing-xl;
 
       a {
-        font-size: $font-base;
+        font-size: $font-sm;
         font-family: $font-family-mono;
-
-        .path {
-          color: var(--txt-3);
-          margin-left: 0.4ch;
-          font-size: 0.8em;
-        }
+        white-space: nowrap;
       }
     }
   }
@@ -308,29 +307,13 @@
     height: 100%;
   }
 
-  // Below desktop: drop the faint /path hints and shrink the nav so the five
-  // themed labels keep fitting as the viewport narrows.
-  @media (max-width: $breakpoint-desktop) {
-    header nav {
-      gap: $spacing-xl;
-
-      a {
-        font-size: $font-sm;
-
-        .path {
-          display: none;
-        }
-      }
-    }
-  }
-
   @media (max-width: $breakpoint-tablet) {
     header {
       padding: 0 $spacing-xl;
       gap: $spacing-md;
 
       nav {
-        gap: $spacing-md;
+        gap: $spacing-sm $spacing-md;
 
         a {
           font-size: $font-xs;

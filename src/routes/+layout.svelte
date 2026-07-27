@@ -15,6 +15,10 @@
 
   export let data;
 
+  let menuOpen = false;
+  // Close the mobile menu whenever the route changes.
+  $: if (data.pathname) menuOpen = false;
+
   let prevTwoPages = ['', ''];
   $: {
     prevTwoPages = [prevTwoPages[1], data.pathname];
@@ -86,6 +90,8 @@
 
 <a class="skip" href="#main">Skip to content</a>
 
+<svelte:window on:keydown={(e) => e.key === 'Escape' && (menuOpen = false)} />
+
 {#if $page.url.pathname !== '/'}
   <header>
     <div class="row">
@@ -94,7 +100,15 @@
         <NavLogo size="2.5rem" />
       </button>
     </div>
-    <nav>
+    <button
+      class="menu-toggle"
+      on:click={() => (menuOpen = !menuOpen)}
+      aria-label="Toggle menu"
+      aria-expanded={menuOpen}
+    >
+      <iconify-icon icon={menuOpen ? 'ph:x' : 'ph:list'}></iconify-icon>
+    </button>
+    <nav class:open={menuOpen}>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
           <span class="arrow" aria-hidden="true">&nbsp;></span><span
@@ -158,8 +172,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     gap: $spacing-xl;
-    padding: 0 $spacing-7xl;
+    padding: 0 $spacing-5xl;
     min-height: $spacing-8xl;
     transition: transform 0.1s ease;
     transform: translateY(0);
@@ -187,15 +202,22 @@
 
     nav {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: $spacing-sm $spacing-xl;
+      flex-wrap: nowrap;
+      gap: $spacing-xl;
 
       a {
         font-size: $font-sm;
         font-family: $font-family-mono;
         white-space: nowrap;
       }
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      color: var(--txt);
+      font-size: $font-lg;
+      align-items: center;
     }
   }
 
@@ -307,24 +329,35 @@
     height: 100%;
   }
 
-  @media (max-width: $breakpoint-tablet) {
+  // Collapse the nav into a dropdown when the labels would no longer fit on one
+  // line, so the top bar never wraps or clips.
+  @media (max-width: 1080px) {
     header {
       padding: 0 $spacing-xl;
-      gap: $spacing-md;
+
+      .menu-toggle {
+        display: flex;
+      }
 
       nav {
-        gap: $spacing-sm $spacing-md;
-
-        a {
-          font-size: $font-xs;
-        }
+        position: absolute;
+        top: 100%;
+        right: $spacing-xl;
+        z-index: $z-index-sticky;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: $spacing-md;
+        margin-top: $spacing-xs;
+        padding: $spacing-lg $spacing-xl;
+        background: var(--bg-2);
+        border: 1px solid var(--bg-3);
+        border-radius: 8px;
+        display: none;
       }
-    }
-  }
 
-  @media (max-width: $breakpoint-mobile) {
-    header nav {
-      display: none;
+      nav.open {
+        display: flex;
+      }
     }
   }
 </style>

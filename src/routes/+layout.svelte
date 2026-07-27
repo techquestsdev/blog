@@ -125,7 +125,7 @@
 
 {#if $page.url.pathname !== '/'}
   <footer class="site-footer">
-    <span>⚔ forged in vim &amp; regret</span>
+    <span><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
     <a class="external" href="/contact"
       >send a raven <span class="arrow" aria-hidden="true">❯</span></a
     >

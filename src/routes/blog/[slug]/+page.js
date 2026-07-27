@@ -1,5 +1,6 @@
 import { nameFromPath, importOgImage } from '$lib/js/posts.js';
 import { buildBlogPostingJsonLd, buildImageObject } from '$lib/utils/structured-data.js';
+import { readingJourney } from '$lib/utils/reading-time.js';
 import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 
@@ -21,6 +22,12 @@ export async function load({ params }) {
     throw error(404, 'Post Not Found');
   }
 
+  // Reading time for this post only (lazy raw import → its own code-split
+  // chunk, so we don't inline every post's markdown into the bundle).
+  const raws = import.meta.glob('/src/content/blog/*/*.md', { query: '?raw', import: 'default' });
+  const rawText = await raws[match.path]?.();
+  const journey = rawText ? readingJourney(rawText) : null;
+
   let imagePath = match.path.split('/').slice(0, -1).join('/') + '/' + post.metadata.ogImage;
   let image = await importOgImage(imagePath);
 
@@ -31,6 +38,7 @@ export async function load({ params }) {
 
   return {
     post,
+    journey,
     meta: {
       title: `${post.metadata.name} | Tech Quests`,
       description: post.metadata.description,

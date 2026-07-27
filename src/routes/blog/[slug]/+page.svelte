@@ -15,6 +15,10 @@
     <span class="author">Andre Nogueira</span>
     <span class="divider">·</span>
     <time datetime={metadata.date}>{formatDate(metadata.date)}</time>
+    {#if data.journey}
+      <span class="divider">·</span>
+      <span>{data.journey}</span>
+    {/if}
   </p>
   <p class="description">{metadata.description}</p>
   <div class="content">

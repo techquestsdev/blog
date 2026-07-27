@@ -22,9 +22,7 @@
   <div class="posts">
     {#each data.posts as post (post.slug)}
       <a href={'/blog/' + post.slug} class="link">
-        <div class="date">
-          {formatDate(post.date)}{#if post.journey}<span class="journey">{post.journey}</span>{/if}
-        </div>
+        <div class="date">{formatDate(post.date)}</div>
         <h2>
           <iconify-icon icon={post.icon}> </iconify-icon>{post.name}<span
             class="arrow"
@@ -105,13 +103,6 @@
     font-size: $font-sm;
     color: var(--txt-3);
     margin-top: $spacing-2xs;
-  }
-
-  .journey {
-    display: block;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    margin-top: $spacing-3xs;
   }
 
   h2 {

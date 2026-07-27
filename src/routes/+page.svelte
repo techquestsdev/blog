@@ -1,20 +1,14 @@
 <script>
   import NavLogo from '$lib/components/NavLogo.svelte';
   import { pages } from '$lib/js/nav.js';
-  import { toggleTheme } from '$lib/js/theme';
-  import { triggerBurst } from '$lib/js/ascii-burst.js';
-
-  function onLogoClick(e) {
-    toggleTheme();
-    triggerBurst(e.clientX, e.clientY);
-  }
+  import { toggleThemeWithBurst } from '$lib/js/theme';
 </script>
 
 <main>
   <div class="container">
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
-      <button class="pfpstart" on:click={onLogoClick} aria-label="Toggle theme"><NavLogo size="4rem" /></button>
+      <button class="pfpstart" on:click={toggleThemeWithBurst} aria-label="Toggle theme"><NavLogo size="4rem" /></button>
     </div>
     <p>▸ field notes of an SRE, logged from the tech wilds — <span class="m">no dragons, just YAML</span>.</p>
     <nav>

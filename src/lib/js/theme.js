@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import { triggerBurst } from '$lib/js/ascii-burst.js';
 
 export const userTheme = browser && localStorage.getItem('color-scheme');
 
@@ -14,6 +15,11 @@ export function toggleTheme() {
 
     return newTheme;
   });
+}
+
+export function toggleThemeWithBurst(e) {
+  toggleTheme();
+  triggerBurst(e.clientX, e.clientY);
 }
 
 export function setTheme(newTheme) {

@@ -3,7 +3,7 @@
 </script>
 
 <div class="logo" style={`width: ${size};`}>
-  <svg viewBox="0 -195 800 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <svg viewBox="0 0 800 410" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <g stroke-miterlimit="10" fill="none">
       <path
         class="loop"

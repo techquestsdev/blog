@@ -7,17 +7,11 @@
   import AsciiField from '$lib/components/AsciiField.svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
-  import { toggleTheme } from '$lib/js/theme.js';
-  import { triggerBurst } from '$lib/js/ascii-burst.js';
+  import { toggleThemeWithBurst } from '$lib/js/theme.js';
   import { pages } from '$lib/js/nav.js';
   import { fly } from 'svelte/transition';
 
   export let data;
-
-  function onLogoClick(e) {
-    toggleTheme();
-    triggerBurst(e.clientX, e.clientY);
-  }
 
   let prevTwoPages = ['', ''];
   $: {
@@ -90,7 +84,7 @@
   <header>
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
-      <button class="pfp" on:click={onLogoClick} aria-label="Toggle theme">
+      <button class="pfp" on:click={toggleThemeWithBurst} aria-label="Toggle theme">
         <NavLogo size="2.5rem" />
       </button>
     </div>

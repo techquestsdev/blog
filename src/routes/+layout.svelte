@@ -122,6 +122,13 @@
   {/key}
 </div>
 
+{#if $page.url.pathname !== '/'}
+  <footer class="site-footer">
+    <span>⚔ forged in vim &amp; regret</span>
+    <a class="external" href="/contact">send a raven <span class="arrow" aria-hidden="true">❯</span></a>
+  </footer>
+{/if}
+
 <style lang="scss">
   header {
     display: flex;
@@ -172,6 +179,29 @@
   .container {
     height: 100%;
     display: grid;
+  }
+
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+    padding: $spacing-xl $spacing-7xl;
+    font-family: $font-family-mono;
+    font-size: $font-xs;
+    color: var(--txt-3);
+    border-top: 1px solid var(--bg-3);
+
+    a {
+      color: var(--txt-3);
+    }
+    a:hover {
+      color: var(--txt);
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      padding: $spacing-xl;
+    }
   }
 
   .skip {

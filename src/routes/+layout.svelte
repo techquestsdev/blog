@@ -4,6 +4,7 @@
   import '$lib/assets/fonts/inter.css';
   import { page } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
+  import AsciiField from '$lib/components/AsciiField.svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
   import { toggleTheme } from '$lib/js/theme.js';
@@ -58,6 +59,8 @@
     };
   }
 </script>
+
+<AsciiField />
 
 <PageHead
   title={$page.error ? $page.status : $page.data.meta.title}

@@ -7,6 +7,7 @@ images: [cg_demo_1.png, cg_demo_2.png, cg_demo_3.png, cg_demo_4.png, cg_demo_5.p
 github: https://github.com/techquestsdev/crontab-guru
 # website: https://github.com/techquestsdev/crontab-guru
 date: 2025-11-05
+status: shipped
 ---
 
 Howdy!

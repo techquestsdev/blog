@@ -1,6 +1,7 @@
 <script>
   import Image from '$lib/components/Image.svelte';
   import RssIcon from '~icons/ph/rss';
+  import { statusRune } from '$lib/js/project-status.js';
 
   export let data;
 </script>
@@ -22,6 +23,10 @@
   <div class="posts">
     {#each data.posts as post (post.slug)}
       <a href={'/projects/' + post.slug} class="link">
+        {#if statusRune(post.status)}
+          {@const rune = statusRune(post.status)}
+          <div class="state">{rune.glyph} {rune.label}</div>
+        {/if}
         <h2>
           {post.name}<span class="arrow" aria-hidden="true">&nbsp;></span><span
             class="slash"
@@ -109,6 +114,7 @@
     display: grid;
     grid-template-areas:
       'thumb'
+      'state'
       'title'
       'description';
     gap: $spacing-sm;
@@ -116,6 +122,13 @@
 
   .thumb {
     grid-area: thumb;
+  }
+
+  .state {
+    grid-area: state;
+    font-family: $font-family-mono;
+    font-size: $font-xs;
+    color: var(--txt-3);
   }
 
   h2 {

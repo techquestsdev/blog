@@ -7,6 +7,7 @@ images: [houndr_preview.png]
 github: https://github.com/techquestsdev/houndr
 # website: https://github.com/techquestsdev/houndr
 date: 2026-03-03
+status: evolving
 ---
 
 Howdy!

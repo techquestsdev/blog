@@ -42,6 +42,7 @@
   }
 
   h1 {
+    font-family: $font-family-display;
     font-size: $font-3xl;
     margin: 0;
   }

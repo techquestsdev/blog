@@ -28,11 +28,11 @@
             aria-hidden="true">&nbsp;></span
           ><span class="slash" aria-hidden="true">/</span>
         </h2>
-        <div class="date">{formatDate(post.date)}</div>
+        <div class="meta">
+          {formatDate(post.date)}{#if post.journey}
+            · {post.journey}{/if}
+        </div>
         <div class="description">{post.description}</div>
-        {#if post.journey}
-          <div class="journey">{post.journey}</div>
-        {/if}
       </a>
     {/each}
   </div>
@@ -90,63 +90,20 @@
     max-width: 100%;
   }
 
+  a.link {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
   h2 {
     margin: 0;
     color: var(--txt);
   }
 
-  .date {
-    grid-area: date;
-    font-size: $font-sm;
-    font-family: $font-family-mono;
-    color: var(--txt-3);
-    margin-top: $spacing-2xs;
-  }
-
-  .journey {
-    grid-area: journey;
+  .meta {
     font-family: $font-family-mono;
     font-size: $font-xs;
     color: var(--txt-3);
-    margin-top: $spacing-2xs;
-  }
-
-  a {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      'date title'
-      '. description'
-      '. journey';
-    justify-content: left;
-    gap: $spacing-md $spacing-3xl;
-  }
-
-  h2 {
-    grid-area: title;
-  }
-
-  .description {
-    grid-area: description;
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    a {
-      grid-template-columns: auto;
-      grid-template-areas:
-        'date'
-        'title'
-        'description'
-        'journey';
-      gap: $spacing-xs;
-
-      .description {
-        grid-column: 1;
-      }
-
-      .date {
-        margin-top: 0;
-      }
-    }
   }
 </style>

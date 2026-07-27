@@ -260,6 +260,22 @@
     height: 100%;
   }
 
+  // Below desktop: drop the faint /path hints and shrink the nav so the five
+  // themed labels keep fitting as the viewport narrows.
+  @media (max-width: $breakpoint-desktop) {
+    header nav {
+      gap: $spacing-xl;
+
+      a {
+        font-size: $font-sm;
+
+        .path {
+          display: none;
+        }
+      }
+    }
+  }
+
   @media (max-width: $breakpoint-tablet) {
     header {
       padding: 0 $spacing-xl;
@@ -267,6 +283,10 @@
 
       nav {
         gap: $spacing-md;
+
+        a {
+          font-size: $font-xs;
+        }
       }
     }
   }

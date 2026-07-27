@@ -129,21 +129,23 @@
 
 {#if $page.url.pathname !== '/'}
   <footer class="site-footer">
-    <div class="foot-left">
-      <span><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
-      <span class="copy">© {data.year} Tech Quests</span>
-    </div>
-    <div class="foot-social">
-      <a
-        class="external"
-        href="https://github.com/techquestsdev"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
-      >
-      <a href="/blog/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
-        ><iconify-icon icon="ph:rss"></iconify-icon></a
-      >
+    <div class="foot-inner">
+      <span class="flavor"><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
+      <div class="foot-right">
+        <span class="copy">© {data.year} Tech Quests</span>
+        <span class="foot-social">
+          <a
+            class="external"
+            href="https://github.com/techquestsdev"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
+          >
+          <a href="/blog/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
+            ><iconify-icon icon="ph:rss"></iconify-icon></a
+          >
+        </span>
+      </div>
     </div>
   </footer>
 {/if}
@@ -222,16 +224,10 @@
   }
 
   .site-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: $spacing-lg $spacing-3xl;
-    flex-wrap: wrap;
-    padding: $spacing-xl $spacing-7xl;
+    border-top: 1px solid var(--bg-3);
     font-family: $font-family-mono;
     font-size: $font-xs;
     color: var(--txt-3);
-    border-top: 1px solid var(--bg-3);
 
     a {
       color: var(--txt-3);
@@ -242,10 +238,23 @@
       color: var(--txt);
     }
 
-    .foot-left {
+    // Constrain footer content to the page's content width and center it, so it
+    // lines up with the article column instead of hugging the screen edges.
+    .foot-inner {
+      max-width: $width-content;
+      margin: 0 auto;
+      padding: $spacing-xl;
       display: flex;
-      flex-direction: column;
-      gap: $spacing-3xs;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-sm $spacing-3xl;
+      flex-wrap: wrap;
+    }
+
+    .foot-right {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
     }
 
     .foot-social {
@@ -259,17 +268,11 @@
       }
     }
 
-    // On small screens, stack the flavor/copyright and the social icons
-    // centered for a tidier presentation.
     @media (max-width: $breakpoint-tablet) {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: $spacing-md;
-      padding: $spacing-xl;
-
-      .foot-left {
-        align-items: center;
+      .foot-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: $spacing-md;
       }
     }
   }

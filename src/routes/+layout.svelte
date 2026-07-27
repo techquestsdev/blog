@@ -147,7 +147,11 @@
 {#if $page.url.pathname !== '/'}
   <footer class="site-footer">
     <div class="foot-inner">
-      <span class="flavor"><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
+      <span class="flavor"
+        >Built by <a href="https://aanogueira.dev" target="_blank" rel="noopener noreferrer"
+          >Andre Nogueira</a
+        ></span
+      >
       <div class="foot-right">
         <span class="copy">© {data.year} Tech Quests</span>
         <span class="foot-social">

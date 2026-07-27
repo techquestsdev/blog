@@ -88,8 +88,8 @@
     <nav>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow">&nbsp;></span><span class="slash">/</span>{label}<span
-            class="path">{path}</span
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span class="slash" aria-hidden="true">/</span>{label}<span
+            class="path" aria-hidden="true">{path}</span
           >
         </a>
       {/each}

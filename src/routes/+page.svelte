@@ -53,7 +53,7 @@
     <nav>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow">&nbsp;></span><span class="slash">/</span>{label}
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span class="slash" aria-hidden="true">/</span>{label}
         </a>
       {/each}
     </nav>

@@ -1,10 +1,15 @@
 <script>
+  import { theme } from '$lib/js/theme';
   import GithubIcon from '~icons/ph/github-logo';
   import LinkedinIcon from '~icons/ph/linkedin-logo';
-  import MediumIcon from '~icons/ph/medium-logo';
-  import DevToIcon from '~icons/ph/dev-to-logo';
   import CoffeeIcon from '~icons/ph/coffee';
   import RssIcon from '~icons/ph/rss';
+
+  // One CV link that matches the active theme (dark CV for dark mode, light for light).
+  $: cvUrl =
+    $theme === 'dark'
+      ? 'https://github.com/aanogueira/cv/releases/download/latest/cv-dark.pdf'
+      : 'https://github.com/aanogueira/cv/releases/download/latest/cv.pdf';
 </script>
 
 <main>
@@ -39,20 +44,6 @@
     </li>
     <li>
       <a
-        href="https://medium.com/@aanogueira"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><MediumIcon /> Medium profile<span class="arrow">-></span>
-      </a>
-    </li>
-    <li>
-      <a href="https://dev.to/aanogueira" class="external" target="_blank" rel="noopener noreferrer"
-        ><DevToIcon /> Dev.to profile<span class="arrow">-></span>
-      </a>
-    </li>
-    <li>
-      <a
         href="https://buymeacoffee.com/aanogueira"
         class="external"
         target="_blank"
@@ -73,21 +64,8 @@
   <h2>CV</h2>
   <ul class="link-list">
     <li>
-      <a
-        href="https://github.com/aanogueira/cv/releases/download/latest/cv.pdf"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Download CV (light)<span class="arrow">-></span>
-      </a>
-    </li>
-    <li>
-      <a
-        href="https://github.com/aanogueira/cv/releases/download/latest/cv-dark.pdf"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        >Download CV (dark)<span class="arrow">-></span>
+      <a href={cvUrl} class="external" target="_blank" rel="noopener noreferrer"
+        >Download CV<span class="arrow">-></span>
       </a>
     </li>
   </ul>
@@ -101,6 +79,7 @@
         rel="noopener noreferrer">Github repo<span class="arrow">-></span></a
       >
     </li>
+    <!-- Analytics link hidden for now — not in use.
     <li>
       <a
         href="https://analytics.techquests.dev/share/XKuVSonQXqJALOvj/Blog"
@@ -109,6 +88,7 @@
         rel="noopener noreferrer">Analytics<span class="arrow">-></span></a
       >
     </li>
+    -->
   </ul>
   <div class="info">
     <span class="main">Stack</span> <span class="sub">-></span>

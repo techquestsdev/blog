@@ -3,7 +3,7 @@
   import '$lib/assets/fonts/fira-mono.css';
   import '$lib/assets/fonts/inter.css';
   import '$lib/assets/fonts/pixelify-sans.css';
-  import { page } from '$app/stores';
+  import { page, navigating } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
   import AsciiField from '$lib/components/AsciiField.svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
@@ -63,6 +63,10 @@
 
 <AsciiField />
 
+{#if $navigating}
+  <div class="nav-progress" aria-hidden="true"></div>
+{/if}
+
 <PageHead
   title={$page.error ? $page.status : $page.data.meta.title}
   description={$page.error ? $page.error.message : $page.data.meta.description}
@@ -107,12 +111,12 @@
     <div
       class="transition"
       in:fly={{
-        duration: 100,
-        delay: 50,
+        duration: 260,
+        delay: 60,
         ...xy(data.pathname)
       }}
       out:fly={{
-        duration: 100,
+        duration: 150,
         ...xy(data.pathname, false)
       }}
     >
@@ -180,8 +184,29 @@
   }
 
   .container {
-    height: 100%;
+    flex: 1 0 auto;
     display: grid;
+  }
+
+  // Indeterminate top progress bar shown while navigating between pages.
+  .nav-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    z-index: $z-index-modal;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    animation: nav-slide 0.9s ease-in-out infinite;
+  }
+
+  @keyframes nav-slide {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
   }
 
   .site-footer {

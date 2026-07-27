@@ -12,7 +12,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should return posts and meta information', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [
@@ -43,7 +43,7 @@ describe('Blog Page Load Function', () => {
     expect(result.posts[1].slug).toBe('post-1');
   });
   it('should sort posts by date in descending order', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [
@@ -78,7 +78,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should return meta object structure', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     getPosts.mockResolvedValue([]);
@@ -94,7 +94,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should work with empty posts', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     getPosts.mockResolvedValue([]);
@@ -106,7 +106,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should gracefully handle posts with malformed dates', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [
@@ -132,7 +132,7 @@ describe('Blog Page Load Function', () => {
     expect(result.posts).toHaveLength(2);
   });
   it('should handle empty posts array', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     getPosts.mockResolvedValue([]);
@@ -144,7 +144,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should handle posts with invalid dates', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [
@@ -171,7 +171,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should handle posts with same dates', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [
@@ -199,7 +199,7 @@ describe('Blog Page Load Function', () => {
   });
 
   it('should handle posts without dates', async () => {
-    const { load } = await import('./+page.js');
+    const { load } = await import('./+page.server.js');
     const { getPosts } = await import('$lib/js/posts.js');
 
     const mockPosts = [

@@ -63,6 +63,7 @@ html {
   --green: var(--green-dark);
   --salmon: var(--salmon-dark);
   --yellow: var(--yellow-dark);
+  --ascii-ink: hsla(189, 41%, 68%, ALPHA);
 
   font-family: $font-family-base;
   font-weight: 400;
@@ -83,6 +84,7 @@ html {
     --green: var(--green-light);
     --salmon: var(--salmon-light);
     --yellow: var(--yellow-light);
+    --ascii-ink: hsla(40, 20%, 25%, ALPHA);
   }
 }
 
@@ -100,6 +102,7 @@ html {
   --green: var(--green-dark);
   --salmon: var(--salmon-dark);
   --yellow: var(--yellow-dark);
+  --ascii-ink: hsla(189, 41%, 68%, ALPHA);
 
   .shiki,
   .shiki span {
@@ -128,6 +131,7 @@ html {
   --green: var(--green-light);
   --salmon: var(--salmon-light);
   --yellow: var(--yellow-light);
+  --ascii-ink: hsla(40, 20%, 25%, ALPHA);
 }
 
 html {

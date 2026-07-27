@@ -48,10 +48,9 @@
     }
   }
 
-  // Subtle, theme-adaptive outline so the shape stays legible while the colored
-  // strokes carry the motion. --txt-3 shifts with the active light/dark theme.
+  // High-contrast outline: near-white on dark, near-black on light (theme-adaptive).
   .base {
-    stroke: var(--txt-3);
+    stroke: var(--txt-0);
   }
 
   // A green highlight continuously flowing around the loop.

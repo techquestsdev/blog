@@ -1,7 +1,14 @@
 <script>
+  import { onMount } from 'svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
   import { pages } from '$lib/js/nav.js';
   import { toggleThemeWithBurst } from '$lib/js/theme';
+  import { triggerBurst } from '$lib/js/ascii-burst.js';
+
+  onMount(() => {
+    // A reveal ripple from the centre of the viewport when landing on home.
+    triggerBurst(window.innerWidth / 2, window.innerHeight / 2);
+  });
 </script>
 
 <main>
@@ -72,6 +79,33 @@
 
   p .m {
     color: var(--yellow);
+  }
+
+  // Staggered entrance for the hero on first load.
+  .row,
+  p,
+  nav {
+    animation: rise 0.7s ease both;
+  }
+  .row {
+    animation-delay: 0.05s;
+  }
+  p {
+    animation-delay: 0.15s;
+  }
+  nav {
+    animation-delay: 0.25s;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   @media (max-width: $breakpoint-mobile) {

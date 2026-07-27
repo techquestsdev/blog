@@ -131,5 +131,15 @@
     height: 100%;
     z-index: -1;
     pointer-events: none;
+    animation: field-in 1.6s ease both;
+  }
+
+  @keyframes field-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>

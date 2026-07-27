@@ -129,10 +129,27 @@
 
 {#if $page.url.pathname !== '/'}
   <footer class="site-footer">
-    <span><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
-    <a class="external" href="/contact"
-      >send a raven <span class="arrow" aria-hidden="true">❯</span></a
-    >
+    <div class="foot-left">
+      <span><span aria-hidden="true">⚔</span> forged in vim &amp; regret</span>
+      <span class="copy">© {data.year} Tech Quests</span>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      {#each pages as { label, path } (path)}
+        <a href={path}>{label}</a>
+      {/each}
+    </nav>
+    <div class="foot-social">
+      <a
+        class="external"
+        href="https://github.com/techquestsdev"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
+      >
+      <a href="/blog/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
+        ><iconify-icon icon="ph:rss"></iconify-icon></a
+      >
+    </div>
   </footer>
 {/if}
 
@@ -212,7 +229,8 @@
   .site-footer {
     display: flex;
     justify-content: space-between;
-    gap: $spacing-md;
+    align-items: center;
+    gap: $spacing-lg $spacing-3xl;
     flex-wrap: wrap;
     padding: $spacing-xl $spacing-7xl;
     font-family: $font-family-mono;
@@ -222,13 +240,39 @@
 
     a {
       color: var(--txt-3);
+      text-decoration: none;
+      transition: color $transition-fast;
     }
     a:hover {
       color: var(--txt);
     }
 
+    .foot-left {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-3xs;
+    }
+
+    .foot-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-md $spacing-lg;
+    }
+
+    .foot-social {
+      display: flex;
+      gap: $spacing-md;
+      font-size: $font-sm;
+
+      iconify-icon {
+        padding-right: 0;
+        vertical-align: middle;
+      }
+    }
+
     @media (max-width: $breakpoint-tablet) {
       padding: $spacing-xl;
+      gap: $spacing-md $spacing-lg;
     }
   }
 

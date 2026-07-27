@@ -28,7 +28,7 @@
             aria-hidden="true">&nbsp;></span
           ><span class="slash" aria-hidden="true">/</span>
         </h2>
-        <div class="date">{formatDate(post.date)}</div>
+        <div class="date">{formatDate(post.date)} · <span class="journey">{post.journey}</span></div>
         <div class="description">{post.description}</div>
       </a>
     {/each}
@@ -98,6 +98,10 @@
     font-family: $font-family-mono;
     color: var(--txt-3);
     margin-top: $spacing-2xs;
+  }
+
+  .journey {
+    color: var(--yellow);
   }
 
   a {

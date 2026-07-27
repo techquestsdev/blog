@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock the getPosts function
-vi.mock('$lib/js/posts.js', () => ({
+// Mock the getPosts function, keeping the real nameFromPath.
+vi.mock('$lib/js/posts.js', async (importActual) => ({
+  ...(await importActual()),
   getPosts: vi.fn()
 }));
 

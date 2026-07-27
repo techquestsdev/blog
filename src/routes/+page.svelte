@@ -19,10 +19,7 @@
         ><NavLogo size="4rem" /></button
       >
     </div>
-    <p>
-      <span aria-hidden="true">▸</span> field notes of an SRE, logged from the tech wilds —
-      <span class="m">no dragons, just YAML</span>.
-    </p>
+    <p>An SRE's field notes <span class="dash">—</span> homelabs, platforms, and code.</p>
     <nav>
       {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
@@ -77,7 +74,7 @@
     margin: $spacing-lg 0;
   }
 
-  p .m {
+  .dash {
     color: var(--yellow);
   }
 

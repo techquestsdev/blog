@@ -2,7 +2,6 @@
   import '../app.scss';
   import '$lib/assets/fonts/fira-mono.css';
   import '$lib/assets/fonts/inter.css';
-  import '$lib/assets/fonts/pixelify-sans.css';
   import { page, navigating } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
   import AsciiField from '$lib/components/AsciiField.svelte';
@@ -197,6 +196,8 @@
 
       h1 {
         font-family: $font-family-display;
+        font-weight: $font-weight-display;
+        letter-spacing: $letter-spacing-display;
         font-size: $font-base;
         color: var(--txt);
         margin: 0;

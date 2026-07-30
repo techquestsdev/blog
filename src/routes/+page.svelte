@@ -55,6 +55,8 @@
 
   h1 {
     font-family: $font-family-display;
+    font-weight: $font-weight-display;
+    letter-spacing: $letter-spacing-display;
     font-size: $font-3xl;
     margin: 0;
   }

@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Fira+Mono:wght@400;500&family=Inter:wght@400;600&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Inter:wght@400;600&display=swap"
   rel="stylesheet"
 />
 <style>
@@ -75,9 +75,13 @@
   }
   .brand svg { width: 150px; height: auto; }
   .wordmark {
-    font-family: 'Pixelify Sans', sans-serif;
-    font-weight: 700;
-    font-size: 112px;
+    font-family: 'Fira Mono', monospace;
+    /* 500 to match $font-weight-display — bold overpowers the thin loop mark. */
+    font-weight: 500;
+    /* Mono is wide — smaller size and negative tracking keep the wordmark on one
+       comfortable line next to the mark. Mirrors $letter-spacing-display. */
+    font-size: 86px;
+    letter-spacing: -0.04em;
     line-height: 1;
     color: var(--txt-0);
   }

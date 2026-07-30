@@ -44,7 +44,14 @@ $font-4xl: 5rem;
 // Font families
 $font-family-base: 'Inter Variable', system-ui, sans-serif;
 $font-family-mono: 'Fira Mono', monospace;
-$font-family-display: 'Pixelify Sans', 'Fira Mono', monospace;
+// Display = the same mono as the rest of the site. Keeps one type voice sitewide
+// and matches the geometric, modern feel of the loop mark.
+$font-family-display: 'Fira Mono', monospace;
+// 500, not 700: the loop mark is drawn with thin strokes, and bold mono stems
+// read far heavier than the logo next to them.
+$font-weight-display: 500;
+// Mono advances are wide; pull the tracking in so large display text doesn't sprawl.
+$letter-spacing-display: -0.04em;
 
 // Line heights
 $line-height-2xl: 2.9rem;

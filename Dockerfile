@@ -5,6 +5,11 @@
 
 FROM caddy:alpine
 
+# Pick up Alpine security fixes that landed after the base image was built.
+# caddy:alpine is rebuilt infrequently, so its apk packages (curl, c-ares, ...)
+# lag behind the fixed versions already published for the same Alpine release.
+RUN apk --no-cache upgrade
+
 # Copy pre-built static site from build/ directory
 COPY build /usr/share/caddy
 COPY Caddyfile /etc/caddy/Caddyfile

@@ -6,12 +6,19 @@
   const CELL = 13;
   const FONT = 13;
 
+  export let active = true;
+
   let canvas;
   let ctx;
   let w = 0;
   let h = 0;
   let raf;
   let reduced = false;
+  let mounted = false;
+  // Only the very first reveal should play the slow "materialising" keyframe;
+  // later toggles (navigating back to the homepage) just want a quick,
+  // consistent crossfade that matches the page transition's timing.
+  let everShown = false;
   const mouse = { x: -9999, y: -9999 };
   let ripples = [];
   let lastBurstId = 0;
@@ -77,6 +84,20 @@
     raf = requestAnimationFrame(loop);
   }
 
+  // Pause the animation loop when the field is hidden (e.g. navigated away from
+  // the homepage) instead of destroying the canvas, so re-showing it crossfades
+  // smoothly rather than popping in/out.
+  $: if (mounted && !reduced) {
+    if (active && !raf) {
+      raf = requestAnimationFrame(loop);
+    } else if (!active && raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+    }
+  }
+
+  $: if (active) everShown = true;
+
   function onMove(e) {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -103,8 +124,9 @@
       ripples.push({ x: b.x, y: b.y, start: lastT });
     });
 
+    mounted = true;
     if (reduced) draw(0);
-    else raf = requestAnimationFrame(loop);
+    else if (active) raf = requestAnimationFrame(loop);
 
     return () => {
       obs.disconnect();
@@ -121,7 +143,8 @@
   });
 </script>
 
-<canvas bind:this={canvas} aria-hidden="true"></canvas>
+<canvas bind:this={canvas} class:active class:first-reveal={active && !everShown} aria-hidden="true"
+></canvas>
 
 <style lang="scss">
   canvas {
@@ -131,7 +154,20 @@
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    animation: field-in 1.6s ease both;
+    opacity: 0;
+    // Quick, consistent crossfade for every toggle, matching the ~430ms page
+    // transition instead of a slow standalone fade.
+    transition: opacity 0.35s ease;
+
+    &.active {
+      opacity: 1;
+    }
+
+    // Only the true first reveal (initial page load) gets the slower,
+    // more dramatic "materialising" keyframe.
+    &.first-reveal {
+      animation: field-in 1.6s ease both;
+    }
   }
 
   @keyframes field-in {

@@ -9,7 +9,7 @@
   import Analytics from '$lib/components/Analytics.svelte';
   import { toggleThemeWithBurst } from '$lib/js/theme.js';
   import { pages } from '$lib/js/nav.js';
-  import { fly } from 'svelte/transition';
+  import { fly, slide } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
 
   export let data;
@@ -65,7 +65,7 @@
   }
 </script>
 
-<AsciiField />
+<AsciiField active={$page.url.pathname === '/'} />
 
 {#if $navigating}
   <div class="nav-progress" aria-hidden="true"></div>
@@ -92,7 +92,7 @@
 <svelte:window on:keydown={(e) => e.key === 'Escape' && (menuOpen = false)} />
 
 {#if $page.url.pathname !== '/'}
-  <header>
+  <header transition:slide={{ duration: 220, easing: quintOut }}>
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
       <button class="pfp" on:click={toggleThemeWithBurst} aria-label="Toggle theme">
@@ -125,13 +125,13 @@
     <div
       class="transition"
       in:fly={{
-        duration: 340,
-        delay: 90,
+        duration: 260,
+        delay: 170,
         easing: quintOut,
         ...xy(data.pathname)
       }}
       out:fly={{
-        duration: 180,
+        duration: 150,
         easing: quintOut,
         ...xy(data.pathname, false)
       }}
@@ -144,15 +144,11 @@
 </div>
 
 {#if $page.url.pathname !== '/'}
-  <footer class="site-footer">
+  <footer class="site-footer" transition:slide={{ duration: 220, easing: quintOut }}>
     <div class="foot-inner">
-      <span class="flavor"
-        >Built by <a href="https://aanogueira.dev" target="_blank" rel="noopener noreferrer"
-          >Andre Nogueira</a
-        ></span
-      >
+      <span class="flavor">Built by <a href="/about">Andre Nogueira</a></span>
       <div class="foot-right">
-        <span class="copy">© {data.year} Tech Quests</span>
+        <span class="copy">© {data.year} <a href="/">TechQuests.dev</a></span>
         <span class="foot-social">
           <a
             class="external"
@@ -161,7 +157,7 @@
             rel="noopener noreferrer"
             aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
           >
-          <a href="/blog/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
+          <a href="/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
             ><iconify-icon icon="ph:rss"></iconify-icon></a
           >
         </span>
@@ -229,6 +225,7 @@
   .container {
     flex: 1 0 auto;
     display: grid;
+    overflow: hidden;
   }
 
   // Indeterminate top progress bar shown while navigating between pages.

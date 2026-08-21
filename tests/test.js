@@ -1,4 +1,18 @@
 import { expect, test } from '@playwright/test';
+import { pages } from '../src/lib/js/nav.js';
+
+// Nav labels are themed and live in nav.js; read them from there so copy
+// changes don't silently break these tests.
+const labelFor = (path) => pages.find((page) => page.path === path).label;
+
+// Below 1080px the nav collapses into a dropdown, so open it before asserting
+// on the links.
+const openNavIfCollapsed = async (page) => {
+  const menuToggle = page.locator('.menu-toggle');
+  if (await menuToggle.isVisible()) {
+    await menuToggle.click();
+  }
+};
 
 test.describe('Homepage', () => {
   test('should display homepage with heading', async ({ page }) => {
@@ -9,10 +23,12 @@ test.describe('Homepage', () => {
 
   test('should have navigation links', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('link', { name: 'About' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Blog' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Projects' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Contact' })).toBeVisible();
+    await openNavIfCollapsed(page);
+
+    for (const { label } of pages) {
+      // `exact` matters: the "Tech Quests" wordmark would substring-match "Quests".
+      await expect(page.getByRole('link', { name: label, exact: true })).toBeVisible();
+    }
   });
 
   test('should have theme toggle functionality', async ({ page }) => {
@@ -53,7 +69,7 @@ test.describe('Blog', () => {
 test.describe('Projects', () => {
   test('should display project with heading and content', async ({ page }) => {
     await page.goto('/projects');
-    await expect(page.locator('main h1').first()).toContainText(/Projects/);
+    await expect(page.locator('main h1').first()).toContainText(labelFor('/projects'));
 
     const projectCards = page.locator('[data-testid="project-card"], .project-card, article');
     if ((await projectCards.count()) > 0) {

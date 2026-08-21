@@ -14,6 +14,11 @@
   $: canonicalUrl = `${hostname}${$page.url.pathname}`;
   $: hasImage = Boolean(image?.img?.src);
   $: twitterCard = hasImage ? 'summary_large_image' : 'summary';
+  $: imageUrl = hasImage
+    ? /^https?:\/\//.test(image.img.src)
+      ? image.img.src
+      : hostname + image.img.src
+    : '';
   $: jsonLdString = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : '';
   $: jsonLdScriptTag = jsonLdString
     ? '<' + 'script type="application/ld+json">' + jsonLdString + '</' + 'script>'
@@ -44,13 +49,13 @@
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   {#if hasImage}
-    <meta property="og:image" content={hostname + image.img.src} />
+    <meta property="og:image" content={imageUrl} />
     {#if image.img.w && image.img.h}
       <meta property="og:image:width" content={image.img.w} />
       <meta property="og:image:height" content={image.img.h} />
     {/if}
     <meta property="og:image:alt" content={title} />
-    <meta name="twitter:image" content={hostname + image.img.src} />
+    <meta name="twitter:image" content={imageUrl} />
     <meta name="twitter:image:alt" content={title} />
   {:else}
     <meta property="og:image" content={`${hostname}/blog.png`} />

@@ -7,14 +7,18 @@
 </script>
 
 <main>
-  <h1>
-    <iconify-icon icon={metadata.icon}> </iconify-icon>
-    {metadata.name}
-  </h1>
+  <a href="/blog" class="back">
+    <span class="arrow">&lt;</span>Back to blog
+  </a>
+  <h1><iconify-icon icon={metadata.icon}></iconify-icon>{metadata.name}</h1>
   <p class="meta">
     <span class="author">Andre Nogueira</span>
     <span class="divider">·</span>
     <time datetime={metadata.date}>{formatDate(metadata.date)}</time>
+    {#if data.journey}
+      <span class="divider">·</span>
+      <span>{data.journey}</span>
+    {/if}
   </p>
   <p class="description">{metadata.description}</p>
   <div class="content">
@@ -29,18 +33,19 @@
   }
 
   .description {
-    font-size: $font-sm;
-    margin: $spacing-sm 0 $spacing-3xl 0;
+    font-size: $font-base;
+    margin: $spacing-md 0 $spacing-3xl 0;
     font-style: italic;
     color: var(--txt-2);
   }
 
   .meta {
     margin: $spacing-sm 0 0 0;
-    font-size: $font-sm;
+    font-size: $font-xs;
     font-family: $font-family-mono;
-    color: var(--txt-2);
+    color: var(--txt-3);
     display: flex;
+    flex-wrap: wrap;
     gap: $spacing-sm;
     align-items: center;
   }
@@ -50,14 +55,12 @@
   }
 
   h1 {
-    margin: $spacing-lg 0;
+    margin: 0;
     line-height: 1.3;
-    display: flex;
-    align-items: center;
-    gap: 0;
   }
 
   h1 :global(iconify-icon) {
-    padding-right: 0.75ch;
+    vertical-align: -0.1em;
+    margin-right: 0.1ch;
   }
 </style>

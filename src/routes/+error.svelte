@@ -5,7 +5,9 @@
 <main>
   {#if $page.error}
     <h1 class="errorCode">{$page.status}</h1>
-    <h2 class="errorMessage">{$page.error.message}</h2>
+    <h2 class="errorMessage">
+      {$page.status === 404 ? "you've wandered off the map" : $page.error.message}
+    </h2>
     <div class="links">
       <a href="/">Home</a>
       <a href="/blog">Blog</a>
@@ -39,7 +41,7 @@
     gap: $spacing-md;
 
     a {
-      color: var(--primary);
+      color: var(--green);
       text-decoration: none;
       font-weight: bold;
 

@@ -1,22 +1,22 @@
 <script>
   import '../app.scss';
   import '$lib/assets/fonts/fira-mono.css';
-  import '$lib/assets/fonts/fira-code-variable.css';
-  import { page } from '$app/stores';
+  import '$lib/assets/fonts/inter.css';
+  import { page, navigating } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
-  import Toggle from '$lib/components/Toggle.svelte';
+  import AsciiField from '$lib/components/AsciiField.svelte';
   import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
-  import { fly } from 'svelte/transition';
+  import { toggleThemeWithBurst } from '$lib/js/theme.js';
+  import { pages } from '$lib/js/nav.js';
+  import { fly, slide } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
   export let data;
 
-  const pages = [
-    { name: 'Projects', path: '/projects' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' }
-  ];
+  let menuOpen = false;
+  // Close the mobile menu whenever the route changes.
+  $: if (data.pathname) menuOpen = false;
 
   let prevTwoPages = ['', ''];
   $: {
@@ -53,8 +53,8 @@
     const yDiff = currDepth - prevDepth;
 
     // Ensure we don't return NaN values
-    const xValue = isNaN(xDiff) ? 0 : xDiff * 20;
-    const yValue = isNaN(yDiff) ? 0 : yDiff * 20;
+    const xValue = isNaN(xDiff) ? 0 : xDiff * 12;
+    const yValue = isNaN(yDiff) ? 0 : yDiff * 12;
 
     // Return numeric values in pixels for the fly transition
     // Apply direction for in vs out transitions
@@ -64,6 +64,12 @@
     };
   }
 </script>
+
+<AsciiField active={$page.url.pathname === '/'} />
+
+{#if $navigating}
+  <div class="nav-progress" aria-hidden="true"></div>
+{/if}
 
 <PageHead
   title={$page.error ? $page.status : $page.data.meta.title}
@@ -83,22 +89,34 @@
 
 <a class="skip" href="#main">Skip to content</a>
 
+<svelte:window on:keydown={(e) => e.key === 'Escape' && (menuOpen = false)} />
+
 {#if $page.url.pathname !== '/'}
-  <header>
+  <header transition:slide={{ duration: 220, easing: quintOut }}>
     <div class="row">
       <a href="/"><h1>Tech Quests</h1></a>
-      <a class="pfp" href="/" aria-label="homepage">
-        <NavLogo size="2rem" />
-      </a>
+      <button class="pfp" on:click={toggleThemeWithBurst} aria-label="Toggle theme">
+        <NavLogo size="2.5rem" />
+      </button>
     </div>
-    <nav>
-      {#each pages as { name, path } (path)}
+    <button
+      class="menu-toggle"
+      on:click={() => (menuOpen = !menuOpen)}
+      aria-label="Toggle menu"
+      aria-expanded={menuOpen}
+    >
+      <iconify-icon icon={menuOpen ? 'ph:x' : 'ph:list'}></iconify-icon>
+    </button>
+    <nav class:open={menuOpen}>
+      {#each pages as { label, path } (path)}
         <a class="nav" href={path}>
-          <span class="arrow">&nbsp;></span><span class="slash">/</span>{name}
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span
+            class="slash"
+            aria-hidden="true">/</span
+          >{label}
         </a>
       {/each}
     </nav>
-    <Toggle />
   </header>
 {/if}
 
@@ -107,12 +125,14 @@
     <div
       class="transition"
       in:fly={{
-        duration: 100,
-        delay: 50,
+        duration: 260,
+        delay: 170,
+        easing: quintOut,
         ...xy(data.pathname)
       }}
       out:fly={{
-        duration: 100,
+        duration: 150,
+        easing: quintOut,
         ...xy(data.pathname, false)
       }}
     >
@@ -123,14 +143,38 @@
   {/key}
 </div>
 
+{#if $page.url.pathname !== '/'}
+  <footer class="site-footer" transition:slide={{ duration: 220, easing: quintOut }}>
+    <div class="foot-inner">
+      <span class="flavor">Built by <a href="/about">Andre Nogueira</a></span>
+      <div class="foot-right">
+        <span class="copy">© {data.year} <a href="/">TechQuests.dev</a></span>
+        <span class="foot-social">
+          <a
+            class="external"
+            href="https://github.com/techquestsdev"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
+          >
+          <a href="/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
+            ><iconify-icon icon="ph:rss"></iconify-icon></a
+          >
+        </span>
+      </div>
+    </div>
+  </footer>
+{/if}
+
 <style lang="scss">
   header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 $spacing-7xl;
-    height: $spacing-8xl;
-    overflow: hidden;
+    position: relative;
+    gap: $spacing-xl;
+    padding: 0 $spacing-5xl;
+    min-height: $spacing-8xl;
     transition: transform 0.1s ease;
     transform: translateY(0);
     flex-shrink: 0;
@@ -138,6 +182,7 @@
     .row {
       @include flex(row, null, center);
       gap: $spacing-xl;
+      flex-shrink: 0;
 
       .pfp {
         display: flex;
@@ -146,26 +191,116 @@
       }
 
       h1 {
+        font-family: $font-family-display;
+        font-weight: $font-weight-display;
+        letter-spacing: $letter-spacing-display;
         font-size: $font-base;
         color: var(--txt);
         margin: 0;
+        white-space: nowrap;
       }
     }
 
     nav {
       display: flex;
-      gap: $spacing-4xl;
+      flex-wrap: nowrap;
+      gap: $spacing-xl;
 
       a {
-        font-size: $font-base;
+        font-size: $font-sm;
         font-family: $font-family-mono;
+        white-space: nowrap;
       }
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      color: var(--txt);
+      font-size: $font-lg;
+      align-items: center;
     }
   }
 
   .container {
-    height: 100%;
+    flex: 1 0 auto;
     display: grid;
+    overflow: hidden;
+  }
+
+  // Indeterminate top progress bar shown while navigating between pages.
+  .nav-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    z-index: $z-index-modal;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    animation: nav-slide 0.9s ease-in-out infinite;
+  }
+
+  @keyframes nav-slide {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--bg-3);
+    font-family: $font-family-mono;
+    font-size: $font-xs;
+    color: var(--txt-3);
+
+    a {
+      color: var(--txt-3);
+      text-decoration: none;
+      transition: color $transition-fast;
+    }
+    a:hover {
+      color: var(--txt);
+    }
+
+    // Constrain footer content to the page's content width and center it, so it
+    // lines up with the article column instead of hugging the screen edges.
+    .foot-inner {
+      max-width: $width-content;
+      margin: 0 auto;
+      padding: $spacing-xl;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: $spacing-sm $spacing-3xl;
+      flex-wrap: wrap;
+    }
+
+    .foot-right {
+      display: flex;
+      align-items: center;
+      gap: $spacing-lg;
+    }
+
+    .foot-social {
+      display: flex;
+      gap: $spacing-md;
+      font-size: $font-sm;
+
+      iconify-icon {
+        padding-right: 0;
+        vertical-align: middle;
+      }
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      .foot-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: $spacing-md;
+      }
+    }
   }
 
   .skip {
@@ -173,7 +308,7 @@
     left: $spacing-md;
     top: $spacing-md;
     padding: $spacing-xs $spacing-md;
-    background: var(--bg-1);
+    background: var(--bg-2);
     color: var(--txt);
     border: 1px solid var(--bg-3);
     z-index: $z-index-sticky;
@@ -196,20 +331,35 @@
     height: 100%;
   }
 
-  @media (max-width: $breakpoint-tablet) {
+  // Collapse the nav into a dropdown when the labels would no longer fit on one
+  // line, so the top bar never wraps or clips.
+  @media (max-width: 1080px) {
     header {
-      padding: 0 $spacing-md;
-      gap: $spacing-md;
+      padding: 0 $spacing-xl;
+
+      .menu-toggle {
+        display: flex;
+      }
 
       nav {
+        position: absolute;
+        top: 100%;
+        right: $spacing-xl;
+        z-index: $z-index-sticky;
+        flex-direction: column;
+        align-items: flex-end;
         gap: $spacing-md;
+        margin-top: $spacing-xs;
+        padding: $spacing-lg $spacing-xl;
+        background: var(--bg-2);
+        border: 1px solid var(--bg-3);
+        border-radius: 8px;
+        display: none;
       }
-    }
-  }
 
-  @media (max-width: $breakpoint-mobile) {
-    header nav {
-      display: none;
+      nav.open {
+        display: flex;
+      }
     }
   }
 </style>

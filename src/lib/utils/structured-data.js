@@ -120,6 +120,40 @@ export function buildProjectJsonLd(metadata, images) {
   };
 }
 
+export function buildVideoJsonLd(metadata) {
+  const url = `${hostname}/videos/${metadata.slug}`;
+  const datePublished = metadata.date ? new Date(metadata.date).toISOString() : undefined;
+  const thumbnailUrl = `https://i.ytimg.com/vi/${metadata.youtubeId}/maxresdefault.jpg`;
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${metadata.youtubeId}`;
+  const contentUrl = `https://youtube.com/watch?v=${metadata.youtubeId}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: metadata.name,
+    description: metadata.description,
+    thumbnailUrl,
+    ...(datePublished ? { uploadDate: datePublished } : {}),
+    ...(metadata.duration ? { duration: metadata.duration } : {}),
+    contentUrl,
+    embedUrl,
+    url,
+    publisher: {
+      '@type': 'Organization',
+      name: siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: logoUrl
+      }
+    },
+    author: {
+      '@type': 'Person',
+      name: authorName,
+      url: authorUrl
+    }
+  };
+}
+
 export function buildImageObject(image) {
   return normalizeImage(image);
 }

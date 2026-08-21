@@ -745,5 +745,3 @@ _This is part of the **Home Lab** series. All the chapters can be found bellow:_
 - [Chapter 6: Kubernetes Ingress Controller](homelab-chapter-6)
 - [Chapter 7: Kubernetes DNS and SSL](homelab-chapter-7)
 - [Chapter 8: Kubernetes Storage with Rook-Ceph](homelab-chapter-8)
-
-> More to come...

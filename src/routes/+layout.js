@@ -5,6 +5,7 @@ export const load = ({ url }) => {
 
   return {
     pathname,
+    year: new Date().getFullYear(),
     meta: {
       title: 'Tech Quests | A SRE saga on technological adventures',
       description:

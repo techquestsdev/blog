@@ -1,69 +1,48 @@
-<script>
-  import Toggle from '$lib/components/Toggle.svelte';
-  import pfpinDark from '$lib/assets/pfpin-dark.json?raw';
-  import pfpinLight from '$lib/assets/pfpin-light.json?raw';
-  import { theme } from '$lib/js/theme';
-  import { onMount } from 'svelte';
-
-  let lottie;
-  let animation;
-
-  $: currentTheme = $theme;
-
-  // Load animation function
-  function loadAnimation(theme) {
-    const node = document.querySelector('.pfpstart');
-
-    // Destroy the existing animation to avoid multiple instances
-    if (animation) {
-      animation.destroy();
-    }
-
-    // Load the new animation based on the current theme
-    animation = lottie.loadAnimation({
-      name: 'pfp',
-      container: node,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: theme === 'dark' ? JSON.parse(pfpinDark) : JSON.parse(pfpinLight)
-    });
-  }
-
-  onMount(async () => {
-    lottie = await import('lottie-web/build/player/lottie_light.min.js');
-    loadAnimation(currentTheme);
-  });
-
-  // Watch for theme changes to reload the animation
-  $: {
-    if (lottie) {
-      loadAnimation(currentTheme);
-    }
-  }
+<script context="module">
+  // Module scope persists for the whole session, so this only stays true for
+  // the very first time the homepage mounts (a hard load or first SPA visit).
+  // Later client-side navigations back to "/" skip the hero reveal below,
+  // letting the normal page-fly transition do the work instead.
+  let visited = false;
 </script>
 
-<main>
+<script>
+  import { onMount } from 'svelte';
+  import NavLogo from '$lib/components/NavLogo.svelte';
+  import { pages } from '$lib/js/nav.js';
+  import { toggleThemeWithBurst } from '$lib/js/theme';
+  import { triggerBurst } from '$lib/js/ascii-burst.js';
+
+  const firstVisit = !visited;
+
+  onMount(() => {
+    if (firstVisit) {
+      // A reveal ripple from the centre of the viewport when landing on home
+      // for the first time only.
+      triggerBurst(window.innerWidth / 2, window.innerHeight / 2);
+    }
+    visited = true;
+  });
+</script>
+
+<main class:first-visit={firstVisit}>
   <div class="container">
     <div class="row">
-      <h1>Tech Quests</h1>
-      <div class="pfpstart"></div>
+      <a href="/"><h1>Tech Quests</h1></a>
+      <button class="pfpstart" on:click={toggleThemeWithBurst} aria-label="Toggle theme"
+        ><NavLogo size="4rem" /></button
+      >
     </div>
-    <p>The saga of a SRE sharing his technological adventures.</p>
+    <p>An SRE's field notes <span class="dash">—</span> homelabs, platforms, and code.</p>
     <nav>
-      <a class="nav" href="/projects">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Projects
-      </a>
-      <a class="nav" href="/blog">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Blog
-      </a>
-      <a class="nav" href="/about">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>About
-      </a>
-      <a class="nav" href="/contact">
-        <span class="arrow">&nbsp;></span><span class="slash">/</span>Contact
-      </a>
-      <Toggle />
+      {#each pages as { label, path } (path)}
+        <a class="nav" href={path}>
+          <span class="arrow" aria-hidden="true">&nbsp;></span><span
+            class="slash"
+            aria-hidden="true">/</span
+          >{label}
+        </a>
+      {/each}
     </nav>
   </div>
 </main>
@@ -83,13 +62,15 @@
   }
 
   .pfpstart {
-    width: $spacing-6xl;
-    height: $spacing-6xl;
-    margin-top: $spacing-xs;
-    margin-left: $spacing-base;
+    display: inline-flex;
+    background: none;
+    padding: 0;
   }
 
   h1 {
+    font-family: $font-family-display;
+    font-weight: $font-weight-display;
+    letter-spacing: $letter-spacing-display;
     font-size: $font-3xl;
     margin: 0;
   }
@@ -109,18 +90,60 @@
     margin: $spacing-lg 0;
   }
 
+  .dash {
+    color: var(--yellow);
+  }
+
+  // Staggered entrance for the hero, but only on the very first load — on
+  // later client-side navigations back to "/" the page-level fly transition
+  // already handles the reveal, so replaying this would fight with it.
+  :global(.first-visit) {
+    .row,
+    p,
+    nav {
+      animation: rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .row {
+      animation-delay: 0.1s;
+    }
+    p {
+      animation-delay: 0.28s;
+    }
+    nav {
+      animation-delay: 0.46s;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @media (max-width: $breakpoint-mobile) {
     nav {
       flex-direction: column;
-      gap: $spacing-sm;
+      gap: $spacing-md;
     }
     .row {
-      flex-direction: column-reverse;
-      gap: $spacing-sm;
-      align-items: flex-start;
+      gap: $spacing-lg;
+      align-items: center;
+    }
+    h1 {
+      font-size: $font-2xl;
     }
     .pfpstart {
-      visibility: hidden;
+      margin: 0;
+      flex-shrink: 0;
+
+      :global(.logo) {
+        width: $font-2xl;
+      }
     }
   }
 </style>

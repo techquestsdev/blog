@@ -92,7 +92,9 @@
 
   figcaption {
     font-style: italic;
-    font-size: $font-base;
+    font-size: $font-xs;
+    color: var(--txt-3);
     text-align: center;
+    margin-top: $spacing-md;
   }
 </style>

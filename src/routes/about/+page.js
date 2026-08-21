@@ -5,7 +5,7 @@ export function load() {
     meta: {
       title: 'About Andre Nogueira | Tech Quests',
       description:
-        'Learn more about Andre Nogueira, the Site Reliability Engineer behind Tech Quests, and the purpose of this blog.',
+        'About Andre Nogueira and Tech Quests — long-form posts, projects, and videos on Site Reliability Engineering and platform work.',
       type: 'blog-about',
       jsonLd: buildPersonJsonLd()
     }

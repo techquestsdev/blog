@@ -52,13 +52,6 @@ global.localStorage = {
   clear: vi.fn()
 };
 
-global.document = {
-  documentElement: {
-    setAttribute: vi.fn(),
-    getAttribute: vi.fn()
-  }
-};
-
 // Mock SvelteKit environment variables
 vi.mock('$app/environment', () => ({
   browser: false,

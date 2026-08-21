@@ -6,3 +6,41 @@
 # Not exploitable in our deployment: the blog serves static files only;
 # the JOSE code path is not reached at runtime.
 CVE-2026-34986
+
+# ---------------------------------------------------------------------------
+# Compiled into the caddy binary shipped by caddy:alpine (currently 2.11.4,
+# built with Go 1.26.3). We cannot fix these ourselves: the tag already
+# resolves to the newest published image, and every fix below needs a Go
+# toolchain / module version that upstream has not rebuilt against yet.
+# Alpine *package* CVEs are NOT ignored here - `apk upgrade` in the Dockerfile
+# fixes those for real.
+#
+# Re-check when Caddy publishes an image built on Go >= 1.26.4; drop whichever
+# of these it clears.
+
+# golang.org/x/text v0.37.0 -> 0.39.0. norm.Iter infinite loop (DoS) on
+# malformed input. Reached only for text Caddy normalises itself; we serve
+# pre-built static files and never feed it attacker-controlled text.
+CVE-2026-56852
+
+# google.golang.org/grpc v1.81.0 -> 1.82.1. xDS RBAC and HTTP/2 issues.
+# We run no gRPC listener and no xDS control plane; this code is dead weight
+# linked into the binary.
+GHSA-hrxh-6v49-42gf
+
+# Go stdlib crypto/x509 -> 1.26.4. DoS via excessive processing of DNS names
+# in a certificate. Only reachable while parsing a peer certificate; the blog
+# terminates TLS for inbound clients and initiates no outbound mTLS.
+CVE-2026-27145
+
+# Go stdlib os -> 1.26.5. os.Root symlink following allows directory
+# traversal. The site root is baked into the image at build time from our own
+# `build/` output and is never user-writable, so there is no path for an
+# attacker-planted symlink to appear under /usr/share/caddy.
+CVE-2026-39822
+
+# Go stdlib mime -> 1.26.4. DoS via maliciously-crafted MIME header. Caddy
+# parses request headers, so this is the least remote of the set - accepted as
+# a bounded DoS on a static, stateless, CDN-frontable site with no data at
+# risk. Revisit first when a rebuilt image lands.
+CVE-2026-42504

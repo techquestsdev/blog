@@ -17,6 +17,13 @@
           { "/": "/unkee/passkey-get", "comment": "Passkey assertion ceremony" },
           { "/": "/unkee/passkey-get/*", "comment": "Passkey assertion ceremony" }
         ]
+      },
+      {
+        "appIDs": ["293M4MWUJC.dev.techquests.unkeeauth"],
+        "components": [
+          { "/": "/authenticator/sync-confirmed", "comment": "Cloud Sync magic-link confirm hands back to the app" },
+          { "/": "/authenticator/sync-confirmed/*", "comment": "Cloud Sync magic-link confirm hands back to the app" }
+        ]
       }
     ]
   },

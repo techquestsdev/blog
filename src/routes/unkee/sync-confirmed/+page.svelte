@@ -3,8 +3,8 @@
     <div class="mark"><span class="dot"></span>UnKee</div>
     <h1>You're signed in</h1>
     <p>
-      Cloud Sync sign-in was confirmed. If you're not returned to the app automatically, switch
-      back to UnKee — you can close this tab.
+      Cloud Sync sign-in was confirmed. If you're not returned to the app automatically, switch back
+      to UnKee — you can close this tab.
     </p>
   </div>
 </main>

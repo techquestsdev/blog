@@ -6,3 +6,12 @@
 # Not exploitable in our deployment: the blog serves static files only;
 # the JOSE code path is not reached at runtime.
 CVE-2026-34986
+
+# Go stdlib (net/http, crypto/tls) vulnerabilities baked into the caddy:alpine
+# runtime image, which still ships Go 1.26.8 as of 2026-10-09. Fixed upstream
+# in Go 1.26.9/1.27.2, but Caddy's official image hasn't been rebuilt against
+# it yet. Both are DoS-only (no RCE/data exposure); this blog is a static
+# site with no sensitive data or availability SLA. Drop once caddy:alpine
+# picks up the patched Go toolchain.
+CVE-2026-78667
+CVE-2026-97031

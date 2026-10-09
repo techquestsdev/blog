@@ -1,10 +1,10 @@
 {
-  "version": "1.10.0",
-  "pub_date": "2026-10-09T14:32:04.869Z",
+  "version": "1.10.1",
+  "pub_date": "2026-10-09T19:57:47.952Z",
   "platforms": {
     "darwin-aarch64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSK2gzdW9jS3ZEMXVCSWFkaW5yWEpiTmpnNW9CaUJ6ZkU0MEo0OWtLUUNWZnFjQlRyQkM5MG9VOFY3Wm5jcm5GTzYzd1o0Z09EQkZPWXI2Y1hDQ0xsMTJ4azJqaWg0V2dzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkxNTU2MzI0CWZpbGU6VW5LZWVfMS4xMC4wX2Rhcndpbi1hYXJjaDY0LmFwcC50YXIuZ3oKMGlidkhnTnRaVzQwOXJXM3Vxb1J2a0g4OG9DOVMrQUZtaStIdmxRVFJSbjdBK1dTMitMTFpJbG8xZnpPdWxXa0pPRnR2NW9MdWVUY3dLOWtWVU4yQ0E9PQo=",
-      "url": "https://techquests.dev/unkee/updates/UnKee_1.10.0_darwin-aarch64.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSK2gzdW9jS3ZEMXVGQ1kyOFFXTzJkTzZqanlGQVRvTXo4WURhNitJZDlVT2FlUmhBbFJOcTdqWlVTVG4vTngxYVRHdHJ4TVJYY2hPQ0l4K2ZMa1h0YTMzbTN0Nk5SMFFJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkxNTc1ODY3CWZpbGU6VW5LZWVfMS4xMC4xX2Rhcndpbi1hYXJjaDY0LmFwcC50YXIuZ3oKM2JRQVFRRVJQNklHd2Y3ajRha0sxOFpaT1VaZ0dsWEVFbkt2cjIvNEJISmNJTWhCYU9wbm5PUkZFWmdKTHVPZTU3OHdtT2Urei94ejFhbm9HQk8rQkE9PQo=",
+      "url": "https://techquests.dev/unkee/updates/UnKee_1.10.1_darwin-aarch64.app.tar.gz"
     }
   }
 }

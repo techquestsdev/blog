@@ -15,3 +15,10 @@ CVE-2026-34986
 # picks up the patched Go toolchain.
 CVE-2026-78667
 CVE-2026-97031
+
+# golang.org/x/net / stdlib's vendored net/http/internal/http2: DoS via
+# excessive HTTP/2 SETTINGS frames. Fixed in x/net 0.60.0 / Go 1.26.9+,
+# not yet present in caddy:alpine (still on x/net v0.59.0, Go 1.26.8 as
+# of 2026-10-09). DoS-only; static site, no availability SLA. Drop once
+# caddy:alpine picks up the patched toolchain/dependency.
+CVE-2026-78669

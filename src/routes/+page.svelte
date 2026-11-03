@@ -1,149 +1,140 @@
-<script context="module">
-  // Module scope persists for the whole session, so this only stays true for
-  // the very first time the homepage mounts (a hard load or first SPA visit).
-  // Later client-side navigations back to "/" skip the hero reveal below,
-  // letting the normal page-fly transition do the work instead.
-  let visited = false;
-</script>
-
 <script>
-  import { onMount } from 'svelte';
-  import NavLogo from '$lib/components/NavLogo.svelte';
-  import { pages } from '$lib/js/nav.js';
-  import { toggleThemeWithBurst } from '$lib/js/theme';
-  import { triggerBurst } from '$lib/js/ascii-burst.js';
+  import {
+    CAMPAIGNS,
+    STATUS,
+    pad,
+    fmtDate,
+    year,
+    decoratePosts,
+    campaignLabel,
+    CATS,
+    LIFE,
+    decorateProject
+  } from '$lib/js/site.js';
 
-  const firstVisit = !visited;
+  export let data;
 
-  onMount(() => {
-    if (firstVisit) {
-      // A reveal ripple from the centre of the viewport when landing on home
-      // for the first time only.
-      triggerBurst(window.innerWidth / 2, window.innerHeight / 2);
-    }
-    visited = true;
-  });
+  $: posts = decoratePosts(data.posts);
+  $: latest = posts.slice(0, 5);
+  $: featured =
+    posts.find((p) => p.campaign && CAMPAIGNS[p.campaign].status === 'active') ??
+    posts.find((p) => p.campaign);
+  $: camp = featured ? CAMPAIGNS[featured.campaign] : null;
+  $: isActive = camp?.status === 'active';
+  $: projects = data.projects.map(decorateProject);
 </script>
 
-<main class:first-visit={firstVisit}>
-  <div class="container">
-    <div class="row">
-      <a href="/"><h1>Tech Quests</h1></a>
-      <button class="pfpstart" on:click={toggleThemeWithBurst} aria-label="Toggle theme"
-        ><NavLogo size="4rem" /></button
-      >
-    </div>
-    <p>An SRE's field notes <span class="dash">—</span> homelabs, platforms, and code.</p>
-    <nav>
-      {#each pages as { label, path } (path)}
-        <a class="nav" href={path}>
-          <span class="arrow" aria-hidden="true">&nbsp;></span><span
-            class="slash"
-            aria-hidden="true">/</span
-          >{label}
-        </a>
-      {/each}
-    </nav>
+<section class="g hero">
+  <h1 class="mega">Every post is a quest<em>.</em></h1>
+  <p class="lede">
+    Notes from a platform engineer building things: homelabs, terminal tools and side projects,
+    logged one mission at a time.
+  </p>
+  <div class="meta">
+    <span class="lab">Field journal</span><span class="lab"><b>André Nogueira</b></span><span
+      class="lab">Vol. {new Date().getFullYear()}</span
+    >
   </div>
-</main>
+</section>
 
-<style lang="scss">
-  main {
-    @include flex(row, center, center);
+{#if camp}
+  <section class="block" style="--blk:{camp.color}">
+    <a class="g block-row" href="/blog/{featured.slug}" style="width:100%">
+      <span class="c-l" style="display:grid;gap:8px"
+        ><span class="lab">{isActive ? 'Current campaign' : 'Latest campaign'}</span><span
+          class="st-w {camp.status}"><span class="gl"></span>{STATUS[camp.status]}</span
+        ><span class="num">{pad(featured.act, 2)}</span></span
+      >
+      <span class="c-r" style="display:grid;gap:16px"
+        ><span class="lab"
+          >{camp.name} · Act {featured.act} of {featured.act}{isActive ? '+' : ' · Final act'}</span
+        ><span class="big mono">{featured.title}</span><span class="cta"
+          >{isActive ? 'Continue the campaign →' : 'Read the final act →'}</span
+        ></span
+      >
+    </a>
+  </section>
+{/if}
 
-    height: 100%;
-    max-height: calc(100vh - $spacing-10xl);
-    margin: 0 $spacing-xl;
-  }
+<section class="g sh band heavy">
+  <span class="c-l lab">01 · Quest log</span>
+  <h2 class="huge" style="grid-column:4/12">Latest</h2>
+  <a class="more" href="/blog">All quests</a>
+</section>
+<ul class="idx">
+  <li style="border-top:0">
+    <div class="g thead lab" aria-hidden="true">
+      <span style="grid-column:1/2">No.</span><span style="grid-column:2/4">Campaign</span><span
+        style="grid-column:4/10">Quest</span
+      ><span style="grid-column:10/13;justify-self:end">Logged</span>
+    </div>
+  </li>
+  {#each latest as p (p.slug)}
+    <li>
+      <a class="g" href="/blog/{p.slug}">
+        <span class="n">{pad(p.n)}</span><span class="camp lab"
+          >{#if p.campaign}<span
+              class="sw"
+              style="background:{CAMPAIGNS[p.campaign].color}"
+              aria-hidden="true"
+            ></span>{/if}{campaignLabel(p)}</span
+        >
+        <span class="t"
+          >{p.title}{#if p.desc}<span class="d">{p.desc}</span>{/if}</span
+        >
+        <span class="date lab">{fmtDate(p.date)}</span>
+      </a>
+    </li>
+  {/each}
+</ul>
 
-  .row {
-    @include flex(row, null, center);
-    gap: $spacing-2xl;
-  }
+<section class="g sh band heavy" style="margin-top:64px">
+  <span class="c-l lab">02 · Built</span>
+  <h2 class="huge" style="grid-column:4/12">Artifacts</h2>
+  <a class="more" href="/projects">All artifacts</a>
+</section>
+<ul class="idx art">
+  {#each projects.slice(0, 3) as p (p.slug)}
+    <li>
+      <a class="g" href="/projects/{p.slug}">
+        <span class="name">{p.name}</span><span class="desc">{p.description}</span>
+        <span class="c-type"
+          ><span class="lab" style="display:inline-flex;align-items:center"
+            ><span class="sw" style="background:var(--tq-cat-{p.cat})" aria-hidden="true"
+            ></span>{CATS[p.cat]}</span
+          ></span
+        ><span class="c-year lab">{year(p.date)}</span><span class="c-life"
+          ><span class="life {p.life}"><i aria-hidden="true"></i>{LIFE[p.life]}</span></span
+        >
+      </a>
+    </li>
+  {/each}
+</ul>
 
-  .pfpstart {
-    display: inline-flex;
-    background: none;
-    padding: 0;
-  }
-
-  h1 {
-    font-family: $font-family-display;
-    font-weight: $font-weight-display;
-    letter-spacing: $letter-spacing-display;
-    font-size: $font-3xl;
-    margin: 0;
-  }
-
-  nav {
-    display: flex;
-    gap: $spacing-3xl;
-
-    a {
-      font-size: $font-base;
-      font-family: $font-family-mono;
-    }
-  }
-
-  p {
-    font-size: $font-sm;
-    margin: $spacing-lg 0;
-  }
-
-  .dash {
-    color: var(--yellow);
-  }
-
-  // Staggered entrance for the hero, but only on the very first load — on
-  // later client-side navigations back to "/" the page-level fly transition
-  // already handles the reveal, so replaying this would fight with it.
-  :global(.first-visit) {
-    .row,
-    p,
-    nav {
-      animation: rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    .row {
-      animation-delay: 0.1s;
-    }
-    p {
-      animation-delay: 0.28s;
-    }
-    nav {
-      animation-delay: 0.46s;
-    }
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    nav {
-      flex-direction: column;
-      gap: $spacing-md;
-    }
-    .row {
-      gap: $spacing-lg;
-      align-items: center;
-    }
-    h1 {
-      font-size: $font-2xl;
-    }
-    .pfpstart {
-      margin: 0;
-      flex-shrink: 0;
-
-      :global(.logo) {
-        width: $font-2xl;
-      }
-    }
-  }
-</style>
+<section class="g sh band heavy" style="margin-top:64px">
+  <span class="c-l lab">03 · Recorded</span>
+  <h2 class="huge" style="grid-column:4/12">Episodes</h2>
+  <a class="more" href="/videos">All episodes</a>
+</section>
+<ul class="idx ep" style="margin-bottom:96px">
+  {#each data.videos as video, i (video.slug)}
+    {@const n = data.videos.length - i}
+    <li>
+      <a class="g" href="/videos/{video.slug}">
+        <span class="thumb" aria-hidden="true"
+          ><span class="th-top"
+            ><span class="lab">Episode {pad(n, 2)}</span><svg
+              class="mk"
+              style="width:56px;color:#e0def4;--a1:#eb6f92;--a2:#f6c177"><use href="#m" /></svg
+            ></span
+          ><span class="th-t">{video.name}</span><span class="epn">{pad(n, 2)}</span></span
+        >
+        <span class="body"
+          ><span class="lab">Episode {pad(n, 2)} · {fmtDate(video.date)}</span><span
+            class="big mono">{video.name}</span
+          ><span style="color:var(--tq-ink-2)">{video.description}</span></span
+        >
+      </a>
+    </li>
+  {/each}
+</ul>

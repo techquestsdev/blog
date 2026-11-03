@@ -1,27 +1,56 @@
 <script>
-  import { onMount } from 'svelte';
-  import XIcon from '~icons/ph/x-logo';
-  import DiscordIcon from '~icons/ph/discord-logo';
-  import EnvelopeIcon from '~icons/ph/envelope';
-
-  let status = 'Send ->';
   let nameInput;
   let emailInput;
   let messageInput;
 
-  onMount(() => {
-    [nameInput, emailInput, messageInput].forEach((field) => {
-      if (field?.dataset?.placeholder) {
-        field.placeholder = field.dataset.placeholder;
-      }
-    });
-  });
+  let errors = { name: '', email: '', msg: '' };
+  let posting = false;
+  let sent = false;
+  let failed = false;
+
+  const rules = {
+    name: (value) => (value.trim() ? '' : 'Enter your name so I know who to reply to.'),
+    email: (value) =>
+      !value.trim()
+        ? 'Enter your email so I can reply.'
+        : /^\S+@\S+\.\S+$/.test(value)
+          ? ''
+          : 'That email looks incomplete, e.g. you@example.com.',
+    msg: (value) => (value.trim().length >= 10 ? '' : 'Write at least 10 characters.')
+  };
+
+  const validate = (id, value) => {
+    const message = rules[id](value);
+    errors = { ...errors, [id]: message };
+    return !message;
+  };
+
+  const handleBlur = (event) => {
+    const field = event.currentTarget;
+    validate(field.id, field.value);
+  };
 
   const handleSubmit = async (event) => {
-    status = 'Sending...';
-    const formData = new FormData(event.currentTarget);
+    if (posting) return;
+
+    const form = event.currentTarget;
+    sent = false;
+    failed = false;
+
+    const results = [
+      validate('name', nameInput.value),
+      validate('email', emailInput.value),
+      validate('msg', messageInput.value)
+    ];
+    const firstInvalid = results.indexOf(false);
+    if (firstInvalid !== -1) {
+      [nameInput, emailInput, messageInput][firstInvalid].focus();
+      return;
+    }
+
+    posting = true;
+    const formData = new FormData(form);
     const object = Object.fromEntries(formData);
-    const json = JSON.stringify(object);
 
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
@@ -30,194 +59,118 @@
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: json
+        body: JSON.stringify(object)
       });
 
       const result = await response.json();
       if (result.success) {
-        status = 'Message Sent!';
-        event.currentTarget.reset();
-        return;
+        form.reset();
+        errors = { name: '', email: '', msg: '' };
+        sent = true;
+      } else {
+        failed = true;
       }
-
-      status = 'Send failed. Please try email.';
     } catch {
-      status = 'Send failed. Please try email.';
+      failed = true;
+    } finally {
+      posting = false;
     }
   };
 </script>
 
-<main>
-  <h1>Contact</h1>
-  <p>Ways to get in touch, in order from fastest to slowest.</p>
-  <div class="info">
-    <XIcon /> X <span class="sub">-></span>
-    <a href="https://x.com/0xaanogueira" class="external" target="_blank" rel="noopener noreferrer"
-      >0xaanogueira<span class="arrow">-></span>
-    </a>
+<section class="g ph">
+  <div class="side">
+    <span class="lab">05 · Contact</span>
+    <span class="lab"><b>Send a raven</b></span>
   </div>
-  <div class="info">
-    <DiscordIcon /> Discord <span class="sub">-></span>
-    <a
-      href="https://discord.com/users/aanogueira"
-      class="external"
-      target="_blank"
-      rel="noopener noreferrer"
-      >aanogueira<span class="arrow">-></span>
-    </a>
-  </div>
-  <div class="info">
-    <EnvelopeIcon /> Email <span class="sub">-></span>
-    <a href="mailto:aanogueira@protonmail.com" class="external"
-      >aanogueira@protonmail.com<span class="arrow">-></span>
-    </a>
-  </div>
-  <h3 class="section-title">Contact form</h3>
+  <h1 class="mega c-r">Say hello</h1>
+  <p class="lede">Questions about a post, a project idea, or a bug in one of the artifacts.</p>
+</section>
+
+<div class="g band heavy">
   <form
+    class="form"
     method="POST"
     action="https://api.web3forms.com/submit"
+    novalidate
     on:submit|preventDefault={handleSubmit}
   >
     <input type="hidden" name="access_key" value="31a49089-9b40-4bf6-89a7-fa5a56535661" />
     <input type="hidden" name="subject" value="Tech Quests contact form" />
-    <div class="field">
-      <label class="field-label" for="contact-name"
-        >Name<span class="cli-only">: </span>
-        <input
-          id="contact-name"
-          type="text"
-          name="name"
-          data-placeholder="John Doe"
-          required
-          bind:this={nameInput}
-        />
-      </label>
+
+    <div class="field" class:invalid={!!errors.name}>
+      <label for="name">Name *</label>
+      <input
+        id="name"
+        type="text"
+        name="name"
+        autocomplete="name"
+        aria-invalid={errors.name ? 'true' : 'false'}
+        bind:this={nameInput}
+        on:blur={handleBlur}
+      />
+      <span class="err" hidden={!errors.name}>{errors.name}</span>
     </div>
-    <div class="field">
-      <label class="field-label" for="contact-email"
-        >Email<span class="cli-only">: </span>
-        <input
-          id="contact-email"
-          type="email"
-          name="email"
-          data-placeholder="john.doe@gmail.com"
-          required
-          bind:this={emailInput}
-        />
-      </label>
+
+    <div class="field" class:invalid={!!errors.email}>
+      <label for="email">Email *</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        autocomplete="email"
+        aria-invalid={errors.email ? 'true' : 'false'}
+        bind:this={emailInput}
+        on:blur={handleBlur}
+      />
+      <span class="err" hidden={!errors.email}>{errors.email}</span>
     </div>
-    <div class="field full">
-      <label class="field-label" for="contact-message"
-        >Message<span class="cli-only">: </span>
-        <textarea
-          id="contact-message"
-          name="message"
-          data-placeholder="Hi there! I have a question about..."
-          required
-          rows="4"
-          bind:this={messageInput}></textarea>
-      </label>
+
+    <div class="field" class:invalid={!!errors.msg}>
+      <label for="msg">Message *</label>
+      <textarea
+        id="msg"
+        name="message"
+        rows="5"
+        autocomplete="off"
+        aria-invalid={errors.msg ? 'true' : 'false'}
+        bind:this={messageInput}
+        on:blur={handleBlur}></textarea>
+      <span class="err" hidden={!errors.msg}>{errors.msg}</span>
     </div>
-    <div class="field full">
-      <button type="submit">{status}</button>
-    </div>
+
+    <button class="btn" type="submit" disabled={posting}>
+      {posting ? 'Sending…' : 'Send message'}
+    </button>
+
+    {#if sent}
+      <div class="ok" role="status">
+        <strong class="mono">Message logged.</strong> Thanks — I'll get back to you soon.
+      </div>
+    {/if}
+    {#if failed}
+      <p class="err" role="alert">Send failed. Please try email.</p>
+    {/if}
   </form>
-</main>
 
-<style lang="scss">
-  main {
-    @include page-container;
-  }
-
-  a {
-    font-family: $font-family-mono;
-    font-size: $font-sm;
-  }
-
-  .info {
-    font-size: $font-sm;
-    margin: $spacing-sm 0;
-    font-family: $font-family-mono;
-  }
-
-  form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $spacing-sm $spacing-md;
-  }
-
-  .field {
-    display: grid;
-    gap: $spacing-xs;
-  }
-
-  .section-title {
-    margin-top: $spacing-4xl;
-  }
-
-  .cli-only {
-    display: none;
-  }
-
-  .field.full {
-    grid-column: 1 / -1;
-  }
-
-  .field-label {
-    font-size: $font-xs;
-    font-family: $font-family-mono;
-    color: var(--txt-2);
-    display: grid;
-    gap: $spacing-xs;
-  }
-
-  input[type='text'],
-  input[type='email'],
-  textarea,
-  button {
-    background-color: transparent;
-    border: none;
-    padding: $spacing-sm;
-    color: inherit;
-    font: inherit;
-    font-size: $font-xs;
-    border: 2px solid var(--bg-3);
-    transition: $transition-fast;
-    background-color: var(--bg-2);
-    // border-radius: 0.5rem;
-
-    &:focus {
-      outline: none;
-      border: 2px solid var(--txt-2);
-    }
-  }
-
-  ::placeholder {
-    color: var(--txt-2);
-  }
-
-  textarea,
-  button {
-    grid-column: 1 / -1;
-  }
-
-  button {
-    font-family: $font-family-mono;
-    padding: $spacing-sm $font-sm;
-    &:hover {
-      border: 2px solid var(--txt-2);
-    }
-  }
-
-  .info :global(svg) {
-    vertical-align: -0.15em;
-    margin-right: 0.5ch;
-    font-size: 0.95em;
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    form {
-      grid-template-columns: auto;
-    }
-  }
-</style>
+  <ul class="links">
+    <li class="lab" style="padding-bottom:12px">Elsewhere</li>
+    <li>
+      <a href="https://x.com/0xaanogueira" target="_blank" rel="noopener noreferrer"
+        >X <span>↗</span></a
+      >
+    </li>
+    <li>
+      <a href="https://discord.com/users/aanogueira" target="_blank" rel="noopener noreferrer"
+        >Discord <span>↗</span></a
+      >
+    </li>
+    <li><a href="mailto:aanogueira@protonmail.com">Email <span>↗</span></a></li>
+    <li>
+      <a href="https://github.com/aanogueira" target="_blank" rel="noopener noreferrer"
+        >GitHub <span>↗</span></a
+      >
+    </li>
+    <li><a href="/rss.xml">RSS <span>↗</span></a></li>
+  </ul>
+</div>

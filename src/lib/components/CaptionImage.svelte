@@ -23,10 +23,12 @@
 
 <style lang="scss">
   figcaption {
-    font-style: italic;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    text-align: center;
-    margin-top: $spacing-md;
+    font: 500 var(--tq-text-xs) / 1.5 var(--tq-font-display);
+    letter-spacing: var(--tq-tracking-label);
+    text-transform: uppercase;
+    font-style: normal;
+    color: var(--tq-ink-2);
+    text-align: left;
+    margin-top: 12px;
   }
 </style>

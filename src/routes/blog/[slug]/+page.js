@@ -1,4 +1,4 @@
-import { nameFromPath, importOgImage } from '$lib/js/posts.js';
+import { nameFromPath, importOgImage, getPosts } from '$lib/js/posts.js';
 import { buildBlogPostingJsonLd, buildImageObject } from '$lib/utils/structured-data.js';
 import { readingJourney } from '$lib/utils/reading-time.js';
 import { error } from '@sveltejs/kit';
@@ -30,6 +30,8 @@ export async function load({ params }) {
 
   let imagePath = match.path.split('/').slice(0, -1).join('/') + '/' + post.metadata.ogImage;
   let image = await importOgImage(imagePath);
+  if (!post.metadata.ogImage || !image)
+    image = { img: { src: `/og/blog/${params.slug}.png`, w: 1200, h: 630 } };
 
   const jsonLd = buildBlogPostingJsonLd(
     { ...post.metadata, slug: params.slug },
@@ -38,6 +40,7 @@ export async function load({ params }) {
 
   return {
     post,
+    posts: await getPosts(modules),
     journey,
     meta: {
       title: `${post.metadata.name} | Tech Quests`,

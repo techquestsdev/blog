@@ -1,132 +1,135 @@
 <script>
-  import { formatDate } from '$lib/js/utils.js';
-  import RssIcon from '~icons/ph/rss';
+  import { CAMPAIGNS, STATUS, pad, fmtDate, decoratePosts, campaignLabel } from '$lib/js/site.js';
 
   export let data;
+
+  let filter = 'all';
+  let posts = [];
+  let campaignBlocks = [];
+  let visiblePosts = [];
+
+  const filters = [
+    { value: 'all', label: 'All' },
+    { value: 'homelab', label: 'Homelab' },
+    { value: 'tictactoe', label: 'Tic-Tac-Toe' },
+    { value: 'side', label: 'Side quests' }
+  ];
+
+  $: posts = decoratePosts(data.posts);
+  $: campaignBlocks = Object.entries(CAMPAIGNS).map(([key, campaign]) => ({
+    key,
+    ...campaign,
+    acts: posts.filter((post) => post.campaign === key).sort((a, b) => a.act - b.act)
+  }));
+  $: visiblePosts = posts.filter(
+    (post) => filter === 'all' || (filter === 'side' ? !post.campaign : post.campaign === filter)
+  );
 </script>
 
-<main>
-  <div class="title-row">
-    <h1>Chronicles <span class="count">[{data.posts.length}]</span></h1>
-    <a
-      href="/blog/rss.xml"
-      class="rss-link"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Blog RSS feed"
-    >
-      <RssIcon /> RSS
-    </a>
+<section class="g ph">
+  <div class="side">
+    <span class="lab">01 · Quest log</span>
+    <span class="lab">{posts.length} entries</span>
+    <a class="lab" href="/blog/rss.xml">RSS ↗</a>
   </div>
+  <h1 class="mega c-r">Quests</h1>
+  <p class="lede">
+    Long-form write-ups. Series are campaigns, each with its own colour; each chapter is an act.
+  </p>
+</section>
 
-  <div class="posts">
-    {#each data.posts as post (post.slug)}
-      <a href={'/blog/' + post.slug} class="link">
-        <div class="date">{formatDate(post.date)}</div>
-        <h2>
-          <iconify-icon icon={post.icon}> </iconify-icon>{post.name}<span
-            class="arrow"
-            aria-hidden="true">&nbsp;></span
-          ><span class="slash" aria-hidden="true">/</span>
-        </h2>
-        <div class="description">{post.description}</div>
-      </a>
+{#each campaignBlocks as campaign (campaign.key)}
+  <div class="camp-block" style={`--cc:${campaign.color}`}>
+    <div class="g camp-row">
+      <div class="c-l" style="display:grid;gap:8px">
+        <span class="lab">Campaign · {campaign.acts.length} acts</span>
+        <h2 class="big">{campaign.name}</h2>
+        <span class={`st-w ${campaign.status}`}
+          ><span class="gl"></span>{STATUS[campaign.status]}</span
+        >
+        <span class="blurb">{campaign.blurb}</span>
+      </div>
+      <div class="acts">
+        {#each campaign.acts as act (act.slug)}
+          <a href={`/blog/${act.slug}`} aria-label={`Act ${act.act}: ${act.title}`}>
+            <span class="a">{pad(act.act, 2)}</span>
+            <span class="lab">Act</span>
+          </a>
+        {/each}
+        {#if campaign.status === 'active'}
+          <span class="todo"><span class="lab">Next</span><span class="lab">In progress</span></span
+          >
+        {/if}
+      </div>
+    </div>
+  </div>
+{/each}
+
+<div class="g side-row band heavy">
+  <div class="c-l" style="display:grid;gap:8px">
+    <span class="lab">Standalone</span>
+    <h2 class="big">Side quests</h2>
+  </div>
+  <p class="c-r lede" style="align-self:end">
+    One-off entries outside any campaign, like the Prologue. No colour.
+  </p>
+</div>
+
+<section class="g sh band heavy" style="margin-top:48px">
+  <span class="c-l lab">Index</span>
+  <div class="c-r" style="display:grid;gap:24px">
+    <h2 class="huge">All entries</h2>
+    <div class="filters" role="group" aria-label="Filter quests">
+      {#each filters as option (option.value)}
+        <button
+          type="button"
+          class="chip"
+          aria-pressed={filter === option.value}
+          on:click={() => (filter = option.value)}>{option.label}</button
+        >
+      {/each}
+    </div>
+  </div>
+</section>
+
+{#if visiblePosts.length}
+  <ul class="idx" style="margin-bottom:96px">
+    <li style="border-top:0">
+      <div class="g thead lab" aria-hidden="true">
+        <span style="grid-column:1/2">No.</span>
+        <span style="grid-column:2/4">Campaign</span>
+        <span style="grid-column:4/10">Quest</span>
+        <span style="grid-column:10/13;justify-self:end">Logged</span>
+      </div>
+    </li>
+    {#each visiblePosts as post (post.slug)}
+      <li>
+        <a class="g" href={`/blog/${post.slug}`}>
+          <span class="n">{pad(post.n)}</span>
+          <span class="camp lab">
+            {#if post.campaign}
+              <span
+                class="sw"
+                style={`background:${CAMPAIGNS[post.campaign].color}`}
+                aria-hidden="true"
+              ></span>{campaignLabel(post)}
+            {:else}
+              {campaignLabel(post)}
+            {/if}
+          </span>
+          <span class="t">
+            {post.title}{#if post.desc}<span class="d">{post.desc}</span>{/if}
+          </span>
+          <span class="date lab">{fmtDate(post.date)}</span>
+        </a>
+      </li>
     {/each}
+  </ul>
+{:else}
+  <div class="g">
+    <p class="c-r empty">
+      No quests in this filter yet.
+      <button class="more" type="button" on:click={() => (filter = 'all')}>Show all</button>
+    </p>
   </div>
-</main>
-
-<style lang="scss">
-  main {
-    @include page-container;
-    padding-top: 0;
-  }
-
-  .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: $spacing-md;
-    flex-wrap: wrap;
-    margin: $spacing-xl 0 $spacing-2xl 0;
-
-    h1 {
-      margin: 0;
-    }
-  }
-
-  .rss-link {
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4ch;
-    transition: color $transition-fast;
-
-    :global(svg) {
-      font-size: 1em;
-    }
-
-    &:hover {
-      color: var(--txt);
-    }
-  }
-
-  .count {
-    font-family: $font-family-mono;
-    font-size: $font-base;
-    color: var(--txt-3);
-    font-weight: 400;
-    margin-left: 0.5ch;
-  }
-
-  .posts {
-    @include flex(column);
-    gap: $spacing-xl;
-    max-width: 100%;
-  }
-
-  a.link {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      'date title'
-      '.    description';
-    justify-content: left;
-    gap: $spacing-sm $spacing-3xl;
-  }
-
-  .date {
-    grid-area: date;
-    font-family: $font-family-mono;
-    font-size: $font-sm;
-    color: var(--txt-3);
-    margin-top: $spacing-2xs;
-  }
-
-  h2 {
-    grid-area: title;
-    margin: 0;
-    color: var(--txt);
-  }
-
-  .description {
-    grid-area: description;
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    a.link {
-      grid-template-columns: auto;
-      grid-template-areas:
-        'date'
-        'title'
-        'description';
-      gap: $spacing-xs;
-    }
-
-    .date {
-      margin-top: 0;
-    }
-  }
-</style>
+{/if}

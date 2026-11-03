@@ -8,7 +8,8 @@ const labelFor = (path) => pages.find((page) => page.path === path).label;
 // Below 1080px the nav collapses into a dropdown, so open it before asserting
 // on the links.
 const openNavIfCollapsed = async (page) => {
-  const menuToggle = page.locator('.menu-toggle');
+  await page.waitForLoadState('networkidle');
+  const menuToggle = page.locator('button.iconbtn.menu');
   if (await menuToggle.isVisible()) {
     await menuToggle.click();
   }
@@ -27,16 +28,21 @@ test.describe('Homepage', () => {
 
     for (const { label } of pages) {
       // `exact` matters: the "Tech Quests" wordmark would substring-match "Quests".
-      await expect(page.getByRole('link', { name: label, exact: true })).toBeVisible();
+      await expect(
+        page.locator('#nav').getByRole('link', { name: label, exact: true })
+      ).toBeVisible();
     }
   });
 
   test('should have theme toggle functionality', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     const themeToggle = page.locator('[data-testid="theme-toggle"]').first();
     if (await themeToggle.isVisible()) {
+      const html = page.locator('html');
+      const initialColorScheme = await html.getAttribute('color-scheme');
       await themeToggle.click();
-      await page.waitForTimeout(100);
+      await expect.poll(() => html.getAttribute('color-scheme')).not.toBe(initialColorScheme);
     }
   });
 });
@@ -46,13 +52,13 @@ test.describe('Blog', () => {
     await page.goto('/blog');
     await expect(page.locator('main h1').first()).toBeVisible();
 
-    const blogPosts = page.locator('.posts');
+    const blogPosts = page.locator('.idx');
     await expect(blogPosts).toBeVisible();
   });
 
   test('should navigate to individual blog posts', async ({ page }) => {
     await page.goto('/blog');
-    const firstPostLink = page.locator('.posts a').first();
+    const firstPostLink = page.locator('.idx a[href^="/blog/"]').first();
     if (await firstPostLink.isVisible()) {
       await firstPostLink.click();
       await expect(page.locator('main').first()).toBeVisible();

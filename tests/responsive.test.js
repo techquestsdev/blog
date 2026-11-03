@@ -1,4 +1,4 @@
-import { expect, test, devices } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Mobile Responsiveness', () => {
   test('should render correctly on mobile devices', async ({ browser }) => {
@@ -22,7 +22,7 @@ test.describe('Mobile Responsiveness', () => {
     }
 
     // Check that navigation is accessible (might be hamburger menu on mobile)
-    const navigation = page.locator('nav').first();
+    const navigation = page.locator('button.iconbtn.menu').first();
     if (await navigation.isVisible()) {
       await expect(navigation).toBeVisible();
     }
@@ -33,44 +33,11 @@ test.describe('Mobile Responsiveness', () => {
     await page.goto('/projects');
 
     // Check for projects and try to interact with them
-    const firstProject = page.locator('.posts a').first();
+    const firstProject = page.locator('ol.names a.nm[href^="/projects/"]').first();
     if (await firstProject.isVisible()) {
       await firstProject.click(); // Use click instead of tap for broader compatibility
       await expect(page.locator('main').first()).toBeVisible();
     }
-  });
-
-  test('should display carousel correctly on tablet', async ({ browser }) => {
-    const context = await browser.newContext({
-      ...devices['iPad Pro']
-    });
-    const page = await context.newPage();
-
-    await page.goto('/projects/beer');
-
-    const carousel = page.locator('.embla');
-    if (await carousel.isVisible()) {
-      await expect(carousel).toBeVisible();
-
-      // Test swipe gesture if supported
-      const carouselContainer = page.locator('.embla__container');
-      if (await carouselContainer.isVisible()) {
-        try {
-          // Try to dispatch touch events - may not be supported in all browsers
-          await carouselContainer.dispatchEvent('touchstart', {
-            touches: [{ identifier: 0, clientX: 100, clientY: 100 }]
-          });
-          await carouselContainer.dispatchEvent('touchend', {
-            touches: []
-          });
-        } catch (error) {
-          // Fallback to mouse events if touch events aren't supported
-          await carouselContainer.hover();
-        }
-      }
-    }
-
-    await context.close();
   });
 });
 
@@ -109,7 +76,7 @@ test.describe('Viewport Responsiveness', () => {
       await expect(content).toBeVisible();
 
       // Check that layout doesn't break
-      const posts = page.locator('.posts');
+      const posts = page.locator('ul.idx');
       if (await posts.isVisible()) {
         await expect(posts).toBeVisible();
       }

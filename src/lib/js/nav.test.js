@@ -5,9 +5,9 @@ describe('nav pages', () => {
   it('maps every route to a themed label without changing paths', () => {
     const byPath = Object.fromEntries(pages.map((p) => [p.path, p.label]));
     expect(byPath).toEqual({
-      '/projects': 'Quests',
-      '/blog': 'Chronicles',
-      '/videos': 'Sagas',
+      '/blog': 'Quests',
+      '/projects': 'Artifacts',
+      '/videos': 'Episodes',
       '/about': 'About',
       '/contact': 'Contact'
     });

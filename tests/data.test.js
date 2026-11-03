@@ -5,7 +5,7 @@ test.describe('Data Loading', () => {
     await page.goto('/blog');
     await page.waitForLoadState('networkidle');
 
-    const posts = page.locator('.posts a');
+    const posts = page.locator('ul.idx > li > a.g[href^="/blog/"]');
     const postCount = await posts.count();
 
     if (postCount > 0) {
@@ -14,14 +14,11 @@ test.describe('Data Loading', () => {
         const post = posts.nth(i);
         await expect(post).toBeVisible();
 
-        const title = post.locator('h2');
+        const title = post.locator('.t');
         await expect(title).toBeVisible();
 
         const date = post.locator('.date');
         await expect(date).toBeVisible();
-
-        const description = post.locator('.description');
-        await expect(description).toBeVisible();
       }
     }
   });
@@ -30,7 +27,7 @@ test.describe('Data Loading', () => {
     await page.goto('/projects');
     await page.waitForLoadState('networkidle');
 
-    const projects = page.locator('.posts a');
+    const projects = page.locator('ol.names a.nm[href^="/projects/"]');
     const projectCount = await projects.count();
 
     if (projectCount > 0) {
@@ -40,12 +37,8 @@ test.describe('Data Loading', () => {
         await expect(project).toBeVisible();
 
         // Check for project title
-        const title = project.locator('h2');
+        const title = project.locator('.nn');
         await expect(title).toBeVisible();
-
-        // Check for description
-        const description = project.locator('.description');
-        await expect(description).toBeVisible();
       }
     }
   });
@@ -72,10 +65,10 @@ test.describe('Data Loading', () => {
 
     await expect(page.locator('main')).toBeVisible();
 
-    const heading = page.locator('h1').first();
+    const heading = page.locator('.post-head h1');
     await expect(heading).toBeVisible();
 
-    const description = page.locator('.description');
+    const description = page.locator('.post-head .lede');
     await expect(description).toBeVisible();
   });
 });
@@ -87,7 +80,7 @@ test.describe('Content Formatting', () => {
     await page.waitForLoadState('networkidle');
 
     // Check for common markdown elements
-    const content = page.locator('main');
+    const content = page.locator('article.prose');
     await expect(content).toBeVisible();
 
     // Check if there are paragraphs

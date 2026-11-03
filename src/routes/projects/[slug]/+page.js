@@ -21,11 +21,7 @@ export async function load({ params }) {
     throw error(404, 'Project Not Found');
   }
 
-  let image = null;
-  if (post.metadata.images?.length) {
-    let imagePath = match.path.split('/').slice(0, -1).join('/') + '/' + post.metadata.images[0];
-    image = await importOgImage(imagePath);
-  }
+  const image = { img: { src: `/og/projects/${params.slug}.png`, w: 1200, h: 630 } };
 
   const imageObjects = post.metadata.images?.length
     ? (

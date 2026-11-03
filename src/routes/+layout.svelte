@@ -2,15 +2,12 @@
   import '../app.scss';
   import '$lib/assets/fonts/fira-mono.css';
   import '$lib/assets/fonts/inter.css';
-  import { page, navigating } from '$app/stores';
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
   import PageHead from '$lib/components/PageHead.svelte';
-  import AsciiField from '$lib/components/AsciiField.svelte';
-  import NavLogo from '$lib/components/NavLogo.svelte';
   import Analytics from '$lib/components/Analytics.svelte';
-  import { toggleThemeWithBurst } from '$lib/js/theme.js';
+  import { theme, toggleTheme, setTheme } from '$lib/js/theme.js';
   import { pages } from '$lib/js/nav.js';
-  import { fly, slide } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
 
   export let data;
 
@@ -18,58 +15,27 @@
   // Close the mobile menu whenever the route changes.
   $: if (data.pathname) menuOpen = false;
 
-  let prevTwoPages = ['', ''];
-  $: {
-    prevTwoPages = [prevTwoPages[1], data.pathname];
-  }
+  // Theme the toggle switches to; anything other than 'light' counts as dark.
+  $: next = $theme === 'light' ? 'dark' : 'light';
 
-  function xy(path, isIn = true) {
-    if (path === prevTwoPages[0]) {
-      return { x: 0, y: 0 };
+  onMount(() => {
+    // app.html's inline script set color-scheme already; sync the store so the label is right.
+    const scheme = document.documentElement.getAttribute('color-scheme');
+    if (scheme) setTheme(scheme);
+  });
+
+  // Theme switch: a horizontal accent line sweeps down while the new theme is revealed behind it.
+  function switchTheme() {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      toggleTheme();
+      return;
     }
-
-    let currDepth = path.split('/').length;
-    let prevDepth = prevTwoPages[0].split('/').length;
-    const getParentPath = (p) => '/' + p.split('/')[1];
-    const currParent = getParentPath(path);
-    const prevParent = getParentPath(prevTwoPages[0]);
-    let currParentIdx = pages.findIndex((page) => page.path === currParent);
-    let prevParentIdx = pages.findIndex((page) => page.path === prevParent);
-
-    if (path === '/') {
-      currParentIdx = prevParentIdx >= 0 ? prevParentIdx : 0;
-      currDepth = 1;
-    }
-    if (prevTwoPages[0] === '/') {
-      prevParentIdx = currParentIdx >= 0 ? currParentIdx : 0;
-      prevDepth = 1;
-    }
-
-    // Fallback to 0 if page not found in navigation
-    if (currParentIdx === -1) currParentIdx = 0;
-    if (prevParentIdx === -1) prevParentIdx = 0;
-
-    const xDiff = currParentIdx - prevParentIdx;
-    const yDiff = currDepth - prevDepth;
-
-    // Ensure we don't return NaN values
-    const xValue = isNaN(xDiff) ? 0 : xDiff * 12;
-    const yValue = isNaN(yDiff) ? 0 : yDiff * 12;
-
-    // Return numeric values in pixels for the fly transition
-    // Apply direction for in vs out transitions
-    return {
-      x: isIn ? xValue : -xValue,
-      y: isIn ? yValue : -yValue
-    };
+    const line = document.createElement('div');
+    line.className = 'sweep';
+    document.body.append(line);
+    document.startViewTransition(() => toggleTheme()).finished.finally(() => line.remove());
   }
 </script>
-
-<AsciiField active={$page.url.pathname === '/'} />
-
-{#if $navigating}
-  <div class="nav-progress" aria-hidden="true"></div>
-{/if}
 
 <PageHead
   title={$page.error ? $page.status : $page.data.meta.title}
@@ -91,275 +57,111 @@
 
 <svelte:window on:keydown={(e) => e.key === 'Escape' && (menuOpen = false)} />
 
-{#if $page.url.pathname !== '/'}
-  <header transition:slide={{ duration: 220, easing: quintOut }}>
-    <div class="row">
-      <a href="/"><h1>Tech Quests</h1></a>
-      <button class="pfp" on:click={toggleThemeWithBurst} aria-label="Toggle theme">
-        <NavLogo size="2.5rem" />
-      </button>
-    </div>
-    <button
-      class="menu-toggle"
-      on:click={() => (menuOpen = !menuOpen)}
-      aria-label="Toggle menu"
-      aria-expanded={menuOpen}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m" viewBox="-375 -215 770 390"
+    ><g fill="none" stroke-linecap="round"
+      ><path
+        stroke="currentColor"
+        stroke-width="30"
+        d="M-350 0A155 155 0 0 1-71.9-94L71.9 94A155 155 0 1 0 71.9-94L-71.9 94"
+      /><path
+        style="stroke:var(--a1,currentColor)"
+        stroke-width="22"
+        d="M-142.5 90.9A105 105 0 0 1-285.9 52.5"
+      /><path
+        style="stroke:var(--a2,currentColor)"
+        stroke-width="22"
+        d="M124.9-192.6A205 205 0 0 1 372.5-102.5"
+      /></g
+    ></symbol
+  >
+</svg>
+
+<header class="top">
+  <div class="g">
+    <a class="logo" href="/" aria-label="TechQuests home"
+      ><svg class="mk" aria-hidden="true"><use href="#m" /></svg><span class="word"
+        >techquests<span>.</span>dev</span
+      ></a
     >
-      <iconify-icon icon={menuOpen ? 'ph:x' : 'ph:list'}></iconify-icon>
-    </button>
-    <nav class:open={menuOpen}>
-      {#each pages as { label, path } (path)}
-        <a class="nav" href={path}>
-          <span class="arrow" aria-hidden="true">&nbsp;></span><span
-            class="slash"
-            aria-hidden="true">/</span
-          >{label}
-        </a>
+    <nav class="nav" class:open={menuOpen} id="nav" aria-label="Main">
+      {#each pages as { label, path }, i (path)}
+        {@const active = $page.url.pathname === path || $page.url.pathname.startsWith(path + '/')}
+        <a href={path} aria-current={active ? 'page' : undefined}
+          ><span class="i" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="n"
+            >{label}</span
+          ></a
+        >
       {/each}
     </nav>
-  </header>
-{/if}
-
-<div class="container">
-  {#key data.pathname}
-    <div
-      class="transition"
-      in:fly={{
-        duration: 260,
-        delay: 170,
-        easing: quintOut,
-        ...xy(data.pathname)
-      }}
-      out:fly={{
-        duration: 150,
-        easing: quintOut,
-        ...xy(data.pathname, false)
-      }}
-    >
-      <div id="main" class="page" role="main">
-        <slot />
-      </div>
+    <div class="tools">
+      <button
+        class="iconbtn"
+        data-testid="theme-toggle"
+        aria-label="Switch to {next} theme"
+        on:click={switchTheme}
+        ><svg
+          class="od-icon"
+          style="--od-icon-size:20px"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+          ><circle cx="12" cy="12" r="9" /><path
+            d="M12 3a9 9 0 0 1 0 18z"
+            fill="currentColor"
+          /></svg
+        ></button
+      >
+      <button
+        class="iconbtn menu"
+        aria-label="Open menu"
+        aria-expanded={menuOpen}
+        aria-controls="nav"
+        on:click={() => (menuOpen = !menuOpen)}
+        ><svg
+          class="od-icon"
+          style="--od-icon-size:22px"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" /></svg
+        ></button
+      >
     </div>
-  {/key}
-</div>
+  </div>
+</header>
 
-{#if $page.url.pathname !== '/'}
-  <footer class="site-footer" transition:slide={{ duration: 220, easing: quintOut }}>
-    <div class="foot-inner">
-      <span class="flavor">Built by <a href="/about">Andre Nogueira</a></span>
-      <div class="foot-right">
-        <span class="copy">© {data.year} <a href="/">TechQuests.dev</a></span>
-        <span class="foot-social">
-          <a
-            class="external"
-            href="https://github.com/techquestsdev"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"><iconify-icon icon="ph:github-logo"></iconify-icon></a
-          >
-          <a href="/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS feed"
-            ><iconify-icon icon="ph:rss"></iconify-icon></a
-          >
-        </span>
-      </div>
+<main id="main" tabindex="-1">
+  <slot />
+</main>
+
+<footer>
+  <div class="g">
+    <div class="f1 footer-word" aria-label="TQD">TQ<span>D</span></div>
+    <div class="f2">
+      <span class="fg"><span class="lab">Field journal of André Nogueira</span></span>
+      <span class="fg"
+        ><a
+          class="lab"
+          href="https://github.com/techquestsdev"
+          target="_blank"
+          rel="noopener noreferrer">GitHub</a
+        ><a
+          class="lab"
+          href="https://www.youtube.com/@techquestsdev"
+          target="_blank"
+          rel="noopener noreferrer">YouTube</a
+        ><a class="lab" href="/rss.xml" target="_blank" rel="noopener noreferrer">RSS</a><a
+          class="lab"
+          href="https://github.com/techquestsdev/blog"
+          target="_blank"
+          rel="noopener noreferrer">Source ↗</a
+        ></span
+      >
+      <span class="fg"><span class="lab">Writing CC BY 4.0 · Code MIT · © {data.year}</span></span>
     </div>
-  </footer>
-{/if}
-
-<style lang="scss">
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    gap: $spacing-xl;
-    padding: 0 $spacing-5xl;
-    min-height: $spacing-8xl;
-    transition: transform 0.1s ease;
-    transform: translateY(0);
-    flex-shrink: 0;
-
-    .row {
-      @include flex(row, null, center);
-      gap: $spacing-xl;
-      flex-shrink: 0;
-
-      .pfp {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      h1 {
-        font-family: $font-family-display;
-        font-weight: $font-weight-display;
-        letter-spacing: $letter-spacing-display;
-        font-size: $font-base;
-        color: var(--txt);
-        margin: 0;
-        white-space: nowrap;
-      }
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: $spacing-xl;
-
-      a {
-        font-size: $font-sm;
-        font-family: $font-family-mono;
-        white-space: nowrap;
-      }
-    }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      color: var(--txt);
-      font-size: $font-lg;
-      align-items: center;
-    }
-  }
-
-  .container {
-    flex: 1 0 auto;
-    display: grid;
-    overflow: hidden;
-  }
-
-  // Indeterminate top progress bar shown while navigating between pages.
-  .nav-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    z-index: $z-index-modal;
-    background: linear-gradient(90deg, transparent, var(--green), transparent);
-    animation: nav-slide 0.9s ease-in-out infinite;
-  }
-
-  @keyframes nav-slide {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(100%);
-    }
-  }
-
-  .site-footer {
-    border-top: 1px solid var(--bg-3);
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-
-    a {
-      color: var(--txt-3);
-      text-decoration: none;
-      transition: color $transition-fast;
-    }
-    a:hover {
-      color: var(--txt);
-    }
-
-    // Constrain footer content to the page's content width and center it, so it
-    // lines up with the article column instead of hugging the screen edges.
-    .foot-inner {
-      max-width: $width-content;
-      margin: 0 auto;
-      padding: $spacing-xl;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: $spacing-sm $spacing-3xl;
-      flex-wrap: wrap;
-    }
-
-    .foot-right {
-      display: flex;
-      align-items: center;
-      gap: $spacing-lg;
-    }
-
-    .foot-social {
-      display: flex;
-      gap: $spacing-md;
-      font-size: $font-sm;
-
-      iconify-icon {
-        padding-right: 0;
-        vertical-align: middle;
-      }
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      .foot-inner {
-        flex-direction: column;
-        text-align: center;
-        gap: $spacing-md;
-      }
-    }
-  }
-
-  .skip {
-    position: absolute;
-    left: $spacing-md;
-    top: $spacing-md;
-    padding: $spacing-xs $spacing-md;
-    background: var(--bg-2);
-    color: var(--txt);
-    border: 1px solid var(--bg-3);
-    z-index: $z-index-sticky;
-    transform: translateY(-200%);
-    transition: transform 0.2s ease;
-  }
-
-  .skip:focus-visible {
-    transform: translateY(0);
-  }
-
-  .transition {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 2;
-  }
-
-  .page {
-    height: 100%;
-  }
-
-  // Collapse the nav into a dropdown when the labels would no longer fit on one
-  // line, so the top bar never wraps or clips.
-  @media (max-width: 1080px) {
-    header {
-      padding: 0 $spacing-xl;
-
-      .menu-toggle {
-        display: flex;
-      }
-
-      nav {
-        position: absolute;
-        top: 100%;
-        right: $spacing-xl;
-        z-index: $z-index-sticky;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: $spacing-md;
-        margin-top: $spacing-xs;
-        padding: $spacing-lg $spacing-xl;
-        background: var(--bg-2);
-        border: 1px solid var(--bg-3);
-        border-radius: 8px;
-        display: none;
-      }
-
-      nav.open {
-        display: flex;
-      }
-    }
-  }
-</style>
+  </div>
+</footer>

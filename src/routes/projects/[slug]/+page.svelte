@@ -1,261 +1,163 @@
 <script>
-  import Image from '$lib/components/Image.svelte';
-  import emblaCarouselSvelte from 'embla-carousel-svelte';
+  import { onMount, tick } from 'svelte';
+  import { page } from '$app/stores';
+  import { CATS, LIFE, decorateProject, year } from '$lib/js/site.js';
 
   export let data;
 
   let { default: content, metadata } = data.post;
+  let p = decorateProject({ slug: $page.params.slug, ...metadata });
+  let prose;
+  let headings = [];
 
-  let emblaApi;
-  let options = { loop: true, align: 'center' };
-  let loop = true;
+  onMount(() => {
+    let observer;
+    const existingIds = new Set(
+      [...prose.querySelectorAll('h2[id], h3[id]')].map((heading) => heading.id)
+    );
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
+    const usedIds = new Set();
+    let section = 0;
+    let subsection = 0;
+    const items = [];
 
-  function recompute() {
-    if (!emblaApi) return;
-    loop = emblaApi.internalEngine().slideLooper.canLoop();
-  }
+    prose.querySelectorAll('h2, h3').forEach((heading) => {
+      heading.querySelectorAll('.s, .anc').forEach((element) => element.remove());
+      const sub = heading.tagName === 'H3';
+      if (!sub) {
+        section += 1;
+        subsection = 0;
+      } else {
+        if (!section) return;
+        subsection += 1;
+      }
 
-  function emblaInit(event) {
-    emblaApi = event.detail;
-    recompute();
-    emblaApi.on('reInit', recompute);
-    emblaApi.on('resize', recompute);
-  }
+      const number = sub ? `${section}.${subsection}` : `${section}`;
+      const text = heading.textContent.trim();
+      let id = heading.id;
+      if (!id) {
+        const base =
+          text
+            .toLowerCase()
+            .normalize('NFKD')
+            .replace(/[^\w\s-]/g, '')
+            .trim()
+            .replace(/[\s_]+/g, '-') || `s${number}`;
+        id = base;
+        let suffix = 2;
+        while (usedIds.has(id) || existingIds.has(id)) id = `${base}-${suffix++}`;
+        heading.id = id;
+      }
+      usedIds.add(id);
 
-  function emblaNext() {
-    emblaApi.scrollNext();
-  }
+      const numberElement = document.createElement('span');
+      numberElement.className = 's';
+      numberElement.textContent = number;
+      heading.prepend(numberElement);
+      items.push({ id, number, text, sub });
+    });
 
-  function emblaPrev() {
-    emblaApi.scrollPrev();
-  }
+    headings = items;
+    tick().then(() => {
+      if (!items.length) return;
+      const links = [...prose.parentElement.querySelectorAll('.toc a')];
+      observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            links.forEach((link) =>
+              link.classList.toggle('on', link.getAttribute('href') === `#${entry.target.id}`)
+            );
+          }),
+        { rootMargin: '-20% 0px -70% 0px' }
+      );
+      prose.querySelectorAll('h2[id], h3[id]').forEach((heading) => observer.observe(heading));
+    });
+
+    return () => observer?.disconnect();
+  });
 </script>
 
-<div class="back-row">
-  <a href="/projects" class="back">
-    <span class="arrow">&lt;</span>Back to projects
-  </a>
+<div class="g">
+  <a class="back c-full" href="/projects">← 02 Artifacts</a>
 </div>
-<div class="head">
-  <div class="row">
-    <h1>{metadata.name}</h1>
-    <div class="links">
-      {#if metadata.website}
-        <a class="external" href={metadata.website} target="_blank" rel="noopener noreferrer">
-          Site<span class="arrow">-></span>
-        </a>
+<section class="g post-head band heavy">
+  <span class="c-l lab" style="align-self:start;padding-top:16px">Artifact</span>
+  <h1 style="font-size:var(--mega);overflow-wrap:anywhere">{p.name}</h1>
+  <p class="lede c-r">{p.description}</p>
+</section>
+<div class="g article band">
+  <aside>
+    <dl class="facts">
+      <div>
+        <dt class="lab">Year</dt>
+        <dd>{year(p.date)}</dd>
+      </div>
+      <div>
+        <dt class="lab">Type</dt>
+        <dd>
+          <span class="lab" style="display:inline-flex;align-items:center">
+            <span class="sw" style={`background:var(--tq-cat-${p.cat})`} aria-hidden="true"></span>
+            {CATS[p.cat]}
+          </span>
+        </dd>
+      </div>
+      {#if p.stack}
+        <div>
+          <dt class="lab">Stack</dt>
+          <dd>{p.stack}</dd>
+        </div>
       {/if}
-      {#if metadata.github}
-        <a class="external" href={metadata.github} target="_blank" rel="noopener noreferrer">
-          Github<span class="arrow">-></span>
-        </a>
+      <div>
+        <dt class="lab">Status</dt>
+        <dd><span class={`life ${p.life}`}><i aria-hidden="true"></i>{LIFE[p.life]}</span></dd>
+      </div>
+      {#if p.github}
+        <div>
+          <dt class="lab">Source</dt>
+          <dd>
+            <a href={p.github} target="_blank" rel="noopener noreferrer">
+              {p.github.replace('https://github.com/', '')}
+            </a>
+          </dd>
+        </div>
       {/if}
+      {#if p.website}
+        <div>
+          <dt class="lab">Live</dt>
+          <dd>
+            <a href={p.website} target="_blank" rel="noopener noreferrer">
+              {p.website.replace('https://', '')}
+            </a>
+          </dd>
+        </div>
+      {/if}
+    </dl>
+    <nav class="toc" aria-label="On this page" hidden={!headings.length}>
+      <span class="lab" style="padding-bottom:8px">Contents</span>
+      {#each headings as heading (heading.id)}
+        <a href={`#${heading.id}`} class:sub={heading.sub}>
+          <span class="tn">{heading.number}</span>{heading.text}
+        </a>
+      {/each}
+    </nav>
+  </aside>
+  <div class="prose" bind:this={prose}>
+    <svelte:component this={content} />
+    {#if p.website || p.github}
+      <p class="see lab">
+        See it in action:
+        {#if p.website}<a href={p.website} target="_blank" rel="noopener noreferrer">live ↗</a>{/if}
+        {#if p.website && p.github}
+          ·
+        {/if}
+        {#if p.github}<a href={p.github} target="_blank" rel="noopener noreferrer"
+            >code on GitHub ↗</a
+          >{/if}
+      </p>
+    {/if}
+    <div class="byline lab">
+      <svg class="mk" aria-hidden="true"><use href="#m" /></svg>A TechQuests project
     </div>
   </div>
-  <p class="description">
-    {metadata.description}
-  </p>
 </div>
-<div class="embla" use:emblaCarouselSvelte={{ options }} on:emblaInit={emblaInit}>
-  <div class="embla__container" class:loop>
-    {#each metadata.images as image (image)}
-      <div class="embla__slide" class:tall={metadata.aspect_ratio === 'tall'}>
-        <Image
-          {image}
-          alt={metadata.description}
-          sizes="(min-width: 800px) 80vw, 100vw"
-          --aspect-ratio={metadata.aspect_ratio === 'tall' ? '9/16' : '16/9'}
-        />
-      </div>
-    {/each}
-  </div>
-  {#if loop}
-    <button class="embla__prev" on:click={emblaPrev} aria-label="Previous image"
-      ><span>&lt;</span></button
-    >
-    <button class="embla__next" on:click={emblaNext} aria-label="Next image"
-      ><span>&gt;</span></button
-    >
-  {/if}
-</div>
-<main class="content">
-  <svelte:component this={content} />
-</main>
-
-<style lang="scss">
-  :global(body) {
-    overflow-x: hidden;
-  }
-
-  main {
-    @include page-container;
-  }
-
-  .back-row {
-    @include page-container;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .head {
-    @include page-container;
-    margin-bottom: $spacing-lg;
-    padding-top: 0;
-
-    a {
-      font-family: $font-family-mono;
-      font-size: $font-md;
-      color: var(--txt-2);
-      text-decoration: underline;
-      text-decoration-color: var(--txt-3);
-      text-decoration-thickness: 1px;
-      text-underline-offset: 0.12em;
-      transition:
-        color 0.2s,
-        text-decoration-color 0.2s;
-      &:hover,
-      &:focus-visible {
-        color: var(--txt);
-        text-decoration-color: var(--txt);
-      }
-    }
-
-    .row {
-      @include flex(row, null, center);
-      gap: $spacing-md $spacing-3xl;
-
-      h1 {
-        margin: 0 auto 0 0;
-        margin-right: auto;
-        line-height: 1.3;
-        word-wrap: break-word;
-      }
-    }
-
-    .links {
-      @include flex(row, null, center);
-      gap: $spacing-sm $spacing-3xl;
-      flex-shrink: 0;
-    }
-
-    .description {
-      font-size: $font-sm;
-      margin: 0 auto 0 0;
-      font-style: italic;
-      color: var(--txt-2);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-  }
-
-  .embla {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    max-width: 100vw;
-  }
-  .embla__container {
-    display: flex;
-    justify-content: center;
-
-    &.loop {
-      justify-content: unset;
-    }
-  }
-  .embla__slide {
-    flex: 0 0 70%;
-    max-width: $width-carousel;
-    min-width: 0;
-    margin-left: $spacing-xl;
-    margin-right: $spacing-xl;
-
-    &.tall {
-      flex: 0 0 20%;
-      max-width: $width-thumbnail;
-    }
-  }
-  .embla__prev,
-  .embla__next {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: calc(15% - $spacing-5xl);
-    background: none;
-
-    span {
-      display: inline-block;
-      color: var(--txt-0);
-      font-size: $font-2xl;
-      font-family: $font-family-mono;
-      transform: scale(1);
-      transition: $transition-fast;
-      opacity: 0;
-      background: var(--bg-2);
-      width: $width-button;
-      height: $width-button;
-      line-height: $line-height-2xl;
-    }
-
-    &:hover span {
-      opacity: 1;
-      transform: scale(1.2);
-    }
-  }
-  .embla__next {
-    right: 0;
-  }
-  .embla__prev {
-    left: 0;
-  }
-
-  @media (max-width: $breakpoint-tablet) {
-    .embla__slide {
-      flex: 0 0 calc(100% - $spacing-3xl);
-      max-width: 100%;
-      margin-left: $spacing-md;
-      margin-right: $spacing-md;
-    }
-    .embla__prev,
-    .embla__next {
-      width: 15%;
-      span {
-        opacity: 1;
-      }
-    }
-    .embla__prev {
-      text-align: left;
-      padding-left: $spacing-sm;
-    }
-    .embla__next {
-      text-align: right;
-      padding-right: $spacing-sm;
-    }
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    .embla__slide {
-      flex: 0 0 calc(100% - $spacing-lg);
-      margin-left: $spacing-sm;
-      margin-right: $spacing-sm;
-    }
-
-    .head {
-      .row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: $spacing-md;
-
-        h1 {
-          margin: 0 0 $spacing-sm 0;
-          line-height: 1.3;
-        }
-      }
-
-      .links {
-        flex-wrap: wrap;
-        margin-bottom: $spacing-md;
-      }
-    }
-  }
-</style>

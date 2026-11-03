@@ -1,151 +1,149 @@
 <script>
-  import Image from '$lib/components/Image.svelte';
-  import RssIcon from '~icons/ph/rss';
-  import { statusRune } from '$lib/js/project-status.js';
+  import { CATS, LIFE, decorateProject, pad, year } from '$lib/js/site.js';
 
   export let data;
+
+  const filters = [
+    { value: 'all', label: 'All' },
+    { value: 'active', label: 'Active' },
+    { value: 'stable', label: 'Stable' },
+    { value: 'archived', label: 'Archived' }
+  ];
+
+  let filter = 'all';
+  let current = null;
+  $: projects = data.posts.map(decorateProject);
+  $: filteredProjects = projects.filter((project) => filter === 'all' || project.life === filter);
+
+  function showPreview(project) {
+    if (window.matchMedia('(min-width: 1025px)').matches) current = project;
+  }
 </script>
 
-<main>
-  <div class="title-row">
-    <h1>Quests <span class="count">[{data.posts.length}]</span></h1>
-    <a
-      href="/projects/rss.xml"
-      class="rss-link"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Projects RSS feed"
-    >
-      <RssIcon /> RSS
-    </a>
-  </div>
+<section class="block" style="--blk:var(--rp-gold)">
+  <section class="g ph">
+    <div class="side">
+      <span class="lab">02 · Built</span>
+      <span class="lab">{projects.length} artifacts</span>
+      <a class="lab" href="/projects/rss.xml">RSS ↗</a>
+    </div>
+    <h1 class="mega c-r">Artifacts</h1>
+    <p class="lede">
+      Things built along the way, published under the TechQuests org. Each keeps its own identity.
+    </p>
+  </section>
+</section>
 
-  <div class="posts">
-    {#each data.posts as post (post.slug)}
-      <a href={'/projects/' + post.slug} class="link">
-        {#if statusRune(post.status)}
-          {@const rune = statusRune(post.status)}
-          <div class="state"><span aria-hidden="true">{rune.glyph}</span> {rune.label}</div>
-        {/if}
-        <h2>
-          {post.name}<span class="arrow" aria-hidden="true">&nbsp;></span><span
-            class="slash"
-            aria-hidden="true">/</span
-          >
-        </h2>
-        <div class="description">{post.description}</div>
-        <div class="thumb">
-          <Image
-            image={post.thumbnail}
-            alt={`${post.name} thumbnail`}
-            sizes="(min-width: 1200px) 50vw, 100vw"
-            --aspect-ratio="16/9"
-          />
-        </div>
-      </a>
+<section class="g sh">
+  <span class="c-l lab">Show</span>
+  <div class="c-r txf" role="group" aria-label="Filter by status">
+    {#each filters as option, index (option.value)}
+      {#if index > 0}<span aria-hidden="true">·</span>{/if}
+      <button
+        type="button"
+        class="tx"
+        class:on={filter === option.value}
+        aria-pressed={filter === option.value}
+        on:click={() => (filter = option.value)}>{option.label}</button
+      >
     {/each}
   </div>
-</main>
+</section>
 
-<style lang="scss">
-  main {
-    width: 100%;
-    max-width: 110rem;
-    margin: 0 auto $spacing-9xl auto;
-    padding: $spacing-xl;
-    padding-top: 0;
-  }
+{#if filteredProjects.length}
+  <div class="g names-wrap">
+    <ol class="names c-full">
+      {#each filteredProjects as project (project.slug)}
+        <li>
+          <a
+            class="nm"
+            href={'/projects/' + project.slug}
+            on:mouseenter={() => showPreview(project)}
+            on:focus={() => showPreview(project)}
+          >
+            <span class="nnum lab">{pad(projects.indexOf(project) + 1, 2)}</span>
+            <span class="nn">{project.name}</span>
+            <span class="nmeta">
+              <span class="lab" style="display:inline-flex;align-items:center"
+                ><span
+                  class="sw"
+                  style={'background:var(--tq-cat-' + project.cat + ')'}
+                  aria-hidden="true"
+                ></span>{CATS[project.cat]}</span
+              >
+              <span class="lab">{year(project.date)}</span>
+              <span class={'life ' + project.life}
+                ><i aria-hidden="true"></i>{LIFE[project.life]}</span
+              >
+            </span>
+          </a>
+        </li>
+      {/each}
+    </ol>
 
-  .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: $spacing-md;
-    flex-wrap: wrap;
-    margin: $spacing-xl 0 $spacing-2xl 0;
-
-    h1 {
-      margin: 0;
-    }
-  }
-
-  .rss-link {
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4ch;
-    transition: color $transition-fast;
-
-    :global(svg) {
-      font-size: 1em;
-    }
-
-    &:hover {
-      color: var(--txt);
-    }
-  }
-
-  .count {
-    font-family: $font-family-mono;
-    font-size: $font-base;
-    color: var(--txt-3);
-    font-weight: 400;
-    margin-left: 0.5ch;
-  }
-
-  .posts {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-3xl;
-    max-width: 100%;
-  }
-
-  @media (max-width: $breakpoint-desktop) {
-    .posts {
-      grid-template-columns: repeat(2, 1fr);
-      gap: $spacing-2xl;
-    }
-  }
-
-  a.link {
-    display: grid;
-    grid-template-areas:
-      'thumb'
-      'state'
-      'title'
-      'description';
-    gap: $spacing-sm;
-  }
-
-  .thumb {
-    grid-area: thumb;
-  }
-
-  .state {
-    grid-area: state;
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-  }
-
-  h2 {
-    grid-area: title;
-    margin: $spacing-sm 0 $spacing-smd 0;
-    color: var(--txt);
-    font-size: $font-lg;
-  }
-
-  .description {
-    grid-area: description;
-  }
-
-  @media (max-width: $breakpoint-mobile) {
-    .posts {
-      grid-template-columns: 1fr;
-      gap: $spacing-xl;
-    }
-  }
-</style>
+    <aside class="pv" class:on={!!current} aria-label="Project preview">
+      <div class="pv-in">
+        {#if current}
+          <span class="lab"
+            >{pad(projects.indexOf(current) + 1, 2)} / {pad(projects.length, 2)}</span
+          >
+          <p class="pv-d">{current.description}</p>
+          <dl class="pv-facts">
+            <div>
+              <dt class="lab">Type</dt>
+              <dd>
+                <span class="lab" style="display:inline-flex;align-items:center"
+                  ><span
+                    class="sw"
+                    style={'background:var(--tq-cat-' + current.cat + ')'}
+                    aria-hidden="true"
+                  ></span>{CATS[current.cat]}</span
+                >
+              </dd>
+            </div>
+            {#if current.stack}
+              <div>
+                <dt class="lab">Stack</dt>
+                <dd>{current.stack}</dd>
+              </div>
+            {/if}
+            <div>
+              <dt class="lab">Year</dt>
+              <dd>{year(current.date)}</dd>
+            </div>
+            <div>
+              <dt class="lab">Status</dt>
+              <dd>
+                <span class={'life ' + current.life}
+                  ><i aria-hidden="true"></i>{LIFE[current.life]}</span
+                >
+              </dd>
+            </div>
+            {#if current.website}
+              <div>
+                <dt class="lab">Live</dt>
+                <dd><a href={current.website}>{current.website.replace('https://', '')} ↗</a></dd>
+              </div>
+            {/if}
+            {#if current.github}
+              <div>
+                <dt class="lab">Source</dt>
+                <dd>
+                  <a href={current.github}>{current.github.replace('https://github.com/', '')} ↗</a>
+                </dd>
+              </div>
+            {/if}
+          </dl>
+          <span class="lab">Click the name to open the write-up →</span>
+        {/if}
+      </div>
+    </aside>
+  </div>
+{:else}
+  <div class="g">
+    <p class="c-r empty">
+      No artifacts with this status.
+      <button class="more" type="button" on:click={() => (filter = 'all')}>Show all</button>
+    </p>
+  </div>
+{/if}

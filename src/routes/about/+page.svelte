@@ -1,9 +1,11 @@
 <script>
+  import { pad } from '$lib/js/site.js';
   import { theme } from '$lib/js/theme';
-  import GithubIcon from '~icons/ph/github-logo';
-  import LinkedinIcon from '~icons/ph/linkedin-logo';
-  import CoffeeIcon from '~icons/ph/coffee';
-  import RssIcon from '~icons/ph/rss';
+
+  const count = (g) => Object.keys(g).length;
+  const questsCount = count(import.meta.glob('/src/content/blog/*/*.md'));
+  const artifactsCount = count(import.meta.glob('/src/content/projects/*/*.md'));
+  const episodesCount = count(import.meta.glob('/src/content/videos/*/*.md'));
 
   // One CV link that matches the active theme (dark CV for dark mode, light for light).
   $: cvUrl =
@@ -12,191 +14,82 @@
       : 'https://github.com/aanogueira/cv/releases/download/latest/cv.pdf';
 </script>
 
-<main>
-  <h1>About</h1>
-  <p>
-    Howdy! I'm <strong>Andre Nogueira</strong> – a Portugal-based Site Reliability Engineer who goes
-    by <strong>aanogueira</strong> online. <strong>Tech Quests</strong> is where I write about the
-    technical work that doesn't fit on a CV: homelab adventures, SRE rabbit-holes, platform
-    engineering experiments, the kind of projects that start with
-    <em>"what if I just tried..."</em>.
-  </p>
-  <p>Long-form posts, hands-on projects, and the occasional video. Best paired with coffee.</p>
-  <h2>Links</h2>
-  <ul class="link-list">
-    <li>
-      <a
-        href="https://github.com/aanogueira"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><GithubIcon /> Github profile<span class="arrow">-></span>
-      </a>
-    </li>
-    <li>
-      <a
-        href="https://linkedin.com/in/aanogueira"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><LinkedinIcon /> Linkedin profile<span class="arrow">-></span>
-      </a>
-    </li>
-    <li>
-      <a
-        href="https://buymeacoffee.com/aanogueira"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><CoffeeIcon /> Buy me a coffee<span class="arrow">-></span>
-      </a>
-    </li>
-  </ul>
-
-  <h2>RSS Feeds</h2>
-  <ul class="link-list">
-    <li>
-      <a href="/rss.xml" class="external" target="_blank" rel="noopener noreferrer"
-        ><RssIcon /> All content feed<span class="arrow">-></span></a
-      >
-    </li>
-  </ul>
-  <h2>CV</h2>
-  <ul class="link-list">
-    <li>
-      <a href={cvUrl} class="external" target="_blank" rel="noopener noreferrer"
-        >Download CV<span class="arrow">-></span>
-      </a>
-    </li>
-  </ul>
-  <h2>This blog</h2>
-  <ul class="link-list">
-    <li>
-      <a
-        href="https://github.com/techquestsdev/blog"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer">Github repo<span class="arrow">-></span></a
-      >
-    </li>
-    <!-- Analytics link hidden for now — not in use.
-    <li>
-      <a
-        href="https://analytics.techquests.dev/share/XKuVSonQXqJALOvj/Blog"
-        class="external"
-        target="_blank"
-        rel="noopener noreferrer">Analytics<span class="arrow">-></span></a
-      >
-    </li>
-    -->
-  </ul>
-  <div class="info">
-    <span class="main">Stack</span> <span class="sub">-></span>
-    SvelteKit <span class="sub">/</span>
-    Vite <span class="sub">/</span>
-    MDsveX <span class="sub">/</span>
-    Mermaid
+<section class="block" style="--blk:var(--tq-ink);color:var(--tq-bg)">
+  <div style="--block-ink:var(--tq-bg)">
+    <section class="g ph">
+      <div class="side">
+        <span class="lab" style="color:inherit">04 · The player</span>
+        <span class="lab" style="color:inherit">Portugal</span>
+      </div>
+      <h1 class="mega c-r">André Nogueira</h1>
+      <p class="lede">
+        Platform engineer who likes building things, then explaining how they work. TechQuests is
+        where those side missions get logged.
+      </p>
+    </section>
   </div>
-  <div class="info">
-    <span class="main">Fonts</span> <span class="sub">-></span>
-    Inter <span class="sub">/</span>
-    Fira Mono
+</section>
+
+<section class="g sh band" style="padding-top:48px">
+  <span class="c-l lab">What's here</span>
+  <div class="c-r" style="display:grid;gap:16px">
+    <h2 class="big">Things I build, written up.</h2>
+    <p class="lede">
+      Howdy! I'm André Nogueira – a Portugal-based Site Reliability Engineer who goes by
+      <strong>aanogueira</strong> online. <strong>Tech Quests</strong> is where I write about the
+      technical work that doesn't fit on a CV: homelab adventures, SRE rabbit-holes, platform
+      engineering experiments, the kind of projects that start with
+      <em>"what if I just tried..."</em>. Long-form posts, hands-on projects, and the occasional
+      video. Best paired with coffee.
+    </p>
   </div>
-  <div class="info">
-    <div class="colors">
-      <div class="color" style="background: var(--bg); border: 2px solid var(--bg-2);">
-        bg<span class="cli-only"> (dark #121416 / light #edebe9)</span>
-      </div>
-      <div class="color" style="background: var(--bg-2);">
-        bg-2<span class="cli-only"> (dark #191b1f / light #e6e4e0)</span>
-      </div>
-      <div class="color" style="background: var(--bg-3);">
-        bg-3<span class="cli-only"> (dark #25272d / light #dad8d2)</span>
-      </div>
-      <div class="color" style="background: var(--txt-3); color: var(--bg);">
-        txt-3<span class="cli-only"> (dark #4f5663 / light #b0a99c)</span>
-      </div>
-      <div class="color" style="background: var(--txt-2); color: var(--bg);">
-        txt-2<span class="cli-only"> (dark #8e95a4 / light #716a5b)</span>
-      </div>
-      <div class="color" style="background: var(--txt); color: var(--bg);">
-        txt<span class="cli-only"> (dark #bdc7db / light #423824)</span>
-      </div>
-      <div class="color" style="background: var(--txt-0); color: var(--bg);">
-        txt-0<span class="cli-only"> (dark #dae2f1 / light #251d0e)</span>
-      </div>
-      <div class="color" style="background: var(--salmon); color: var(--bg);">
-        salmon<span class="cli-only"> (dark #e5afae / light #cc6c6b)</span>
-      </div>
-      <div class="color" style="background: var(--green); color: var(--bg);">
-        green<span class="cli-only"> (dark #8cc5cf / light #45818c)</span>
-      </div>
-      <div class="color" style="background: var(--yellow); color: var(--bg);">
-        yellow<span class="cli-only"> (dark #f2b463 / light #e38b26)</span>
-      </div>
-    </div>
+</section>
+
+<section class="g sh band" style="padding-top:48px">
+  <span class="c-l lab">How the log works</span>
+  <div class="c-r" style="display:grid;gap:16px">
+    <h2 class="big">Quests, campaigns, artifacts, episodes.</h2>
+    <p class="lede">
+      Posts are quests. Series are campaigns with numbered acts. Projects are artifacts, and videos
+      are episodes.
+    </p>
   </div>
-</main>
+</section>
 
-<style lang="scss">
-  main {
-    @include page-container;
-  }
+<div class="g" style="margin:32px auto 48px">
+  <div class="c-r stats">
+    <div><span class="num">{pad(questsCount, 2)}</span><span class="lab">Quests</span></div>
+    <div><span class="num">{pad(artifactsCount, 2)}</span><span class="lab">Artifacts</span></div>
+    <div><span class="num">{pad(episodesCount, 2)}</span><span class="lab">Episodes</span></div>
+  </div>
+</div>
 
-  a {
-    font-family: $font-family-mono;
-    font-size: $font-sm;
-    margin: $spacing-sm 0;
-    display: block;
-  }
-
-  .info {
-    font-size: $font-sm;
-    margin: $spacing-sm 0;
-    font-family: $font-family-mono;
-
-    .main {
-      font-weight: bold;
-      color: var(--txt-2);
-    }
-  }
-
-  .link-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 $spacing-lg 0;
-
-    li {
-      margin: $spacing-sm 0;
-    }
-  }
-
-  .colors {
-    display: inline-flex;
-    margin-top: $spacing-xxs;
-    flex-wrap: wrap;
-  }
-
-  .color {
-    display: inline-block;
-    padding: 0 $spacing-xxs;
-    width: $width-color-box;
-    text-align: center;
-    font-size: 0.9em;
-  }
-
-  .cli-only {
-    display: none;
-  }
-
-  h1 {
-    margin-bottom: $spacing-3xl;
-  }
-
-  a.external :global(svg) {
-    vertical-align: -0.15em;
-    margin-right: 0.5ch;
-    font-size: 0.95em;
-    color: var(--txt);
-  }
-</style>
+<section class="g sh band heavy" style="margin-bottom:96px">
+  <span class="c-l lab">Elsewhere</span>
+  <div class="c-r">
+    <ul class="links" style="padding:0">
+      <li>
+        <a href="https://github.com/aanogueira" target="_blank" rel="noopener noreferrer"
+          >GitHub <span>↗</span></a
+        >
+      </li>
+      <li>
+        <a href="https://linkedin.com/in/aanogueira" target="_blank" rel="noopener noreferrer"
+          >LinkedIn <span>↗</span></a
+        >
+      </li>
+      <li>
+        <a href="https://buymeacoffee.com/aanogueira" target="_blank" rel="noopener noreferrer"
+          >Buy me a coffee <span>↗</span></a
+        >
+      </li>
+      <li><a href="/rss.xml">RSS <span>↗</span></a></li>
+      <li>
+        <a href="https://github.com/techquestsdev/blog" target="_blank" rel="noopener noreferrer"
+          >Blog source <span>↗</span></a
+        >
+      </li>
+      <li><a href={cvUrl} target="_blank" rel="noopener noreferrer">CV <span>↓</span></a></li>
+    </ul>
+  </div>
+</section>

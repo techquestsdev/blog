@@ -9,6 +9,7 @@
     "dev": "NODE_OPTIONS=--trace-deprecation vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "og": "node scripts/og/generate.mjs",
     "test": "npm run test:unit && npm run test:integration",
     "lint": "prettier --check src/ && eslint src/",
     "format": "prettier --write src/",

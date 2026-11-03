@@ -1,145 +1,45 @@
 <script>
-  import { formatDate } from '$lib/js/utils.js';
-  import RssIcon from '~icons/ph/rss';
+  import { fmtDate, pad } from '$lib/js/site.js';
 
   export let data;
-
-  function thumbnail(id) {
-    return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  }
 </script>
 
-<main>
-  <div class="title-row">
-    <h1>Sagas <span class="count">[{data.videos.length}]</span></h1>
-    <a
-      href="/videos/rss.xml"
-      class="rss-link"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Videos RSS feed"
-    >
-      <RssIcon /> RSS
-    </a>
-  </div>
+<section class="block" style="--blk:var(--rp-foam)">
+  <section class="g ph">
+    <div class="side">
+      <span class="lab">03 · Recorded</span>
+      <span class="lab">{data.videos.length} released</span>
+      <a class="lab" href="/videos/rss.xml">RSS ↗</a>
+    </div>
+    <h1 class="mega c-r">Episodes</h1>
+    <p class="lede c-r">The video side of the quests. Walkthroughs and builds, recorded.</p>
+  </section>
+</section>
 
-  <div class="videos">
-    {#each data.videos as video (video.slug)}
-      <a href={`/videos/${video.slug}`} class="card">
-        <div class="thumb">
-          <img src={thumbnail(video.youtubeId)} alt="" loading="lazy" />
-        </div>
-        <div class="meta">
-          <h2>{video.name}</h2>
-          <div class="date">{formatDate(video.date)}</div>
-          <p class="description">{video.description}</p>
-        </div>
+<ul class="idx ep" style="margin-top:48px">
+  {#each data.videos as video, i (video.slug)}
+    <li>
+      <a class="g" href={`/videos/${video.slug}`}>
+        <span class="thumb" aria-hidden="true">
+          <span class="th-top">
+            <span class="lab">Episode {pad(data.videos.length - i, 2)}</span>
+            <svg class="mk" style="width:56px;color:#e0def4;--a1:#eb6f92;--a2:#f6c177">
+              <use href="#m" />
+            </svg>
+          </span>
+          <span class="th-t">{video.name}</span>
+          <span class="epn">{pad(data.videos.length - i, 2)}</span>
+        </span>
+        <span class="body">
+          <span class="lab">Episode {pad(data.videos.length - i, 2)} · {fmtDate(video.date)}</span>
+          <span class="big mono">{video.name}</span>
+          <span style="color:var(--tq-ink-2)">{video.description}</span>
+        </span>
       </a>
-    {/each}
-  </div>
-</main>
+    </li>
+  {/each}
+</ul>
 
-<style lang="scss">
-  main {
-    @include page-container;
-    padding-top: 0;
-  }
-
-  .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: $spacing-md;
-    flex-wrap: wrap;
-    margin: $spacing-xl 0 $spacing-2xl 0;
-
-    h1 {
-      margin: 0;
-    }
-  }
-
-  .rss-link {
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4ch;
-    transition: color $transition-fast;
-
-    :global(svg) {
-      font-size: 1em;
-    }
-
-    &:hover {
-      color: var(--txt);
-    }
-  }
-
-  .count {
-    font-family: $font-family-mono;
-    font-size: $font-base;
-    color: var(--txt-3);
-    font-weight: 400;
-    margin-left: 0.5ch;
-  }
-
-  .videos {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-2xl;
-  }
-
-  .card {
-    display: grid;
-    grid-template-columns: 16rem 1fr;
-    gap: $spacing-xl;
-    text-decoration: none;
-    color: inherit;
-    border: 1px solid var(--bg-3);
-    border-radius: 6px;
-    padding: $spacing-base;
-    transition: border-color $transition-base;
-
-    &:hover {
-      border-color: var(--txt-3);
-    }
-
-    @media (max-width: $breakpoint-mobile) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .thumb {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--bg-2);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-  }
-
-  h2 {
-    margin: 0 0 $spacing-xs 0;
-    font-size: $font-md;
-  }
-
-  .date {
-    font-family: $font-family-mono;
-    font-size: $font-xs;
-    color: var(--txt-3);
-    margin-bottom: $spacing-sm;
-  }
-
-  .description {
-    margin: 0;
-    color: var(--txt);
-  }
-</style>
+<div class="g">
+  <p class="c-r empty" style="margin-bottom:64px">More episodes are on the way.</p>
+</div>

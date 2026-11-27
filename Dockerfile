@@ -4,7 +4,7 @@
 # Build time: ~5-10 seconds (vs minutes with full build)
 
 FROM caddy:2-builder-alpine AS builder
-RUN xcaddy build --output /usr/bin/caddy --with golang.org/x/net@v0.63.0
+RUN xcaddy build --output /usr/bin/caddy --replace golang.org/x/net=golang.org/x/net@v0.63.0
 
 FROM caddy:2-alpine
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
